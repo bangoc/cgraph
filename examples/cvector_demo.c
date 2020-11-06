@@ -27,5 +27,6 @@ int main() {
   cvector_push_back(v, 7);
   cvector_erase(v, 1);
   print_vector(v);
+  cvector_free(v);
   return 0;
 }
