@@ -3,7 +3,7 @@
 
 #include "cgraph_datatype.h"
 
-int igraph_create(cgraph_t *graph, cgraph_ivec_t edges, CGRAPH_INTEGER n,
+int cgraph_create(cgraph_t *graph, cgraph_ivec_t edges, CGRAPH_INTEGER n,
                   bool directed);
 
 #endif  // CGRAPH_CONSTRUCTORS_H_
