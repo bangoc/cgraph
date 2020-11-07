@@ -2,18 +2,6 @@
 
 #include "cgraph.h"
 
-// void print_vector(cgraph_ivec_t v) {
-// 	printf("v(%lu): {", cvector_size(v));
-// 	for (int i = 0; i < cvector_size(v); ++i) {
-// 		if (i == 0) {
-// 			printf("%d", v[i]);
-// 		} 
-// 		else {
-// 			printf(", %d", v[i]);
-// 		}
-// 	}
-// 	printf("}\n");
-// }
 
 int main()
 {
@@ -40,5 +28,6 @@ int main()
 
     cgraph_create(&g, v, 0, true);
     // print_vector(g.from);
+    
     return 0;
 }
