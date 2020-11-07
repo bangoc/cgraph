@@ -11,7 +11,7 @@ int cgraph_neighbors(const cgraph_t *graph,
                      CGRAPH_INTEGER vid,
                      cgraph_neimode_t mode);
 int cgraph_adjacent(const cgraph_t *graph, 
-                    cgraph_vector_t *eids, 
+                    cgraph_ivec_t *eids, 
                     CGRAPH_INTEGER vid,
                     cgraph_neimode_t mode); 
 
