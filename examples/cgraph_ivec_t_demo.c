@@ -15,21 +15,6 @@ void print_vector(cgraph_ivec_t v) {
 }
 
 int main() {
-<<<<<<< HEAD
-	cgraph_ivec_t v = NULL;
-	int a[] = {
-	0, 1,
-	0, 2,
-	1, 2,
-	3, 5
-	};
-	int n = sizeof(a)/sizeof(int);
-	for (int i = 0; i < n; ++i) {
-	cvector_push_back(v, (CGRAPH_INTEGER)a[i]);
-	}
-	print_vector(v);
-	cvector_free(v);
-=======
   cgraph_ivec_t v = cvector_create_empty();
   int a[] = {
     0, 1,
@@ -43,5 +28,4 @@ int main() {
   }
   print_vector(v);
   cvector_free(v);
->>>>>>> da39ac88c45b42e0adb9829760908fb2ef8bb381
 }
