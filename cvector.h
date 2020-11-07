@@ -12,6 +12,12 @@
 #define cvector_vector_type(type) type *
 
 /**
+ * @brief cvector_create - Create a vector of zero size
+ */
+#define cvector_create_empty()  \
+	(void *)(((size_t*)calloc(2, sizeof(size_t))) + 2)
+
+/**
  * @brief cvector_set_capacity - For internal use, sets the capacity variable of the vector
  * @param vec - the vector
  * @param size - the new capacity to set

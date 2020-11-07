@@ -16,18 +16,18 @@ void print_vector(cvector_vector_type(int) v) {
 }
 
 int main() {
-	cvector_vector_type(int) v = NULL;
-	cvector_push_back(v, 1);
-	cvector_push_back(v, 2);
-	cvector_push_back(v, 3);
-	print_vector(v);
-	cvector_pop_back(v);
-	print_vector(v);
-	cvector_push_back(v, 5);
-	cvector_push_back(v, 6);
-	cvector_push_back(v, 7);
-	cvector_erase(v, 1);
-	print_vector(v);
-	cvector_free(v);
+  cvector_vector_type(int) v = cvector_create_empty();
+  cvector_push_back(v, 1);
+  cvector_push_back(v, 2);
+  cvector_push_back(v, 3);
+  print_vector(v);
+  cvector_pop_back(v);
+  print_vector(v);
+  cvector_push_back(v, 5);
+  cvector_push_back(v, 6);
+  cvector_push_back(v, 7);
+  cvector_erase(v, 1);
+  print_vector(v);
+  cvector_free(v);
   return 0;
 }
