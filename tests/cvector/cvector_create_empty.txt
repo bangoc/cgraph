@@ -1,0 +1,4 @@
+cvector_vector_type(int) v = cvector_create_empty()
+expected results: 
+  cvector_capacity(v) = 0 AND
+  cvector_size(v) = 0

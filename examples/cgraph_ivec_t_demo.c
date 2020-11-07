@@ -15,7 +15,7 @@ void print_vector(cgraph_ivec_t v) {
 }
 
 int main() {
-  cgraph_ivec_t v = NULL;
+  cgraph_ivec_t v = cvector_create_empty();
   int a[] = {
     0, 1,
     0, 2,

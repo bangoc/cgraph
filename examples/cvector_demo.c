@@ -15,7 +15,7 @@ void print_vector(cvector_vector_type(int) v) {
 }
 
 int main() {
-  cvector_vector_type(int) v = NULL;
+  cvector_vector_type(int) v = cvector_create_empty();
   cvector_push_back(v, 1);
   cvector_push_back(v, 2);
   cvector_push_back(v, 3);
