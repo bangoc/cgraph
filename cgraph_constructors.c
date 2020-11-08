@@ -14,27 +14,12 @@ int cmpTo(const void * a, const void * b) {
     return x - y;
 }
 
-
-cvector_vector_type(attribute) create_temporary_vector(cgraph_t *graph, int N) {
-    cvector_vector_type(attribute) v = cvector_create_empty();
-    for(int i = 0; i < N / 2; i++) {
-        attribute f;
-        f.from = graph->from[i];
-        f.to = graph->to[i];
-        f.index = i;
-        cvector_push_back(v, f);
-    }    
-    return v;
+void swap(CGRAPH_INTEGER * a, CGRAPH_INTEGER * b) {
+    CGRAPH_INTEGER temp = *a;
+    *a = *b;
+    *b = temp;
 }
 
-int number_vertices(cgraph_ivec_t edges) {
-    int N = cvector_size(edges);
-    int max = 0;
-    for(int i = 0; i < N; i++) {
-        max = (max < edges[i] ? edges[i] : max);
-    }
-    return max + 1;
-}
 
 int binarySearch_leftmost(cvector_vector_type(attribute) v, 
                             int key, int mode) {
@@ -59,6 +44,28 @@ int binarySearch_leftmost(cvector_vector_type(attribute) v,
 }
 
 
+cvector_vector_type(attribute) create_temporary_vector(cgraph_t *graph, int N) {
+    cvector_vector_type(attribute) v = cvector_create_empty();
+    for(int i = 0; i < N / 2; i++) {
+        attribute f;
+        f.from = graph->from[i];
+        f.to = graph->to[i];
+        f.index = i;
+        cvector_push_back(v, f);
+    }    
+    return v;
+}
+
+int number_vertices(cgraph_ivec_t edges) {
+    int N = cvector_size(edges);
+    int max = 0;
+    for(int i = 0; i < N; i++) {
+        max = (max < edges[i] ? edges[i] : max);
+    }
+    return max + 1;
+}
+
+
 void new_from_to(cgraph_t *graph, cgraph_ivec_t edges) {
     int N = cvector_size(edges);
     for(int i = 0; i < N; i++) {
@@ -67,6 +74,13 @@ void new_from_to(cgraph_t *graph, cgraph_ivec_t edges) {
         }
         else {
             cvector_push_back(graph->to, edges[i]);
+        }
+    }
+    if(!cgraph_is_directed(graph)) {
+        for(int i = 0; i < N / 2; i++) {
+            if(graph->from[i] > graph->to[i]) {
+                swap(&graph->from[i], &graph->to[i]);
+            }
         }
     }
 }
@@ -154,15 +168,18 @@ void new_is(cgraph_t * graph, cvector_vector_type(attribute) v,
 
 
 int cgraph_create(cgraph_t *graph, cgraph_ivec_t edges, CGRAPH_INTEGER n, bool directed) {
-    n = number_vertices(edges);
-    int N = (int) cvector_size(edges);
-
+    n = (CGRAPH_INTEGER) number_vertices(edges);
+    graph->n = n;
+    graph->directed = directed;
     graph->from = NULL;
     graph->to = NULL;
     graph->oi = NULL;
     graph->ii = NULL;
     graph->os = NULL;
     graph->is = NULL;
+
+
+    int N = (int) cvector_size(edges);
 
     new_from_to(graph, edges);
 
