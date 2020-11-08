@@ -2,6 +2,7 @@
 #define CGRAPH_CONSTRUCTORS_H_
 
 #include "cgraph_datatype.h"
+#include "cgraph_interface.h" // cgraph_is_directed()
 #include <stdio.h>  // for printf
 #include <string.h> // for memset
 
