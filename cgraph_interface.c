@@ -2,12 +2,12 @@
 
 
 void cgraph_destroy(cgraph_t *graph) {
-    cvector_free(graph->from);
-    cvector_free(graph->to);
-    cvector_free(graph->oi);
-    cvector_free(graph->ii);
-    cvector_free(graph->os);
-    cvector_free(graph->is);
+    cvector_free(&graph->from);
+    cvector_free(&graph->to);
+    cvector_free(&graph->oi);
+    cvector_free(&graph->ii);
+    cvector_free(&graph->os);
+    cvector_free(&graph->is);
 }
 
 
@@ -18,7 +18,6 @@ bool cgraph_is_directed(const cgraph_t *graph) {
 
 int cgraph_neighbors(const cgraph_t *graph, cgraph_ivec_t *neis, 
                     CGRAPH_INTEGER vid, cgraph_neimode_t mode) {
-    
 
     int idx = 0;
     CGRAPH_INTEGER i, j;
@@ -105,7 +104,7 @@ int cgraph_neighbors(const cgraph_t *graph, cgraph_ivec_t *neis,
 
 int cgraph_adjacent(const cgraph_t *graph, cgraph_ivec_t *eids, 
                     CGRAPH_INTEGER vid, cgraph_neimode_t mode) {
-    
+
     int idx = 0;
     CGRAPH_INTEGER i, j;
     CGRAPH_INTEGER node = vid, length_of_result = 0;
