@@ -27,14 +27,17 @@ int main()
     }
     fclose(a);
 
-    cgraph_create(&g, v, 0, false);
-    
-    print_vector(g.from);
-    print_vector(g.to);
-    print_vector(g.oi);
-    print_vector(g.ii);
-    print_vector(g.os);
-    print_vector(g.is);
-    // cgraph_destroy(&g);
+    cgraph_create(&g, v, 0, true);
+
+    // print_vector(g.from);
+    // print_vector(g.to);
+    // print_vector(g.oi);
+    // print_vector(g.ii);
+    // print_vector(g.os);
+    // print_vector(g.is);
+
+    cgraph_ivec_t neis = NULL;
+    cgraph_adjacent(&g, &neis, 1, CGRAPH_ALL);
+    cgraph_destroy(&g);
     return 0;
 }
