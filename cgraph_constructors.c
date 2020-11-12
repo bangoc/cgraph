@@ -21,29 +21,6 @@ void swap(CGRAPH_INTEGER * a, CGRAPH_INTEGER * b) {
 }
 
 
-int binarySearch_leftmost(cvector_vector_type(attribute) v, 
-                            int key, int mode) {
-    int N = cvector_size(v);
-    int low = 0, high = N - 1;
-    int ret = -1;
-    while(low <= high) {
-        int mid = low + (high - low) / 2;
-        int x = (mode == 0 ? v[mid].from : v[mid].to);
-        if(x == key) {
-            ret = mid;
-            high = mid - 1;
-        }
-        else if(x > key) {
-            high = mid - 1;
-        }
-        else {
-            low = mid + 1;
-        }
-    }
-    return ret;
-}
-
-
 cvector_vector_type(attribute) create_temporary_vector(cgraph_t *graph, int N) {
     cvector_vector_type(attribute) v = cvector_create_empty();
     for(int i = 0; i < N / 2; i++) {
@@ -116,13 +93,20 @@ void new_os(cgraph_t * graph, cvector_vector_type(attribute) v,
     int N = cvector_size(v);
 
     qsort(v, N, sizeof(attribute), cmpFrom);
-    int max_element = v[N - 1].from;
 
-    int prv_position = 0;
-    for(int i = 0; i <= num_vertices; i++) {        // os always has num_vertices + 1 elements
-        int pos = binarySearch_leftmost(v, i, 0);
-        prv_position = (pos == -1 ? (i <= max_element ? prv_position : N) : pos);
-        cvector_push_back(graph->os, prv_position);
+    for(int i = 0; i < v[0].from; i++) {
+        cvector_push_back(graph->os, 0);
+    }
+    for(int i = 0; i < N; i++) {
+        if(i == 0) {
+            cvector_push_back(graph->os, 0);
+        }
+        else if(i >= 1 && v[i].from != v[i-1].from) {
+            cvector_push_back(graph->os, i);
+        }
+    }
+    for(int i = v[N-1].from + 1; i <= num_vertices; i++) {
+        cvector_push_back(graph->os, N);
     }
 }
 
@@ -155,13 +139,20 @@ void new_is(cgraph_t * graph, cvector_vector_type(attribute) v,
     int N = cvector_size(v);
 
     qsort(v, N, sizeof(attribute), cmpTo);
-    int max_element = v[N - 1].to;
 
-    int prv_position = 0;
-    for(int i = 0; i <= num_vertices; i++) {        // is always has num_vertices + 1 elements
-        int pos = binarySearch_leftmost(v, i, 1);
-        prv_position = (pos == -1 ? (i <= max_element ? prv_position : N) : pos);
-        cvector_push_back(graph->is, prv_position);
+    for(int i = 0; i < v[0].to; i++) {
+        cvector_push_back(graph->is, 0);
+    }
+    for(int i = 0; i < N; i++) {
+        if(i == 0) {
+            cvector_push_back(graph->is, 0);
+        }
+        else if(i >= 1 && v[i].to != v[i-1].to) {
+            cvector_push_back(graph->is, i);
+        }
+    }
+    for(int i = v[N-1].to + 1; i <= num_vertices; i++) {
+        cvector_push_back(graph->is, N);
     }
 }
 
