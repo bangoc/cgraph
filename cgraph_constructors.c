@@ -14,14 +14,11 @@ int cmpTo(const void * a, const void * b) {
     return x - y;
 }
 
-void swap(CGRAPH_INTEGER * a, CGRAPH_INTEGER * b) {
-    CGRAPH_INTEGER temp = *a;
-    *a = *b;
-    *b = temp;
-}
 
+cvector_vector_type(attribute) create_temporary_vector(
+                                    cgraph_t *graph, 
+                                    int N) {
 
-cvector_vector_type(attribute) create_temporary_vector(cgraph_t *graph, int N) {
     cvector_vector_type(attribute) v = cvector_create_empty();
     for(int i = 0; i < N / 2; i++) {
         attribute f;
@@ -51,13 +48,6 @@ void new_from_to(cgraph_t *graph, cgraph_ivec_t edges) {
         }
         else {
             cvector_push_back(graph->to, edges[i]);
-        }
-    }
-    if(!cgraph_is_directed(graph)) {
-        for(int i = 0; i < N / 2; i++) {
-            if(graph->from[i] > graph->to[i]) {
-                swap(&graph->from[i], &graph->to[i]);
-            }
         }
     }
 }
@@ -158,8 +148,12 @@ void new_is(cgraph_t * graph, cvector_vector_type(attribute) v,
 
 
 
-int cgraph_create(cgraph_t *graph, cgraph_ivec_t edges, CGRAPH_INTEGER n, bool directed) {
+int cgraph_create(cgraph_t *graph, cgraph_ivec_t edges, 
+                    CGRAPH_INTEGER n, bool directed) {
+
     n = (CGRAPH_INTEGER) number_vertices(edges);
+    int N = (int) cvector_size(edges);
+
     graph->n = n;
     graph->directed = directed;
     graph->from = NULL;
@@ -169,8 +163,6 @@ int cgraph_create(cgraph_t *graph, cgraph_ivec_t edges, CGRAPH_INTEGER n, bool d
     graph->os = NULL;
     graph->is = NULL;
 
-
-    int N = (int) cvector_size(edges);
 
     new_from_to(graph, edges);
 
