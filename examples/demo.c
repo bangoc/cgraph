@@ -27,14 +27,14 @@ int main()
     }
     fclose(a);
 
-    cgraph_create(&g, v, 0, true);
+    cgraph_create(&g, v, 0, false);
 
-    // print_vector(g.from);
-    // print_vector(g.to);
-    // print_vector(g.oi);
-    // print_vector(g.ii);
-    // print_vector(g.os);
-    // print_vector(g.is);
+    print_vector(g.from);
+    print_vector(g.to);
+    print_vector(g.oi);
+    print_vector(g.ii);
+    print_vector(g.os);
+    print_vector(g.is);
 
     cgraph_ivec_t neis = cvector_create_empty();
     cgraph_neighbors(&g, &neis, 1, CGRAPH_ALL);
