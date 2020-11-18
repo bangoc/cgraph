@@ -1,13 +1,8 @@
 #ifndef CGRAPH_DATATYPE_H_
 #define CGRAPH_DATATYPE_H_
 
-#include <inttypes.h>
-#include <stdbool.h>
-#include "cvector.h"
-
-#define CGRAPH_INTEGER int32_t
-
-typedef cvector_vector_type(CGRAPH_INTEGER) cgraph_ivec_t;  
+#include "cgraph_basic_types.h"
+#include "cgraph_vector.h"
 
 /**
  * \ingroup internal

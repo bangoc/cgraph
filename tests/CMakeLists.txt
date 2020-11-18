@@ -1,1 +1,2 @@
 add_subdirectory(cvector)
+add_subdirectory(cgraph_vector)
