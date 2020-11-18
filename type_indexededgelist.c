@@ -13,7 +13,7 @@
  */
 ;
 CGRAPH_INTEGER cgraph_vcount(const cgraph_t *graph) {
-    return graph->n;
+  return graph->n;
 }
 
 /**
@@ -27,7 +27,7 @@ CGRAPH_INTEGER cgraph_vcount(const cgraph_t *graph) {
  * Time complexity: O(1)
  */
 CGRAPH_INTEGER cgraph_ecount(const cgraph_t *graph) {
-    return (CGRAPH_INTEGER) cvector_size(&graph->from);
+  return (CGRAPH_INTEGER) cvector_size(&graph->from);
 }
 
 /**
@@ -45,17 +45,17 @@ CGRAPH_INTEGER cgraph_ecount(const cgraph_t *graph) {
  * vertices, but no edges.
  * \param graph Pointer to a not-yet initialized graph object.
  * \param n The number of vertices in the graph, a non-negative
- *          integer number is expected.
+ *      integer number is expected.
  * \param directed Boolean; whether the graph is directed or not. Supported
- *        values are:
- *        \clist
- *        \cli IGRAPH_DIRECTED
- *          The graph will be \em directed.
- *        \cli IGRAPH_UNDIRECTED
- *          The graph will be \em undirected.
- *        \endclist
+ *    values are:
+ *    \clist
+ *    \cli IGRAPH_DIRECTED
+ *      The graph will be \em directed.
+ *    \cli IGRAPH_UNDIRECTED
+ *      The graph will be \em undirected.
+ *    \endclist
  * \return Error code:
- *         \c IGRAPH_EINVAL: invalid number of vertices.
+ *     \c IGRAPH_EINVAL: invalid number of vertices.
  *
  * Time complexity: O(|V|) for a graph with
  * |V| vertices (and no edges).
@@ -65,26 +65,26 @@ CGRAPH_INTEGER cgraph_ecount(const cgraph_t *graph) {
 
 int cgraph_empty(cgraph_t *graph, CGRAPH_INTEGER n, bool directed) {
 
-    if (n < 0) {
-        CGRAPH_ERROR("cannot create empty graph with negative number of vertices");
-    }
+  if (n < 0) {
+    CGRAPH_ERROR("cannot create empty graph with negative number of vertices");
+  }
 
-    graph->n = 0;
-    graph->directed = directed;
-    graph->from = cvector_create_empty();
-    graph->to = cvector_create_empty();
-    graph->oi = cvector_create_empty();
-    graph->ii = cvector_create_empty();
-    graph->os = cvector_create_empty();
-    graph->is = cvector_create_empty();
+  graph->n = 0;
+  graph->directed = directed;
+  graph->from = cvector_create_empty();
+  graph->to = cvector_create_empty();
+  graph->oi = cvector_create_empty();
+  graph->ii = cvector_create_empty();
+  graph->os = cvector_create_empty();
+  graph->is = cvector_create_empty();
 
-    cvector_push_back(graph->os, 0);
-    cvector_push_back(graph->is, 0);
+  cvector_push_back(graph->os, 0);
+  cvector_push_back(graph->is, 0);
 
-    /* add the vertices */
-    CGRAPH_CHECK(cgraph_add_vertices(graph, n));
+  /* add the vertices */
+  CGRAPH_CHECK(cgraph_add_vertices(graph, n));
 
-    return 0;
+  return 0;
 }
 
 /**
@@ -97,10 +97,10 @@ int cgraph_empty(cgraph_t *graph, CGRAPH_INTEGER n, bool directed) {
  *
  * \param graph The graph object to extend.
  * \param nv Non-negative integer giving the number of
- *           vertices to add.
+ *       vertices to add.
  * \return Error code:
- *         \c IGRAPH_EINVAL: invalid number of new
- *         vertices.
+ *     \c IGRAPH_EINVAL: invalid number of new
+ *     vertices.
  *
  * Time complexity: O(|V|) where
  * |V| is
@@ -109,24 +109,24 @@ int cgraph_empty(cgraph_t *graph, CGRAPH_INTEGER n, bool directed) {
  * \example examples/simple/igraph_add_vertices.c
  */
 int cgraph_add_vertices(cgraph_t *graph, CGRAPH_INTEGER nv) {
-    long int ec = cgraph_ecount(graph);
-    long int i;
+  long int ec = cgraph_ecount(graph);
+  long int i;
 
-    if (nv < 0) {
-        CGRAPH_ERROR("cannot add negative number of vertices");
-    }
+  if (nv < 0) {
+    CGRAPH_ERROR("cannot add negative number of vertices");
+  }
 
-    CGRAPH_CHECK(cgraph_ivec_grow(graph->os, graph->n + nv + 1));
-    CGRAPH_CHECK(cgraph_ivec_grow(graph->is, graph->n + nv + 1));
-    cgraph_ivec_setsize(graph->os, graph->n + nv + 1);
-    cgraph_ivec_setsize(graph->is, graph->n + nv + 1);
+  CGRAPH_CHECK(cgraph_ivec_grow(graph->os, graph->n + nv + 1));
+  CGRAPH_CHECK(cgraph_ivec_grow(graph->is, graph->n + nv + 1));
+  cgraph_ivec_setsize(graph->os, graph->n + nv + 1);
+  cgraph_ivec_setsize(graph->is, graph->n + nv + 1);
 
-    for (i = graph->n + 1; i < graph->n + nv + 1; i++) {
-        (graph->os)[i] = ec;
-        (graph->is)[i] = ec;
-    }
+  for (i = graph->n + 1; i < graph->n + nv + 1; i++) {
+    (graph->os)[i] = ec;
+    (graph->is)[i] = ec;
+  }
 
-    graph->n += nv;
+  graph->n += nv;
 
-    return 0;
+  return 0;
 }
