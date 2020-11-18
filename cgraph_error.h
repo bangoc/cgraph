@@ -16,7 +16,6 @@ typedef void cgraph_error_handler_t(
         if (cgraph_i_ret != 0) {\
             CGRAPH_ERROR("API failed"); \
         } } while (0)
-#endif
 
 int cgraph_error(const char *reason, 
                  const char *file, 
