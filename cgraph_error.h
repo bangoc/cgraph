@@ -11,6 +11,13 @@ typedef void cgraph_error_handler_t(
         cgraph_error (reason, __FILE__, __LINE__) ; \
     } while (0)
 
+#define CGRAPH_CHECK(a) do { \
+        int cgraph_i_ret=(a); \
+        if (cgraph_i_ret != 0) {\
+            CGRAPH_ERROR("API failed"); \
+        } } while (0)
+#endif
+
 int cgraph_error(const char *reason, 
                  const char *file, 
                  int line);

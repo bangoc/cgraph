@@ -4,6 +4,8 @@
 #include "cgraph_datatype.h"
 #include "cgraph_constants.h"
 
+int cgraph_empty(cgraph_t *graph, CGRAPH_INTEGER n, bool directed);
+int cgraph_add_vertices(cgraph_t *graph, CGRAPH_INTEGER nv);
 void cgraph_destroy(cgraph_t *graph);
 bool cgraph_is_directed(const cgraph_t *graph);
 int cgraph_neighbors(const cgraph_t *graph, 
