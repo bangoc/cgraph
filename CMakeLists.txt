@@ -2,12 +2,25 @@ project (cgraph C)
 cmake_minimum_required(VERSION 2.8)
 set(CMAKE_C_STANDARD 99)
 
+if (NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE "Debug")
+endif (NOT CMAKE_BUILD_TYPE)
+
+if (${CMAKE_BUILD_TYPE} STREQUAL Debug)
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g")
+endif()
+
 include_directories(${CMAKE_SOURCE_DIR})
 add_subdirectory(examples)
 
 if (${CMAKE_PROJECT_NAME} STREQUAL cgraph)
   include(CTest)
 endif()
+
+set(cgraph_src cgraph_error.c cgraph_vector.c type_indexededgelist.c
+               structure_generators.c)
+
+add_library(cgraph STATIC ${cgraph_src})
 
 if(${BUILD_TESTING})  
   add_subdirectory(tests)
@@ -16,4 +29,5 @@ if(${BUILD_TESTING})
   add_test(NAME CGraphIvecIsInInterval COMMAND cgraph_ivec_isininterval_ut)
   add_test(NAME CGraphIvecGrowAndSetsize COMMAND cgraph_ivec_grow_and_setsize_ut)
   add_test(NAME CGraphIvecOrder COMMAND cgraph_ivec_order_ut)
+  add_test(NAME CreateGraph COMMAND create_graph_ut)
 endif()

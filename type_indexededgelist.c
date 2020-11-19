@@ -28,7 +28,7 @@ CGRAPH_INTEGER cgraph_vcount(const cgraph_t *graph) {
  * Time complexity: O(1)
  */
 CGRAPH_INTEGER cgraph_ecount(const cgraph_t *graph) {
-  return (CGRAPH_INTEGER) cvector_size(&graph->from);
+  return (CGRAPH_INTEGER) cvector_size(graph->from);
 }
 
 /**
@@ -196,8 +196,8 @@ int cgraph_add_edges(cgraph_t *graph, const cgraph_ivec_t edges) {
     }
 
     /* from & to */
-    CGRAPH_CHECK(cgraph_ivec_grow(graph->from, no_of_edges + edges_to_add));
-    CGRAPH_CHECK(cgraph_ivec_grow(graph->to, no_of_edges + edges_to_add));
+    CGRAPH_CHECK(cgraph_ivec_grow(&graph->from, no_of_edges + edges_to_add));
+    CGRAPH_CHECK(cgraph_ivec_grow(&graph->to, no_of_edges + edges_to_add));
 
     while (i < edges_to_add * 2) {
         if (directed || edges[i] > edges[i + 1]) {
@@ -213,8 +213,8 @@ int cgraph_add_edges(cgraph_t *graph, const cgraph_ivec_t edges) {
     oldhandler = cgraph_set_error_handler(cgraph_error_handler_ignore);
 
     /* oi & ii */
-    ret1 = cgraph_ivec_init(newoi, no_of_edges + edges_to_add);
-    ret2 = cgraph_ivec_init(newii, no_of_edges + edges_to_add);
+    ret1 = cgraph_ivec_init(&newoi, no_of_edges + edges_to_add);
+    ret2 = cgraph_ivec_init(&newii, no_of_edges + edges_to_add);
     if (!ret1 || !ret2) {
         cgraph_ivec_setsize(graph->from, no_of_edges); /* gets smaller */
         cgraph_ivec_setsize(graph->to, no_of_edges);   /* gets smaller */
@@ -275,8 +275,8 @@ int cgraph_add_vertices(cgraph_t *graph, CGRAPH_INTEGER nv) {
     CGRAPH_ERROR("cannot add negative number of vertices");
   }
 
-  CGRAPH_CHECK(cgraph_ivec_grow(graph->os, graph->n + nv + 1));
-  CGRAPH_CHECK(cgraph_ivec_grow(graph->is, graph->n + nv + 1));
+  CGRAPH_CHECK(cgraph_ivec_grow(&graph->os, graph->n + nv + 1));
+  CGRAPH_CHECK(cgraph_ivec_grow(&graph->is, graph->n + nv + 1));
   cgraph_ivec_setsize(graph->os, graph->n + nv + 1);
   cgraph_ivec_setsize(graph->is, graph->n + nv + 1);
 

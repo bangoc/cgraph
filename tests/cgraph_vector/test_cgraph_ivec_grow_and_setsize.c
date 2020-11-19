@@ -9,7 +9,7 @@ int main() {
     return 1;
   }
 
-  cgraph_ivec_grow(v, 10);
+  cgraph_ivec_grow(&v, 10);
   if (cvector_capacity(v) != 10 || cvector_size(v) != 0) {
     printf("%s: FAILED\n", "Test grow 10");
     return 1;
