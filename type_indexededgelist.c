@@ -1,5 +1,6 @@
 #include "cgraph_error.h"
 #include "cgraph_interface.h"
+#include "cgraph_vector.h"
 
 /**
  * \ingroup interface
@@ -28,6 +29,70 @@ CGRAPH_INTEGER cgraph_vcount(const cgraph_t *graph) {
  */
 CGRAPH_INTEGER cgraph_ecount(const cgraph_t *graph) {
   return (CGRAPH_INTEGER) cvector_size(&graph->from);
+}
+
+/**
+ * \ingroup interface
+ * \function igraph_is_directed
+ * \brief Is this a directed graph?
+ *
+ * \param graph The graph.
+ * \return Logical value, <code>TRUE</code> if the graph is directed,
+ * <code>FALSE</code> otherwise.
+ *
+ * Time complexity: O(1)
+ *
+ * \example examples/simple/igraph_is_directed.c
+ */
+
+bool cgraph_is_directed(const cgraph_t *graph) {
+    return graph->directed;
+}
+
+static int cgraph_i_create_start(
+        cgraph_ivec_t res, cgraph_ivec_t el,
+        cgraph_ivec_t iindex, CGRAPH_INTEGER nodes) {
+
+# define EDGE(i) el[ iindex[(i)] ]
+
+    CGRAPH_INTEGER no_of_nodes;
+    CGRAPH_INTEGER no_of_edges;
+    CGRAPH_INTEGER i, j, idx;
+
+    no_of_nodes = nodes;
+    no_of_edges = cvector_size(el);
+
+    /* result */
+
+    CGRAPH_CHECK(cgraph_ivec_setsize(res, nodes + 1));
+
+    /* create the index */
+
+    if (cvector_size(el) == 0) {
+        /* empty graph */
+        cgraph_ivec_null(res);
+    } else {
+        idx = -1;
+        for (i = 0; i <= EDGE(0); i++) {
+            idx++; res[idx] = 0;
+        }
+        for (i = 1; i < no_of_edges; i++) {
+            CGRAPH_INTEGER n = 
+              (CGRAPH_INTEGER) (EDGE(i) - EDGE(res[idx]));
+            for (j = 0; j < n; j++) {
+                idx++; res[idx] = i;
+            }
+        }
+        j = EDGE(res[idx]);
+        for (i = 0; i < no_of_nodes - j; i++) {
+            idx++; res[idx] = no_of_edges;
+        }
+    }
+
+    /* clean */
+
+# undef EDGE
+    return 0;
 }
 
 /**
@@ -85,6 +150,100 @@ int cgraph_empty(cgraph_t *graph, CGRAPH_INTEGER n, bool directed) {
   CGRAPH_CHECK(cgraph_add_vertices(graph, n));
 
   return 0;
+}
+
+/**
+ * \ingroup interface
+ * \function igraph_add_edges
+ * \brief Adds edges to a graph object.
+ *
+ * </para><para>
+ * The edges are given in a vector, the
+ * first two elements define the first edge (the order is
+ * <code>from</code>, <code>to</code> for directed
+ * graphs). The vector
+ * should contain even number of integer numbers between zero and the
+ * number of vertices in the graph minus one (inclusive). If you also
+ * want to add new vertices, call igraph_add_vertices() first.
+ * \param graph The graph to which the edges will be added.
+ * \param edges The edges themselves.
+ *
+ * This function invalidates all iterators.
+ *
+ * </para><para>
+ * Time complexity: O(|V|+|E|) where
+ * |V| is the number of vertices and
+ * |E| is the number of
+ * edges in the \em new, extended graph.
+ *
+ * \example examples/simple/igraph_add_edges.c
+ */
+int cgraph_add_edges(cgraph_t *graph, const cgraph_ivec_t edges) {
+    long int no_of_edges = cgraph_ecount(graph);
+    long int edges_to_add = cvector_size(edges) / 2;
+    long int i = 0;
+    cgraph_error_handler_t *oldhandler;
+    bool ret1, ret2;
+    cgraph_ivec_t newoi = cvector_create_empty(), 
+                  newii = cvector_create_empty();
+    bool directed = cgraph_is_directed(graph);
+
+    if (cvector_size(edges) % 2 != 0) {
+        CGRAPH_ERROR("invalid (odd) length of edges vector");
+    }
+    if (!cgraph_ivec_isininterval(edges, 0, cgraph_vcount(graph) - 1)) {
+        CGRAPH_ERROR("cannot add edges");
+    }
+
+    /* from & to */
+    CGRAPH_CHECK(cgraph_ivec_grow(graph->from, no_of_edges + edges_to_add));
+    CGRAPH_CHECK(cgraph_ivec_grow(graph->to, no_of_edges + edges_to_add));
+
+    while (i < edges_to_add * 2) {
+        if (directed || edges[i] > edges[i + 1]) {
+            cvector_push_back(graph->from, edges[i++]); /* reserved */
+            cvector_push_back(graph->to,   edges[i++]); /* reserved */
+        } else {
+            cvector_push_back(graph->to,   edges[i++]); /* reserved */
+            cvector_push_back(graph->from, edges[i++]); /* reserved */
+        }
+    }
+
+    /* disable the error handler temporarily */
+    oldhandler = cgraph_set_error_handler(cgraph_error_handler_ignore);
+
+    /* oi & ii */
+    ret1 = cgraph_ivec_init(newoi, no_of_edges + edges_to_add);
+    ret2 = cgraph_ivec_init(newii, no_of_edges + edges_to_add);
+    if (!ret1 || !ret2) {
+        cgraph_ivec_setsize(graph->from, no_of_edges); /* gets smaller */
+        cgraph_ivec_setsize(graph->to, no_of_edges);   /* gets smaller */
+        cgraph_set_error_handler(oldhandler);
+        CGRAPH_ERROR("cannot add edges");
+    }
+    ret1 = cgraph_ivec_order(graph->from, graph->to, newoi);
+    ret2 = cgraph_ivec_order(graph->to, graph->from, newii);
+    if (ret1 != 0 || ret2 != 0) {
+        cgraph_ivec_setsize(graph->from, no_of_edges);
+        cgraph_ivec_setsize(graph->to, no_of_edges);
+        cvector_free(newoi);
+        cvector_free(newii);
+        cgraph_set_error_handler(oldhandler);
+        CGRAPH_ERROR("cannot add edges");
+    }
+
+    /* os & is, its length does not change, error safe */
+    cgraph_i_create_start(graph->os, graph->from, newoi, graph->n);
+    cgraph_i_create_start(graph->is, graph->to, newii, graph->n);
+
+    /* everything went fine  */
+    cvector_free(graph->oi);
+    cvector_free(graph->ii);
+    graph->oi = newoi;
+    graph->ii = newii;
+    cgraph_set_error_handler(oldhandler);
+
+    return 0;
 }
 
 /**

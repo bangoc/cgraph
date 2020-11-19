@@ -2,6 +2,12 @@
 
 static cgraph_error_handler_t *cgraph_i_error_handler = 0;
 
+void cgraph_error_handler_ignore(
+      const char *reason, 
+      const char *file, 
+      int line) {
+}
+
 int cgraph_error(const char *reason, const char *file, int line) {
 
     if (cgraph_i_error_handler) {
