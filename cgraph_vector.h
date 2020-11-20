@@ -15,7 +15,8 @@ int cgraph_ivec_order(const cgraph_ivec_t v, const cgraph_ivec_t v2,
 
 int cgraph_ivec_null(cgraph_ivec_t v);
 
-#define cgraph_ivec_grow(v, newcapacity) \
+#define cgraph_ivec_grow(v, newcapacity) cgraph_ivec_grow_internal((v), newcapacity)
+#define cgraph_ivec_grow_internal(v, newcapacity) \
   do { \
     CGRAPH_INTEGER capacity = (CGRAPH_INTEGER) cvector_capacity(v); \
     if (capacity < newcapacity) { \
@@ -23,7 +24,8 @@ int cgraph_ivec_null(cgraph_ivec_t v);
     } \
   } while(0)
 
-#define cgraph_ivec_setsize(v, newsize) \
+#define cgraph_ivec_setsize(v, newsize) cgraph_ivec_setsize_internal((v), newsize)
+#define cgraph_ivec_setsize_internal(v, newsize) \
   do { \
     CGRAPH_INTEGER capacity = (CGRAPH_INTEGER) cvector_capacity(v); \
     if (newsize <= capacity) { \
@@ -31,19 +33,20 @@ int cgraph_ivec_null(cgraph_ivec_t v);
     } \
   } while (0)
 
-#define cgraph_ivec_init(v, size) \
+#define cgraph_ivec_init(v, size) cgraph_ivec_init_internal((v), size)
+#define cgraph_ivec_init_internal(v, size) \
   do { \
     cgraph_ivec_grow(v, size); \
     cgraph_ivec_setsize(v, size); \
   } while (0)
 
-#define cgraph_ivec_capacity(v) cvector_capacity(v)
-#define cgraph_ivec_size(v) cvector_size(v)
+#define cgraph_ivec_capacity(v) cvector_capacity((v))
+#define cgraph_ivec_size(v) cvector_size((v))
 
 #define cgraph_ivec_create() cvector_create_empty()
 
-#define cgraph_ivec_push_back(v, value) cvector_push_back(v, ((CGRAPH_INTEGER)value))
+#define cgraph_ivec_push_back(v, value) cvector_push_back((v), ((CGRAPH_INTEGER)value))
 
-#define cgraph_ivec_free(v) cvector_free(v)
+#define cgraph_ivec_free(v) cvector_free((v))
 
 #endif  // CGRAPH_VECTOR_H_
