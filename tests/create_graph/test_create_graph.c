@@ -1,6 +1,7 @@
 #include <stdio.h>
 
 #include "cgraph.h"
+#include "ut.h"
 
 cgraph_ivec_t cgraph_ivec_fromarray(CGRAPH_INTEGER *a, CGRAPH_INTEGER n) {
   cgraph_ivec_t v = cvector_create_empty();
