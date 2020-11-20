@@ -1,0 +1,11 @@
+cgraph_neighbors(&g, neis, 1, CGRAPH_IN);
+  expected results:
+    neis == {0, 3}
+
+cgraph_neighbors(&g, neis, 1, CGRAPH_OUT);
+  expected results:
+    neis = {2, 3, 4}
+
+cgraph_neighbors(&g, neis, 1, CGRAPH_ALL);
+  expected results:
+    neis = {0, 2, 3, 3, 4}
