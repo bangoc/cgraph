@@ -13,7 +13,7 @@ int main() {
     UT_MSG_FAILED("Test ivec init size");
     return 1;
   }
-  if (!cgraph_ivec_equal(res, (CGRAPH_INTEGER[]){1, 5, 0, 2, 3, 4})) {
+  if (!cgraph_ivec_equal(res, (CGRAPH_INTEGER[]){1, 5, 0, 2, 3, 4}, 6)) {
     UT_MSG_FAILED("Test index");
     return 1;
   }

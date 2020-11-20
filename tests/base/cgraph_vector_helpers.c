@@ -8,9 +8,12 @@ cgraph_ivec_t cgraph_ivec_fromarray(CGRAPH_INTEGER *a, CGRAPH_INTEGER n) {
   return v;
 }
 
-bool cgraph_ivec_equal(cgraph_ivec_t v, CGRAPH_INTEGER *a) {
-  CGRAPH_INTEGER n = cvector_size(v);
-  for (int i = 0; i < n; ++i) {
+bool cgraph_ivec_equal(cgraph_ivec_t v, CGRAPH_INTEGER *a, CGRAPH_INTEGER n) {
+  CGRAPH_INTEGER sz = cvector_size(v);
+  if (sz != n) {
+    return false;
+  }
+  for (int i = 0; i < sz; ++i) {
     if (v[i] != a[i]) {
       return false;
     }
