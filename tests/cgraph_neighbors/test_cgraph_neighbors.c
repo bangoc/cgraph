@@ -23,7 +23,12 @@ int main() {
     return 1;
   }
   cgraph_neighbors(g, v, 1, CGRAPH_OUT);
-  if (!cgraph_ivec_equal(v, (CGRAPH_INTEGER[]){0, 3})) {
+  if (!cgraph_ivec_equal(v, (CGRAPH_INTEGER[]){2, 3, 4})) {
+    UT_MSG_FAILED("Test OUT Neighbors");
+    return 1;
+  }
+  cgraph_neighbors(g, v, 1, CGRAPH_ALL);
+  if (!cgraph_ivec_equal(v, (CGRAPH_INTEGER[]){0, 2, 3, 3, 4})) {
     UT_MSG_FAILED("Test OUT Neighbors");
     return 1;
   }
