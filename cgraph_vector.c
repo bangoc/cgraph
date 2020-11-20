@@ -12,36 +12,14 @@ CGRAPH_INTEGER cgraph_ivec_max(const cgraph_ivec_t v) {
   return max;
 }
 
-bool cgraph_ivec_isininterval(const cgraph_ivec_t v, CGRAPH_INTEGER low, CGRAPH_INTEGER high) {
+bool cgraph_ivec_isininterval(const cgraph_ivec_t v, 
+                              CGRAPH_INTEGER low, 
+                              CGRAPH_INTEGER high) {
   for (CGRAPH_INTEGER i = 0; i < cvector_size(v); ++i) {
     if (v[i] < low || v[i] > high) {
       return false;
     }
   }
-  return true;
-}
-
-bool cgraph_ivec_grow(cgraph_ivec_t *v, CGRAPH_INTEGER newcapacity) {
-  cgraph_ivec_t _v = *v;
-  CGRAPH_INTEGER capacity = (CGRAPH_INTEGER) cvector_capacity(_v);
-  if (capacity < newcapacity) {
-    cvector_grow(_v, newcapacity);
-  }
-  *v = _v;
-  return _v != NULL;
-}
-
-bool cgraph_ivec_setsize(cgraph_ivec_t v, CGRAPH_INTEGER newsize) {
-  CGRAPH_INTEGER capacity = (CGRAPH_INTEGER) cvector_capacity(v);
-  if (newsize <= capacity) {
-    cvector_set_size(v, newsize);
-  }
-  return true;
-}
-
-bool cgraph_ivec_init(cgraph_ivec_t *v, CGRAPH_INTEGER size) {
-  cgraph_ivec_grow(v, size);
-  cgraph_ivec_setsize(*v, size);
   return true;
 }
 

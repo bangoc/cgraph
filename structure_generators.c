@@ -7,10 +7,10 @@ int cgraph_create(cgraph_t *graph,
           cgraph_ivec_t edges,
           CGRAPH_INTEGER n, 
           bool directed) {
-  bool has_edges = cvector_size(edges) > 0;
+  bool has_edges = cgraph_ivec_size(edges) > 0;
   CGRAPH_INTEGER max = has_edges ? cgraph_ivec_max(edges) + 1 : 0;
 
-  if (cvector_size(edges) % 2 != 0) {
+  if (cgraph_ivec_size(edges) % 2 != 0) {
     CGRAPH_ERROR("Invalid (odd) edges vector");
   }
   if (has_edges && !cgraph_ivec_isininterval(edges, 0, max - 1)) {
