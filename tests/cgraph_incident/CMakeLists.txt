@@ -1,0 +1,2 @@
+add_executable(cgraph_incident_ut test_cgraph_incident.c)
+target_link_libraries(cgraph_incident_ut ut_base cgraph)
