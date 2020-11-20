@@ -314,3 +314,13 @@ void cgraph_destroy(cgraph_t *graph) {
     cvector_free(graph->os);
     cvector_free(graph->is);
 }
+
+int cgraph_neighbors(const cgraph_t *graph, 
+                     cgraph_ivec_t neis, 
+                     CGRAPH_INTEGER vid,
+                     cgraph_neimode_t mode) {
+  /*
+    TODO: Complete this function to pass the tests
+  */
+  return 0;
+}

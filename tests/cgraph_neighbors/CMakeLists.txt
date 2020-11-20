@@ -1,0 +1,2 @@
+add_executable(cgraph_neighbors_ut test_cgraph_neighbors.c)
+target_link_libraries(cgraph_neighbors_ut ut_base cgraph)
