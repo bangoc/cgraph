@@ -1,6 +1,7 @@
 #include <stdio.h>
 
 #include "cgraph_vector.h"
+#include "ut.h"
 
 int main() {
   const char *k_test_name = "Test cgraph_ivec_max";
@@ -17,9 +18,9 @@ int main() {
     cvector_push_back(v, (CGRAPH_INTEGER)a[i]);
   }
   if (cgraph_ivec_max(v) == 5) {
-    printf("%s: OK\n", k_test_name);
+    UT_MSG_OK(k_test_name);
     return 0;
   }
-  printf("%s: FAILED\n",k_test_name);
+  UT_MSG_FAILED(k_test_name);
   return 1;
 }

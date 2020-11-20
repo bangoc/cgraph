@@ -1,6 +1,7 @@
 #include <stdio.h>
 
 #include "cgraph_vector.h"
+#include "ut.h"
 
 int main() {
   cgraph_ivec_t v = cvector_create_empty();
@@ -15,20 +16,20 @@ int main() {
   }
 
   if (cgraph_ivec_isininterval(v, 0, 3) != true) {
-    printf("%s: FAILED\n", "Inbound test");
+    UT_MSG_FAILED("Inbound test");
     return 1;
   }
 
   if (cgraph_ivec_isininterval(v, 0, 2) != false) {
-    printf("%s: FAILED\n", "Upper bound test");
+    UT_MSG_FAILED("Upper bound test");
     return 1;
   }
 
   if (cgraph_ivec_isininterval(v, 1, 3) != false) {
-    printf("%s: FAILED\n", "Lower bound test");
+    UT_MSG_FAILED("Lower bound test");
     return 1;
   }
 
-  printf("%s: OK\n", "Vector is in interval test");
+  UT_MSG_OK("Vector is in interval test");
   return 0;
 }

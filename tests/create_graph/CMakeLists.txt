@@ -1,2 +1,2 @@
 add_executable(create_graph_ut test_create_graph.c)
-target_link_libraries(create_graph_ut cgraph)
+target_link_libraries(create_graph_ut cgraph ut_base)
