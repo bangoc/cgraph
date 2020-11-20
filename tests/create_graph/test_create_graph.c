@@ -40,6 +40,7 @@ int main() {
     UT_MSG_FAILED("Test from vector");
     return 1;
   }
+  cgraph_destroy(&g);
   UT_MSG_OK("Test create graph");
   return 0;
 }

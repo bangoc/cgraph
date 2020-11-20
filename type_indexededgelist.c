@@ -289,3 +289,28 @@ int cgraph_add_vertices(cgraph_t *graph, CGRAPH_INTEGER nv) {
 
   return 0;
 }
+
+/**
+ * \ingroup interface
+ * \function igraph_destroy
+ * \brief Frees the memory allocated for a graph object.
+ *
+ * </para><para>
+ * This function should be called for every graph object exactly once.
+ *
+ * </para><para>
+ * This function invalidates all iterators (of course), but the
+ * iterators of a graph should be destroyed before the graph itself
+ * anyway.
+ * \param graph Pointer to the graph to free.
+ *
+ * Time complexity: operating system specific.
+ */
+void cgraph_destroy(cgraph_t *graph) {
+    cvector_free(graph->from);
+    cvector_free(graph->to);
+    cvector_free(graph->oi);
+    cvector_free(graph->ii);
+    cvector_free(graph->os);
+    cvector_free(graph->is);
+}
