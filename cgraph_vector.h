@@ -4,7 +4,9 @@
 #include "cgraph_basic_types.h"
 #include "base/cvector.h"
 
-typedef cvector_vector_type(CGRAPH_INTEGER) cgraph_ivec_t;  
+typedef cvector_vector_type(CGRAPH_INTEGER) cgraph_ivec_t;
+
+// cgraph_ivec_t is CGRAPH_INTEGER *
 
 /* Pass vector pointer by value */
 CGRAPH_INTEGER cgraph_ivec_max(cgraph_ivec_t const v);
