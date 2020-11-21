@@ -12,11 +12,11 @@ CGRAPH_INTEGER cgraph_vcount(const cgraph_t *graph);
 CGRAPH_INTEGER cgraph_ecount(const cgraph_t *graph);
 bool cgraph_is_directed(const cgraph_t *graph);
 int cgraph_neighbors(const cgraph_t *graph, 
-                     cgraph_ivec_t neis, 
+                     cgraph_ivec_t* neis, 
                      CGRAPH_INTEGER vid,
                      cgraph_neimode_t mode);
 int cgraph_incident(const cgraph_t *graph, 
-                    cgraph_ivec_t eids, 
+                    cgraph_ivec_t* eids, 
                     CGRAPH_INTEGER vid,
                     cgraph_neimode_t mode); 
 

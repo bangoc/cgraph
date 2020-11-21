@@ -17,17 +17,17 @@ int main() {
                             1, 4}, 18);
   cgraph_create(&g, edges, 0, true);
   cgraph_ivec_t v = cgraph_ivec_create();
-  cgraph_neighbors(&g, v, 1, CGRAPH_IN);
+  cgraph_neighbors(&g, &v, 1, CGRAPH_IN);
   if (!cgraph_ivec_equal(v, (CGRAPH_INTEGER[]){0, 3}, 2)) {
     UT_MSG_FAILED("Test IN Neighbors");
     return 1;
   }
-  cgraph_neighbors(&g, v, 1, CGRAPH_OUT);
+  cgraph_neighbors(&g, &v, 1, CGRAPH_OUT);
   if (!cgraph_ivec_equal(v, (CGRAPH_INTEGER[]){2, 3, 4}, 3)) {
     UT_MSG_FAILED("Test OUT Neighbors");
     return 1;
   }
-  cgraph_neighbors(&g, v, 1, CGRAPH_ALL);
+  cgraph_neighbors(&g, &v, 1, CGRAPH_ALL);
   if (!cgraph_ivec_equal(v, (CGRAPH_INTEGER[]){0, 2, 3, 3, 4}, 5)) {
     UT_MSG_FAILED("Test ALL Neighbors");
     return 1;
