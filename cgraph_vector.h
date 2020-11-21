@@ -13,9 +13,9 @@ bool cgraph_ivec_isininterval(const cgraph_ivec_t v,
                               CGRAPH_INTEGER high);
 int cgraph_ivec_order(const cgraph_ivec_t v, 
                       const cgraph_ivec_t v2,
-                      cgraph_ivec_t res);
-int cgraph_ivec_null(cgraph_ivec_t v);
-int cgraph_ivec_setsize(cgraph_ivec_t v, 
+                      const cgraph_ivec_t res);
+int cgraph_ivec_null(const cgraph_ivec_t v);
+int cgraph_ivec_setsize(const cgraph_ivec_t v, 
                         CGRAPH_INTEGER newsize);
 CGRAPH_INTEGER cgraph_ivec_capacity(const cgraph_ivec_t v);
 CGRAPH_INTEGER cgraph_ivec_size(const cgraph_ivec_t v);

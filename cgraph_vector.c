@@ -36,8 +36,9 @@ int ref_cmp(const void *o1, const void *o2) {
   return _v2[i1] - _v2[i2];
 }
 
-int cgraph_ivec_order(const cgraph_ivec_t v, const cgraph_ivec_t v2,
-                        cgraph_ivec_t res) {
+int cgraph_ivec_order(const cgraph_ivec_t v, 
+                      const cgraph_ivec_t v2,
+                      const cgraph_ivec_t res) {
   _v = v;
   _v2 = v2;
   CGRAPH_INTEGER n = cvector_size(v);
@@ -47,13 +48,13 @@ int cgraph_ivec_order(const cgraph_ivec_t v, const cgraph_ivec_t v2,
   qsort(res, n, sizeof(CGRAPH_INTEGER), ref_cmp);
 }
 
-int cgraph_ivec_null(cgraph_ivec_t v) {
+int cgraph_ivec_null(const cgraph_ivec_t v) {
   for (CGRAPH_INTEGER i = 0; i < cvector_size(v); ++i) {
     v[i] = 0;
   }
 }
 
-int cgraph_ivec_setsize(cgraph_ivec_t v, CGRAPH_INTEGER newsize) {
+int cgraph_ivec_setsize(const cgraph_ivec_t v, CGRAPH_INTEGER newsize) {
   CGRAPH_INTEGER capacity = (CGRAPH_INTEGER) cvector_capacity(v);
   if (newsize <= capacity) {
     cvector_set_size(v, newsize);
