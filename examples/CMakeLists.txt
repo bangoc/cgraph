@@ -1,4 +1,8 @@
 add_executable(cgraph_ivec_t_demo cgraph_ivec_t_demo.c)
 add_executable(cvector_demo cvector_demo.c)
+add_executable(ivec_as_param cgraph_ivec_as_param_demo.c)
+add_executable(ivec_as_param2 cgraph_ivec_as_param_demo2.c)
 
 target_link_libraries(cgraph_ivec_t_demo cgraph)
+target_link_libraries(ivec_as_param cgraph)
+target_link_libraries(ivec_as_param2 cgraph)
