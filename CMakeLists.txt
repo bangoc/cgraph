@@ -18,7 +18,8 @@ if (${CMAKE_PROJECT_NAME} STREQUAL cgraph)
 endif()
 
 set(cgraph_src cgraph_error.c cgraph_vector.c type_indexededgelist.c
-               structure_generators.c)
+               structure_generators.c
+               visitors.c)
 
 add_library(cgraph STATIC ${cgraph_src})
 
@@ -34,4 +35,5 @@ if(${BUILD_TESTING})
   add_test(NAME CgraphIncident COMMAND cgraph_incident_ut)
   add_test(NAME CgraphIvecAsValue COMMAND cgraph_ivec_as_value_ut)
   add_test(NAME CgraphIvecAsRef COMMAND cgraph_ivec_as_ref_ut)
+  add_test(NAME CgraphBfs COMMAND cgraph_bfs_ut)
 endif()

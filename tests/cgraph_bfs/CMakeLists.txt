@@ -1,0 +1,2 @@
+add_executable(cgraph_bfs_ut test_cgraph_bfs.c)
+target_link_libraries(cgraph_bfs_ut ut_base cgraph)

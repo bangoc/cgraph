@@ -8,4 +8,12 @@
 #define CGRAPH_INTEGER int32_t
 #endif
 
+#if defined(NAN)
+    #define CGRAPH_NAN NAN
+#elif defined(INFINITY)
+    #define CGRAPH_NAN (INFINITY/INFINITY)
+#else
+    #define CGRAPH_NAN (INT_LEAST32_MIN)
+#endif
+
 #endif  // CGRAPH_BASIC_TYPES_H
