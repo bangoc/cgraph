@@ -2,7 +2,7 @@
 
 #include "cgraph_vector.h"
 
-CGRAPH_INTEGER cgraph_ivec_max(const cgraph_ivec_t v) {
+CGRAPH_INTEGER cgraph_ivec_max(cgraph_ivec_t const v) {
   CGRAPH_INTEGER max = v[0];
   for (CGRAPH_INTEGER i = 1; i < cvector_size(v); ++i) {
     if (v[i] > max) {
@@ -12,7 +12,7 @@ CGRAPH_INTEGER cgraph_ivec_max(const cgraph_ivec_t v) {
   return max;
 }
 
-bool cgraph_ivec_isininterval(const cgraph_ivec_t v, 
+bool cgraph_ivec_isininterval(cgraph_ivec_t const v, 
                               CGRAPH_INTEGER low, 
                               CGRAPH_INTEGER high) {
   for (CGRAPH_INTEGER i = 0; i < cvector_size(v); ++i) {
@@ -36,9 +36,9 @@ int ref_cmp(const void *o1, const void *o2) {
   return _v2[i1] - _v2[i2];
 }
 
-int cgraph_ivec_order(const cgraph_ivec_t v, 
-                      const cgraph_ivec_t v2,
-                      const cgraph_ivec_t res) {
+int cgraph_ivec_order(cgraph_ivec_t const v, 
+                      cgraph_ivec_t const v2,
+                      cgraph_ivec_t const res) {
   _v = v;
   _v2 = v2;
   CGRAPH_INTEGER n = cvector_size(v);
@@ -48,13 +48,13 @@ int cgraph_ivec_order(const cgraph_ivec_t v,
   qsort(res, n, sizeof(CGRAPH_INTEGER), ref_cmp);
 }
 
-int cgraph_ivec_null(const cgraph_ivec_t v) {
+int cgraph_ivec_null(cgraph_ivec_t const v) {
   for (CGRAPH_INTEGER i = 0; i < cvector_size(v); ++i) {
     v[i] = 0;
   }
 }
 
-int cgraph_ivec_setsize(const cgraph_ivec_t v, CGRAPH_INTEGER newsize) {
+int cgraph_ivec_setsize(cgraph_ivec_t const v, CGRAPH_INTEGER newsize) {
   CGRAPH_INTEGER capacity = (CGRAPH_INTEGER) cvector_capacity(v);
   if (newsize <= capacity) {
     cvector_set_size(v, newsize);
@@ -62,11 +62,11 @@ int cgraph_ivec_setsize(const cgraph_ivec_t v, CGRAPH_INTEGER newsize) {
   return 0;
 }
 
-CGRAPH_INTEGER cgraph_ivec_capacity(const cgraph_ivec_t v) {
+CGRAPH_INTEGER cgraph_ivec_capacity(cgraph_ivec_t const v) {
   return (CGRAPH_INTEGER)cvector_capacity(v);
 }
 
-CGRAPH_INTEGER cgraph_ivec_size(const cgraph_ivec_t v) {
+CGRAPH_INTEGER cgraph_ivec_size(cgraph_ivec_t const v) {
   return (CGRAPH_INTEGER)cvector_size(v);
 }
 

@@ -178,7 +178,7 @@ int cgraph_empty(cgraph_t *graph, CGRAPH_INTEGER n, bool directed) {
  *
  * \example examples/simple/igraph_add_edges.c
  */
-int cgraph_add_edges(cgraph_t *graph, const cgraph_ivec_t edges) {
+int cgraph_add_edges(cgraph_t *graph, cgraph_ivec_t const edges) {
     long int no_of_edges = cgraph_ecount(graph);
     long int edges_to_add = cgraph_ivec_size(edges) / 2;
     long int i = 0;

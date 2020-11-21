@@ -8,7 +8,7 @@ cgraph_ivec_t cgraph_ivec_fromarray(CGRAPH_INTEGER *a, CGRAPH_INTEGER n) {
   return v;
 }
 
-bool cgraph_ivec_equal(cgraph_ivec_t v, CGRAPH_INTEGER *a, CGRAPH_INTEGER n) {
+bool cgraph_ivec_equal(cgraph_ivec_t const v, CGRAPH_INTEGER *a, CGRAPH_INTEGER n) {
   CGRAPH_INTEGER sz = cgraph_ivec_size(v);
   if (sz != n) {
     return false;
@@ -21,7 +21,7 @@ bool cgraph_ivec_equal(cgraph_ivec_t v, CGRAPH_INTEGER *a, CGRAPH_INTEGER n) {
   return true;
 }
 
-void print_ivec(const cgraph_ivec_t v) {
+void print_ivec(cgraph_ivec_t const v) {
   printf("sz = %d, ", (int)cgraph_ivec_size(v));
   for (int i = 0; i < cgraph_ivec_size(v); ++i) {
     printf(" %d", v[i]);
