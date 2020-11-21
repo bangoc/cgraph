@@ -6,47 +6,29 @@
 
 typedef cvector_vector_type(CGRAPH_INTEGER) cgraph_ivec_t;  
 
+/* Pass vector pointer by value */
 CGRAPH_INTEGER cgraph_ivec_max(const cgraph_ivec_t v);
-
-bool cgraph_ivec_isininterval(const cgraph_ivec_t v, CGRAPH_INTEGER low, CGRAPH_INTEGER high);
-
-int cgraph_ivec_order(const cgraph_ivec_t v, const cgraph_ivec_t v2,
-                        cgraph_ivec_t res);
-
+bool cgraph_ivec_isininterval(const cgraph_ivec_t v,
+                              CGRAPH_INTEGER low,
+                              CGRAPH_INTEGER high);
+int cgraph_ivec_order(const cgraph_ivec_t v, 
+                      const cgraph_ivec_t v2,
+                      cgraph_ivec_t res);
 int cgraph_ivec_null(cgraph_ivec_t v);
+int cgraph_ivec_setsize(cgraph_ivec_t v, 
+                        CGRAPH_INTEGER newsize);
+CGRAPH_INTEGER cgraph_ivec_capacity(const cgraph_ivec_t v);
+CGRAPH_INTEGER cgraph_ivec_size(const cgraph_ivec_t v);
+cgraph_ivec_t cgraph_ivec_create();
 
-#define cgraph_ivec_grow(v, newcapacity) cgraph_ivec_grow_internal((v), newcapacity)
-#define cgraph_ivec_grow_internal(v, newcapacity) \
-  do { \
-    CGRAPH_INTEGER capacity = (CGRAPH_INTEGER) cvector_capacity(v); \
-    if (capacity < newcapacity) { \
-      cvector_grow(v, newcapacity); \
-    } \
-  } while(0)
+/* Pass vector pointer by reference */
+int cgraph_ivec_grow(cgraph_ivec_t *v, 
+                     CGRAPH_INTEGER newcapacity);
+int cgraph_ivec_init(cgraph_ivec_t *v, 
+                     CGRAPH_INTEGER size);
 
-#define cgraph_ivec_setsize(v, newsize) cgraph_ivec_setsize_internal((v), newsize)
-#define cgraph_ivec_setsize_internal(v, newsize) \
-  do { \
-    CGRAPH_INTEGER capacity = (CGRAPH_INTEGER) cvector_capacity(v); \
-    if (newsize <= capacity) { \
-      cvector_set_size(v, newsize); \
-    } \
-  } while (0)
-
-#define cgraph_ivec_init(v, size) cgraph_ivec_init_internal((v), size)
-#define cgraph_ivec_init_internal(v, size) \
-  do { \
-    cgraph_ivec_grow(v, size); \
-    cgraph_ivec_setsize(v, size); \
-  } while (0)
-
-#define cgraph_ivec_capacity(v) cvector_capacity((v))
-#define cgraph_ivec_size(v) cvector_size((v))
-
-#define cgraph_ivec_create() cvector_create_empty()
-
-#define cgraph_ivec_push_back(v, value) cvector_push_back((v), ((CGRAPH_INTEGER)value))
-
-#define cgraph_ivec_free(v) cvector_free((v))
+int cgraph_ivec_push_back(cgraph_ivec_t *v,
+                          CGRAPH_INTEGER value);
+int cgraph_ivec_free(cgraph_ivec_t *v);
 
 #endif  // CGRAPH_VECTOR_H_

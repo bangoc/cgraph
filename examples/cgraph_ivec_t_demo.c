@@ -3,7 +3,7 @@
 #include "cgraph.h"
 
 void print_vector(cgraph_ivec_t v) {
-  printf("v(%lu): {", cgraph_ivec_size(v));
+  printf("v(%lu): {", (unsigned long)cgraph_ivec_size(v));
   for (int i = 0; i < cgraph_ivec_size(v); ++i) {
     if (i == 0) {
       printf("%d", v[i]);
@@ -24,8 +24,8 @@ int main() {
   };
   int n = sizeof(a)/sizeof(int);
   for (int i = 0; i < n; ++i) {
-    cgraph_ivec_push_back(v, (CGRAPH_INTEGER)a[i]);
+    cgraph_ivec_push_back(&v, (CGRAPH_INTEGER)a[i]);
   }
   print_vector(v);
-  cgraph_ivec_free(v);
+  cgraph_ivec_free(&v);
 }

@@ -1,5 +1,6 @@
 #include <stdio.h>
 
+#include "cgraph_error.h"
 #include "cgraph_vector.h"
 #include "ut.h"
 
@@ -10,7 +11,7 @@ int main() {
     return 1;
   }
 
-  cgraph_ivec_grow(v, 10);
+  CGRAPH_CHECK(cgraph_ivec_grow(&v, 10));
   if (cgraph_ivec_capacity(v) != 10 || cgraph_ivec_size(v) != 0) {
     UT_MSG_FAILED("Test grow 10");
     return 1;

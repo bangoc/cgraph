@@ -3,7 +3,7 @@
 cgraph_ivec_t cgraph_ivec_fromarray(CGRAPH_INTEGER *a, CGRAPH_INTEGER n) {
   cgraph_ivec_t v = cgraph_ivec_create();
   for (CGRAPH_INTEGER i = 0; i < n; ++i) {
-    cgraph_ivec_push_back(v, a[i]);
+    cgraph_ivec_push_back(&v, a[i]);
   }
   return v;
 }

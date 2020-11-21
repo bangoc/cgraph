@@ -12,7 +12,7 @@ int main() {
   };
   int n = sizeof(a)/sizeof(int);
   for (int i = 0; i < n; ++i) {
-    cgraph_ivec_push_back(v, (CGRAPH_INTEGER)a[i]);
+    cgraph_ivec_push_back(&v, (CGRAPH_INTEGER)a[i]);
   }
 
   if (cgraph_ivec_isininterval(v, 0, 3) != true) {

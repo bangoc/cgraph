@@ -143,8 +143,8 @@ int cgraph_empty(cgraph_t *graph, CGRAPH_INTEGER n, bool directed) {
   graph->os = cgraph_ivec_create();
   graph->is = cgraph_ivec_create();
 
-  cgraph_ivec_push_back(graph->os, 0);
-  cgraph_ivec_push_back(graph->is, 0);
+  cgraph_ivec_push_back(&graph->os, 0);
+  cgraph_ivec_push_back(&graph->is, 0);
 
   /* add the vertices */
   CGRAPH_CHECK(cgraph_add_vertices(graph, n));
@@ -196,16 +196,16 @@ int cgraph_add_edges(cgraph_t *graph, const cgraph_ivec_t edges) {
     }
 
     /* from & to */
-    cgraph_ivec_grow(graph->from, no_of_edges + edges_to_add);
-    cgraph_ivec_grow(graph->to, no_of_edges + edges_to_add);
+    CGRAPH_CHECK(cgraph_ivec_grow(&graph->from, no_of_edges + edges_to_add));
+    CGRAPH_CHECK(cgraph_ivec_grow(&graph->to, no_of_edges + edges_to_add));
 
     while (i < edges_to_add * 2) {
         if (directed || edges[i] > edges[i + 1]) {
-            cgraph_ivec_push_back(graph->from, edges[i++]); /* reserved */
-            cgraph_ivec_push_back(graph->to,   edges[i++]); /* reserved */
+            cgraph_ivec_push_back(&graph->from, edges[i++]); /* reserved */
+            cgraph_ivec_push_back(&graph->to,   edges[i++]); /* reserved */
         } else {
-            cgraph_ivec_push_back(graph->to,   edges[i++]); /* reserved */
-            cgraph_ivec_push_back(graph->from, edges[i++]); /* reserved */
+            cgraph_ivec_push_back(&graph->to,   edges[i++]); /* reserved */
+            cgraph_ivec_push_back(&graph->from, edges[i++]); /* reserved */
         }
     }
 
@@ -213,15 +213,21 @@ int cgraph_add_edges(cgraph_t *graph, const cgraph_ivec_t edges) {
     oldhandler = cgraph_set_error_handler(cgraph_error_handler_ignore);
 
     /* oi & ii */
-    cgraph_ivec_init(newoi, no_of_edges + edges_to_add);
-    cgraph_ivec_init(newii, no_of_edges + edges_to_add);
+    ret1 = cgraph_ivec_init(&newoi, no_of_edges + edges_to_add);
+    ret2 = cgraph_ivec_init(&newii, no_of_edges + edges_to_add);
+    if (ret1 != 0 || ret2 != 0) {
+        cgraph_ivec_setsize(graph->from, no_of_edges); /* gets smaller */
+        cgraph_ivec_setsize(graph->to, no_of_edges);   /* gets smaller */
+        cgraph_set_error_handler(oldhandler);
+        CGRAPH_ERROR("cannot add edges");
+    }
     ret1 = cgraph_ivec_order(graph->from, graph->to, newoi);
     ret2 = cgraph_ivec_order(graph->to, graph->from, newii);
     if (ret1 != 0 || ret2 != 0) {
         cgraph_ivec_setsize(graph->from, no_of_edges);
         cgraph_ivec_setsize(graph->to, no_of_edges);
-        cgraph_ivec_free(newoi);
-        cgraph_ivec_free(newii);
+        cgraph_ivec_free(&newoi);
+        cgraph_ivec_free(&newii);
         cgraph_set_error_handler(oldhandler);
         CGRAPH_ERROR("cannot add edges");
     }
@@ -231,8 +237,8 @@ int cgraph_add_edges(cgraph_t *graph, const cgraph_ivec_t edges) {
     cgraph_i_create_start(graph->is, graph->to, newii, graph->n);
 
     /* everything went fine  */
-    cgraph_ivec_free(graph->oi);
-    cgraph_ivec_free(graph->ii);
+    cgraph_ivec_free(&graph->oi);
+    cgraph_ivec_free(&graph->ii);
     graph->oi = newoi;
     graph->ii = newii;
     cgraph_set_error_handler(oldhandler);
@@ -269,8 +275,8 @@ int cgraph_add_vertices(cgraph_t *graph, CGRAPH_INTEGER nv) {
     CGRAPH_ERROR("cannot add negative number of vertices");
   }
 
-  cgraph_ivec_grow(graph->os, graph->n + nv + 1);
-  cgraph_ivec_grow(graph->is, graph->n + nv + 1);
+  CGRAPH_CHECK(cgraph_ivec_grow(&graph->os, graph->n + nv + 1));
+  CGRAPH_CHECK(cgraph_ivec_grow(&graph->is, graph->n + nv + 1));
   cgraph_ivec_setsize(graph->os, graph->n + nv + 1);
   cgraph_ivec_setsize(graph->is, graph->n + nv + 1);
 
@@ -301,12 +307,12 @@ int cgraph_add_vertices(cgraph_t *graph, CGRAPH_INTEGER nv) {
  * Time complexity: operating system specific.
  */
 void cgraph_destroy(cgraph_t *graph) {
-    cgraph_ivec_free(graph->from);
-    cgraph_ivec_free(graph->to);
-    cgraph_ivec_free(graph->oi);
-    cgraph_ivec_free(graph->ii);
-    cgraph_ivec_free(graph->os);
-    cgraph_ivec_free(graph->is);
+    cgraph_ivec_free(&graph->from);
+    cgraph_ivec_free(&graph->to);
+    cgraph_ivec_free(&graph->oi);
+    cgraph_ivec_free(&graph->ii);
+    cgraph_ivec_free(&graph->os);
+    cgraph_ivec_free(&graph->is);
 }
 
 int cgraph_neighbors(const cgraph_t *graph, 

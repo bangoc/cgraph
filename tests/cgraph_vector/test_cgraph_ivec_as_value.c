@@ -7,7 +7,7 @@
 
 void foo(cgraph_ivec_t v) {
   for (int i = 0; i < N; ++i) {
-    cgraph_ivec_push_back(v, i);
+    cgraph_ivec_push_back(&v, i);
   }
 }
 

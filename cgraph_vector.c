@@ -52,3 +52,48 @@ int cgraph_ivec_null(cgraph_ivec_t v) {
     v[i] = 0;
   }
 }
+
+int cgraph_ivec_setsize(cgraph_ivec_t v, CGRAPH_INTEGER newsize) {
+  CGRAPH_INTEGER capacity = (CGRAPH_INTEGER) cvector_capacity(v);
+  if (newsize <= capacity) {
+    cvector_set_size(v, newsize);
+  }
+  return 0;
+}
+
+CGRAPH_INTEGER cgraph_ivec_capacity(const cgraph_ivec_t v) {
+  return (CGRAPH_INTEGER)cvector_capacity(v);
+}
+
+CGRAPH_INTEGER cgraph_ivec_size(const cgraph_ivec_t v) {
+  return (CGRAPH_INTEGER)cvector_size(v);
+}
+
+cgraph_ivec_t cgraph_ivec_create() {
+  return (cgraph_ivec_t)cvector_create_empty();
+}
+
+
+int cgraph_ivec_grow(cgraph_ivec_t *v, CGRAPH_INTEGER newcapacity) {
+  CGRAPH_INTEGER capacity = (CGRAPH_INTEGER) cvector_capacity((*v));
+  if (capacity < newcapacity) { 
+    cvector_grow((*v), newcapacity);
+  }
+  return 0;
+}
+
+int cgraph_ivec_init(cgraph_ivec_t *v, CGRAPH_INTEGER size) {
+  cgraph_ivec_grow(v, size);
+  cgraph_ivec_setsize(*v, size);
+  return 0;
+}
+
+int cgraph_ivec_push_back(cgraph_ivec_t *v, CGRAPH_INTEGER value) {
+  cvector_push_back((*v), ((CGRAPH_INTEGER)value));
+  return 0;
+}
+
+int cgraph_ivec_free(cgraph_ivec_t *v) {
+  cvector_free((*v));
+  return 0;
+}
