@@ -20,3 +20,10 @@ bool cgraph_ivec_equal(cgraph_ivec_t v, CGRAPH_INTEGER *a, CGRAPH_INTEGER n) {
   }
   return true;
 }
+
+void print_ivec(const cgraph_ivec_t v) {
+  printf("sz = %d, ", (int)cgraph_ivec_size(v));
+  for (int i = 0; i < cgraph_ivec_size(v); ++i) {
+    printf(" %d", v[i]);
+  }
+}
