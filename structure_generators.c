@@ -4,7 +4,7 @@
 #include "cgraph_vector.h"
 
 int cgraph_create(cgraph_t *graph, 
-          cgraph_ivec_t edges,
+          const cgraph_ivec_t edges,
           CGRAPH_INTEGER n, 
           bool directed) {
   bool has_edges = cgraph_ivec_size(edges) > 0;

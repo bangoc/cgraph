@@ -4,7 +4,7 @@
 #include "cgraph_datatype.h"
 
 int cgraph_create(cgraph_t *graph, 
-                  cgraph_ivec_t edges, 
+                  const cgraph_ivec_t edges, 
                   CGRAPH_INTEGER n, 
                   bool directed);
 
