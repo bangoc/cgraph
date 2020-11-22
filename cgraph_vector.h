@@ -6,7 +6,16 @@
 
 typedef cvector_vector_type(CGRAPH_INTEGER) cgraph_ivec_t;
 
-// cgraph_ivec_t is CGRAPH_INTEGER *
+// cgraph_ivec_t is a CGRAPH_INTEGER * pointer, but
+//
+// For a vector, we will allocate memory with a special layout,
+// what is different from an usual array.
+// So, it's desireable to use a distinctive name, and cgraph_ivec_t is chosen.
+//
+// If you ask why should we go through all of these pains?
+//   Well, random access to an arbitrary element by index in the primitive form
+//              e.g, v[i]
+//   looked so attractive, right? 
 
 /* Pass vector pointer by value */
 CGRAPH_INTEGER cgraph_ivec_max(cgraph_ivec_t const v);
