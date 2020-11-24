@@ -39,3 +39,7 @@ int cgraph_iqueue_enqueue(cgraph_iqueue_t q, CGRAPH_INTEGER element) {
 size_t cgraph_iqueue_size(cgraph_iqueue_const_t const q) {
   return queue_size(q);
 }
+
+void cgraph_iqueue_destroy(cgraph_iqueue_t q) {
+  queue_destroy(q);
+}

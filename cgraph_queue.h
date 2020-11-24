@@ -19,4 +19,6 @@ int cgraph_iqueue_enqueue(cgraph_iqueue_t q, CGRAPH_INTEGER element);
 
 size_t cgraph_iqueue_size(cgraph_iqueue_const_t const q);
 
+void cgraph_iqueue_destroy(cgraph_iqueue_t q);
+
 #endif  // CGRAPH_QUEUE_H_
