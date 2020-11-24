@@ -11,10 +11,9 @@ if (${CMAKE_BUILD_TYPE} STREQUAL Debug)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g")
 endif()
 
-include_directories(${CMAKE_SOURCE_DIR} 
-      {$CMAKE_SOURCE_DIR}/collections/include)
+include_directories(${CMAKE_SOURCE_DIR})
 add_subdirectory(examples)
-add_subdirectory(collections)
+add_subdirectory(ctc)
 
 if (${CMAKE_PROJECT_NAME} STREQUAL cgraph)
   include(CTest)

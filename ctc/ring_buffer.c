@@ -6,7 +6,7 @@
  * @Last modified time: 2019-03-09T15:23:25-06:00
  */
 
-#include "include/ring_buffer.h"
+#include "ring_buffer.h"
 
 struct ring_buffer_conf {
 

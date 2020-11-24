@@ -18,20 +18,20 @@ set(source_files
   treetable.c 
   tsttable.c)
 set(header_files 
-  include/array.h
-  include/common.h
-  include/deque.h
-  include/hashset.h
-  include/hashtable.h
-  include/list.h
-  include/pqueue.h 
-  include/queue.h
-  include/ring_buffer.h 
-  include/slist.h
-  include/stack.h
-  include/treeset.h
-  include/treetable.h 
-  include/tsttable.h)
+  array.h
+  common.h
+  deque.h
+  hashset.h
+  hashtable.h
+  list.h
+  pqueue.h 
+  queue.h
+  ring_buffer.h 
+  slist.h
+  stack.h
+  treeset.h
+  treetable.h 
+  tsttable.h)
 
 add_library(${PROJECT_NAME} STATIC ${source_files})
 include_directories(./include)
