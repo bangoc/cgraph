@@ -1,5 +1,6 @@
-project (cgraph C)
 cmake_minimum_required(VERSION 2.8)
+project (cgraph C)
+
 set(CMAKE_C_STANDARD 99)
 
 if (NOT CMAKE_BUILD_TYPE)
@@ -10,8 +11,10 @@ if (${CMAKE_BUILD_TYPE} STREQUAL Debug)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g")
 endif()
 
-include_directories(${CMAKE_SOURCE_DIR})
+include_directories(${CMAKE_SOURCE_DIR} 
+      {$CMAKE_SOURCE_DIR}/collections/include)
 add_subdirectory(examples)
+add_subdirectory(collections)
 
 if (${CMAKE_PROJECT_NAME} STREQUAL cgraph)
   include(CTest)
