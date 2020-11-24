@@ -1,6 +1,5 @@
 cmake_minimum_required(VERSION 2.8)
-cmake_policy(SET CMP0048 NEW)
-project(collectc VERSION 0.0.1)
+project(collectc)
 
 set(source_files 
   array.c 

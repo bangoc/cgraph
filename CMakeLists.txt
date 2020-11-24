@@ -19,9 +19,13 @@ if (${CMAKE_PROJECT_NAME} STREQUAL cgraph)
   include(CTest)
 endif()
 
-set(cgraph_src cgraph_error.c cgraph_vector.c type_indexededgelist.c
-               structure_generators.c
-               visitors.c)
+set(cgraph_src 
+  cgraph_error.c 
+  cgraph_vector.c 
+  type_indexededgelist.c
+  structure_generators.c
+  visitors.c
+  cgraph_queue.c)
 
 add_library(cgraph STATIC ${cgraph_src})
 
