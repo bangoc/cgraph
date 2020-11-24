@@ -6,3 +6,5 @@ add_executable(ivec_as_param2 cgraph_ivec_as_param_demo2.c)
 target_link_libraries(cgraph_ivec_t_demo cgraph)
 target_link_libraries(ivec_as_param cgraph)
 target_link_libraries(ivec_as_param2 cgraph)
+
+add_subdirectory(ctc)
