@@ -37,41 +37,19 @@ int main() {
              &succ, 
              &dist);
 
-  if (!cgraph_ivec_equal(order, (CGRAPH_INTEGER[]){1, 2, 3, 4, 5, CGRAPH_NAN}, 6)) {
-    UT_MSG_FAILED("Case 1. order");
-    print_ivec(order);
-    return 1;
+#define TEST(vec, arr, n, msg) \
+  if (!cgraph_ivec_equal(vec, arr, n)) { \
+    UT_MSG_FAILED(msg); \
+    print_ivec(vec); \
+    return 1; \
   }
 
-  if (!cgraph_ivec_equal(rank, (CGRAPH_INTEGER[]){CGRAPH_NAN, 0, 1, 2, 3, 4}, 6)) {
-    UT_MSG_FAILED("Case 1. rank");
-    print_ivec(rank);
-    return 1;
-  }
-
-  if (!cgraph_ivec_equal(father, (CGRAPH_INTEGER[]){CGRAPH_NAN, -1, 1, 1, 1, 3}, 6)) {
-    UT_MSG_FAILED("Case 1. father");
-    print_ivec(father);
-    return 1;
-  }
-
-  if (!cgraph_ivec_equal(pred, (CGRAPH_INTEGER[]){CGRAPH_NAN, -1, 1, 2, 3, 4}, 6)) {
-    UT_MSG_FAILED("Case 1. pred");
-    print_ivec(pred);
-    return 1;
-  }
-
-  if (!cgraph_ivec_equal(succ, (CGRAPH_INTEGER[]){CGRAPH_NAN, 2, 3, 4, 5, -1}, 6)) {
-    UT_MSG_FAILED("Case 1. succ");
-    print_ivec(succ);
-    return 1;
-  }
-
-  if (!cgraph_ivec_equal(dist, (CGRAPH_INTEGER[]){CGRAPH_NAN, 0, 1, 1, 1, 2}, 6)) {
-    UT_MSG_FAILED("Case 1. dist");
-    print_ivec(dist);
-    return 1;
-  }
+  TEST(order, ((CGRAPH_INTEGER[]){1, 2, 3, 4, 5, CGRAPH_NAN}), 6, "Case 1. order");
+  TEST(rank, ((CGRAPH_INTEGER[]){CGRAPH_NAN, 0, 1, 2, 3, 4}), 6, "Case 1. rank");
+  TEST(father, ((CGRAPH_INTEGER[]){CGRAPH_NAN, -1, 1, 1, 1, 3}), 6, "Case 1. father");
+  TEST(pred, ((CGRAPH_INTEGER[]){CGRAPH_NAN, -1, 1, 2, 3, 4}), 6, "Case 1. pred");
+  TEST(succ, ((CGRAPH_INTEGER[]){CGRAPH_NAN, 2, 3, 4, 5, -1}), 6, "Case 1. succ");
+  TEST(dist, ((CGRAPH_INTEGER[]){CGRAPH_NAN, 0, 1, 1, 1, 2}), 6, "Case 1. dist");
 
   // printf("Case 2\n");
   cgraph_bfs(&g, 
@@ -86,35 +64,12 @@ int main() {
              &succ, 
              &dist);
 
-  if (!cgraph_ivec_equal(order, (CGRAPH_INTEGER[]){1, 0, 3, CGRAPH_NAN, CGRAPH_NAN, CGRAPH_NAN}, 6)) {
-    UT_MSG_FAILED("Case 2. order");
-    return 1;
-  }
-
-  if (!cgraph_ivec_equal(rank, (CGRAPH_INTEGER[]){1, 0, CGRAPH_NAN, 2, CGRAPH_NAN, CGRAPH_NAN}, 6)) {
-    UT_MSG_FAILED("Case 2. rank");
-    return 1;
-  }
-
-  if (!cgraph_ivec_equal(father, (CGRAPH_INTEGER[]){1, -1, CGRAPH_NAN, 1, CGRAPH_NAN, CGRAPH_NAN}, 6)) {
-    UT_MSG_FAILED("Case 2. father");
-    return 1;
-  }
-
-  if (!cgraph_ivec_equal(pred, (CGRAPH_INTEGER[]){1, -1, CGRAPH_NAN, 0, CGRAPH_NAN, CGRAPH_NAN}, 6)) {
-    UT_MSG_FAILED("Case 2. pred");
-    return 1;
-  }
-
-  if (!cgraph_ivec_equal(succ, (CGRAPH_INTEGER[]){3, 0, CGRAPH_NAN, -1, CGRAPH_NAN, CGRAPH_NAN}, 6)) {
-    UT_MSG_FAILED("Case 2. succ");
-    return 1;
-  }
-
-  if (!cgraph_ivec_equal(dist, (CGRAPH_INTEGER[]){1, 0, CGRAPH_NAN, 1, CGRAPH_NAN, CGRAPH_NAN}, 6)) {
-    UT_MSG_FAILED("Case 2. dist");
-    return 1;
-  }
+  TEST(order, ((CGRAPH_INTEGER[]){1, 0, 3, CGRAPH_NAN, CGRAPH_NAN, CGRAPH_NAN}), 6, "Case 2. order");
+  TEST(rank, ((CGRAPH_INTEGER[]){1, 0, CGRAPH_NAN, 2, CGRAPH_NAN, CGRAPH_NAN}), 6, "Case 2. rank");
+  TEST(father, ((CGRAPH_INTEGER[]){1, -1, CGRAPH_NAN, 1, CGRAPH_NAN, CGRAPH_NAN}), 6, "Case 2. father");
+  TEST(pred, ((CGRAPH_INTEGER[]){1, -1, CGRAPH_NAN, 0, CGRAPH_NAN, CGRAPH_NAN}), 6, "Case 2. pred");
+  TEST(succ, ((CGRAPH_INTEGER[]){3, 0, CGRAPH_NAN, -1, CGRAPH_NAN, CGRAPH_NAN}), 6, "Case 2. succ");
+  TEST(dist, ((CGRAPH_INTEGER[]){1, 0, CGRAPH_NAN, 1, CGRAPH_NAN, CGRAPH_NAN}), 6, "Case 2. dist");
   
   // printf("Case 3\n");
   cgraph_bfs(&g, 
@@ -129,35 +84,14 @@ int main() {
              &succ, 
              &dist);
 
-  if (!cgraph_ivec_equal(order, (CGRAPH_INTEGER[]){1, 0, 2, 3, 4, 5}, 6)) {
-    UT_MSG_FAILED("Case 3. order");
-    return 1;
-  }
+  TEST(order, ((CGRAPH_INTEGER[]){1, 0, 2, 3, 4, 5}), 6, "Case 3. order");
+  TEST(rank, ((CGRAPH_INTEGER[]){1, 0, 2, 3, 4, 5}), 6, "Case 3. rank");
+  TEST(father, ((CGRAPH_INTEGER[]){1, -1, 1, 1, 1, 3}), 6, "Case 3. father");
+  TEST(pred, ((CGRAPH_INTEGER[]){1, -1, 0, 2, 3, 4}), 6, "Case 3. pred");
+  TEST(succ, ((CGRAPH_INTEGER[]){2, 0, 3, 4, 5, -1}), 6, "Case 3. succ");
+  TEST(dist, ((CGRAPH_INTEGER[]){1, 0, 1, 1, 1, 2}), 6, "Case 3. dist");
 
-  if (!cgraph_ivec_equal(rank, (CGRAPH_INTEGER[]){1, 0, 2, 3, 4, 5}, 6)) {
-    UT_MSG_FAILED("Case 3. rank");
-    return 1;
-  }
-
-  if (!cgraph_ivec_equal(father, (CGRAPH_INTEGER[]){1, -1, 1, 1, 1, 3}, 6)) {
-    UT_MSG_FAILED("Case 3. father");
-    return 1;
-  }
-
-  if (!cgraph_ivec_equal(pred, (CGRAPH_INTEGER[]){1, -1, 0, 2, 3, 4}, 6)) {
-    UT_MSG_FAILED("Case 3. pred");
-    return 1;
-  }
-
-  if (!cgraph_ivec_equal(succ, (CGRAPH_INTEGER[]){2, 0, 3, 4, 5, -1}, 6)) {
-    UT_MSG_FAILED("Case 3. succ");
-    return 1;
-  }
-
-  if (!cgraph_ivec_equal(dist, (CGRAPH_INTEGER[]){1, 0, 1, 1, 1, 2}, 6)) {
-    UT_MSG_FAILED("Case 3. dist");
-    return 1;
-  }
+#undef TEST  
   UT_MSG_OK("Test neightbors");
   return 0;
 }
