@@ -17,8 +17,11 @@ typedef cvector_vector_type(CGRAPH_INTEGER) cgraph_ivec_t;
 //              e.g, v[i]
 //   looked so attractive, right? 
 
+cgraph_ivec_t cgraph_ivec_create();
+
 /* Pass vector pointer by value */
 CGRAPH_INTEGER cgraph_ivec_max(cgraph_ivec_t const v);
+int cgraph_ivec_minmax(cgraph_ivec_t const v, CGRAPH_INTEGER *min, CGRAPH_INTEGER *max);
 bool cgraph_ivec_isininterval(cgraph_ivec_t const v,
                               CGRAPH_INTEGER low,
                               CGRAPH_INTEGER high);
@@ -30,7 +33,7 @@ int cgraph_ivec_setsize(cgraph_ivec_t const v,
                         CGRAPH_INTEGER newsize);
 CGRAPH_INTEGER cgraph_ivec_capacity(cgraph_ivec_t const v);
 CGRAPH_INTEGER cgraph_ivec_size(cgraph_ivec_t const v);
-cgraph_ivec_t cgraph_ivec_create();
+int cgraph_ivec_fill(cgraph_ivec_t const v, CGRAPH_INTEGER data);
 
 /* Pass vector pointer by reference */
 int cgraph_ivec_grow(cgraph_ivec_t *v, 

@@ -12,6 +12,22 @@ CGRAPH_INTEGER cgraph_ivec_max(cgraph_ivec_t const v) {
   return max;
 }
 
+int cgraph_ivec_minmax(cgraph_ivec_t const v, CGRAPH_INTEGER *min, CGRAPH_INTEGER *max) {
+  CGRAPH_INTEGER _min, _max; 
+  _min = _max = v[0];
+  for (CGRAPH_INTEGER i = 1; i < cvector_size(v); ++i) {
+    if (v[i] > _max) {
+      _max = v[i];
+    }
+    if (v[i] < _min) {
+      _min = v[i];
+    }
+  }
+  *min = _min;
+  *max = _max;
+  return 0;
+}
+
 bool cgraph_ivec_isininterval(cgraph_ivec_t const v, 
                               CGRAPH_INTEGER low, 
                               CGRAPH_INTEGER high) {
@@ -49,9 +65,8 @@ int cgraph_ivec_order(cgraph_ivec_t const v,
 }
 
 int cgraph_ivec_null(cgraph_ivec_t const v) {
-  for (CGRAPH_INTEGER i = 0; i < cvector_size(v); ++i) {
-    v[i] = 0;
-  }
+  cgraph_ivec_fill(v, 0);
+  return 0;
 }
 
 int cgraph_ivec_setsize(cgraph_ivec_t const v, CGRAPH_INTEGER newsize) {
@@ -68,6 +83,14 @@ CGRAPH_INTEGER cgraph_ivec_capacity(cgraph_ivec_t const v) {
 
 CGRAPH_INTEGER cgraph_ivec_size(cgraph_ivec_t const v) {
   return (CGRAPH_INTEGER)cvector_size(v);
+}
+
+int cgraph_ivec_fill(cgraph_ivec_t const v, CGRAPH_INTEGER data) {
+  size_t sz = cvector_size(v);
+  for (CGRAPH_INTEGER i = 0; i < sz; ++i) {
+    v[i] = data;
+  }
+  return 0;
 }
 
 cgraph_ivec_t cgraph_ivec_create() {

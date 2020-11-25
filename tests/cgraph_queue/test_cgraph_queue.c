@@ -4,7 +4,7 @@
 #include "ut.h"
 
 int main() {
-  cgraph_iqueue_t q = cgraph_queue_create();
+  cgraph_iqueue_t q = cgraph_iqueue_create();
   for (int elem = 1; elem <= 10; ++elem) {
     cgraph_iqueue_enqueue(q, elem);
   }
@@ -31,5 +31,6 @@ int main() {
     }
   }
   UT_MSG_OK("Queue test: Ok");
+  cgraph_iqueue_free(&q);
   return 0;
 }

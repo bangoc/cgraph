@@ -39,31 +39,37 @@ int main() {
 
   if (!cgraph_ivec_equal(order, (CGRAPH_INTEGER[]){1, 2, 3, 4, 5, CGRAPH_NAN}, 6)) {
     UT_MSG_FAILED("Case 1. order");
+    print_ivec(order);
     return 1;
   }
 
   if (!cgraph_ivec_equal(rank, (CGRAPH_INTEGER[]){CGRAPH_NAN, 0, 1, 2, 3, 4}, 6)) {
     UT_MSG_FAILED("Case 1. rank");
+    print_ivec(rank);
     return 1;
   }
 
   if (!cgraph_ivec_equal(father, (CGRAPH_INTEGER[]){CGRAPH_NAN, -1, 1, 1, 1, 3}, 6)) {
     UT_MSG_FAILED("Case 1. father");
+    print_ivec(father);
     return 1;
   }
 
   if (!cgraph_ivec_equal(pred, (CGRAPH_INTEGER[]){CGRAPH_NAN, -1, 1, 2, 3, 4}, 6)) {
     UT_MSG_FAILED("Case 1. pred");
+    print_ivec(pred);
     return 1;
   }
 
   if (!cgraph_ivec_equal(succ, (CGRAPH_INTEGER[]){CGRAPH_NAN, 2, 3, 4, 5, -1}, 6)) {
     UT_MSG_FAILED("Case 1. succ");
+    print_ivec(succ);
     return 1;
   }
 
   if (!cgraph_ivec_equal(dist, (CGRAPH_INTEGER[]){CGRAPH_NAN, 0, 1, 1, 1, 2}, 6)) {
     UT_MSG_FAILED("Case 1. dist");
+    print_ivec(dist);
     return 1;
   }
 

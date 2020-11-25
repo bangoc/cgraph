@@ -1,6 +1,6 @@
 #include "cgraph_queue.h"
 
-cgraph_iqueue_t cgraph_queue_create() {
+cgraph_iqueue_t cgraph_iqueue_create() {
   cgraph_iqueue_t q;
   if (queue_new(&q) != CC_ERR_ALLOC) {
     return q;
@@ -40,6 +40,10 @@ size_t cgraph_iqueue_size(cgraph_iqueue_const_t const q) {
   return queue_size(q);
 }
 
-void cgraph_iqueue_destroy(cgraph_iqueue_t q) {
-  queue_destroy(q);
+void cgraph_iqueue_free(cgraph_iqueue_t *q) {
+  queue_destroy(*q);
+}
+
+bool cgraph_iqueue_empty(cgraph_iqueue_t const q) {
+  return cgraph_iqueue_size(q) == 0;
 }
