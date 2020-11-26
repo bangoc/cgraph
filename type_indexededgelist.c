@@ -28,7 +28,7 @@ CGRAPH_INTEGER cgraph_vcount(const cgraph_t *graph) {
  * Time complexity: O(1)
  */
 CGRAPH_INTEGER cgraph_ecount(const cgraph_t *graph) {
-  return (CGRAPH_INTEGER) cvector_size(graph->from);
+  return (CGRAPH_INTEGER) cgraph_ivec_size(graph->from);
 }
 
 /**
@@ -60,15 +60,15 @@ static int cgraph_i_create_start(
     CGRAPH_INTEGER i, j, idx;
 
     no_of_nodes = nodes;
-    no_of_edges = cvector_size(el);
+    no_of_edges = cgraph_ivec_size(el);
 
     /* result */
 
-    CGRAPH_CHECK(cgraph_ivec_setsize(res, nodes + 1));
+    cgraph_ivec_setsize(res, nodes + 1);
 
     /* create the index */
 
-    if (cvector_size(el) == 0) {
+    if (cgraph_ivec_size(el) == 0) {
         /* empty graph */
         cgraph_ivec_null(res);
     } else {
@@ -136,15 +136,15 @@ int cgraph_empty(cgraph_t *graph, CGRAPH_INTEGER n, bool directed) {
 
   graph->n = 0;
   graph->directed = directed;
-  graph->from = cvector_create_empty();
-  graph->to = cvector_create_empty();
-  graph->oi = cvector_create_empty();
-  graph->ii = cvector_create_empty();
-  graph->os = cvector_create_empty();
-  graph->is = cvector_create_empty();
+  graph->from = cgraph_ivec_create();
+  graph->to = cgraph_ivec_create();
+  graph->oi = cgraph_ivec_create();
+  graph->ii = cgraph_ivec_create();
+  graph->os = cgraph_ivec_create();
+  graph->is = cgraph_ivec_create();
 
-  cvector_push_back(graph->os, 0);
-  cvector_push_back(graph->is, 0);
+  cgraph_ivec_push_back(&graph->os, 0);
+  cgraph_ivec_push_back(&graph->is, 0);
 
   /* add the vertices */
   CGRAPH_CHECK(cgraph_add_vertices(graph, n));
@@ -178,17 +178,17 @@ int cgraph_empty(cgraph_t *graph, CGRAPH_INTEGER n, bool directed) {
  *
  * \example examples/simple/igraph_add_edges.c
  */
-int cgraph_add_edges(cgraph_t *graph, const cgraph_ivec_t edges) {
+int cgraph_add_edges(cgraph_t *graph, cgraph_ivec_t const edges) {
     long int no_of_edges = cgraph_ecount(graph);
-    long int edges_to_add = cvector_size(edges) / 2;
+    long int edges_to_add = cgraph_ivec_size(edges) / 2;
     long int i = 0;
     cgraph_error_handler_t *oldhandler;
     bool ret1, ret2;
-    cgraph_ivec_t newoi = cvector_create_empty(), 
-                  newii = cvector_create_empty();
+    cgraph_ivec_t newoi = cgraph_ivec_create(), 
+                  newii = cgraph_ivec_create();
     bool directed = cgraph_is_directed(graph);
 
-    if (cvector_size(edges) % 2 != 0) {
+    if (cgraph_ivec_size(edges) % 2 != 0) {
         CGRAPH_ERROR("invalid (odd) length of edges vector");
     }
     if (!cgraph_ivec_isininterval(edges, 0, cgraph_vcount(graph) - 1)) {
@@ -201,11 +201,11 @@ int cgraph_add_edges(cgraph_t *graph, const cgraph_ivec_t edges) {
 
     while (i < edges_to_add * 2) {
         if (directed || edges[i] > edges[i + 1]) {
-            cvector_push_back(graph->from, edges[i++]); /* reserved */
-            cvector_push_back(graph->to,   edges[i++]); /* reserved */
+            cgraph_ivec_push_back(&graph->from, edges[i++]); /* reserved */
+            cgraph_ivec_push_back(&graph->to,   edges[i++]); /* reserved */
         } else {
-            cvector_push_back(graph->to,   edges[i++]); /* reserved */
-            cvector_push_back(graph->from, edges[i++]); /* reserved */
+            cgraph_ivec_push_back(&graph->to,   edges[i++]); /* reserved */
+            cgraph_ivec_push_back(&graph->from, edges[i++]); /* reserved */
         }
     }
 
@@ -215,7 +215,7 @@ int cgraph_add_edges(cgraph_t *graph, const cgraph_ivec_t edges) {
     /* oi & ii */
     ret1 = cgraph_ivec_init(&newoi, no_of_edges + edges_to_add);
     ret2 = cgraph_ivec_init(&newii, no_of_edges + edges_to_add);
-    if (!ret1 || !ret2) {
+    if (ret1 != 0 || ret2 != 0) {
         cgraph_ivec_setsize(graph->from, no_of_edges); /* gets smaller */
         cgraph_ivec_setsize(graph->to, no_of_edges);   /* gets smaller */
         cgraph_set_error_handler(oldhandler);
@@ -226,8 +226,8 @@ int cgraph_add_edges(cgraph_t *graph, const cgraph_ivec_t edges) {
     if (ret1 != 0 || ret2 != 0) {
         cgraph_ivec_setsize(graph->from, no_of_edges);
         cgraph_ivec_setsize(graph->to, no_of_edges);
-        cvector_free(newoi);
-        cvector_free(newii);
+        cgraph_ivec_free(&newoi);
+        cgraph_ivec_free(&newii);
         cgraph_set_error_handler(oldhandler);
         CGRAPH_ERROR("cannot add edges");
     }
@@ -237,8 +237,8 @@ int cgraph_add_edges(cgraph_t *graph, const cgraph_ivec_t edges) {
     cgraph_i_create_start(graph->is, graph->to, newii, graph->n);
 
     /* everything went fine  */
-    cvector_free(graph->oi);
-    cvector_free(graph->ii);
+    cgraph_ivec_free(&graph->oi);
+    cgraph_ivec_free(&graph->ii);
     graph->oi = newoi;
     graph->ii = newii;
     cgraph_set_error_handler(oldhandler);
@@ -307,159 +307,112 @@ int cgraph_add_vertices(cgraph_t *graph, CGRAPH_INTEGER nv) {
  * Time complexity: operating system specific.
  */
 void cgraph_destroy(cgraph_t *graph) {
-    cvector_free(graph->from);
-    cvector_free(graph->to);
-    cvector_free(graph->oi);
-    cvector_free(graph->ii);
-    cvector_free(graph->os);
-    cvector_free(graph->is);
+    cgraph_ivec_free(&graph->from);
+    cgraph_ivec_free(&graph->to);
+    cgraph_ivec_free(&graph->oi);
+    cgraph_ivec_free(&graph->ii);
+    cgraph_ivec_free(&graph->os);
+    cgraph_ivec_free(&graph->is);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-int cmpfunc(const void * a, const void * b){
-  return (*(int*)a-*(int*)b);
-}
-#include<stdio.h>
 int cgraph_neighbors(const cgraph_t *graph, 
-                     cgraph_ivec_t neis, 
+                     cgraph_ivec_t *neis, 
                      CGRAPH_INTEGER vid,
                      cgraph_neimode_t mode) {
-  /*
-    TODO: Complete this function to pass the tests
-  */ cvector_set_size(neis,0);
-     if(mode == CGRAPH_IN){
-         CGRAPH_INTEGER min,max;
-         min = graph->is[vid];
-         max = graph->is[vid+1]-1;
-         for(CGRAPH_INTEGER i=min;i<=max;i++){
-           cvector_push_back(neis,graph->from[graph->ii[i]]);
-         }
-     }
-     if(mode == CGRAPH_OUT){
-        CGRAPH_INTEGER min,max;
-        min = graph->os[vid];
-        max = graph->os[vid+1]-1;
-        for(CGRAPH_INTEGER i=min;i<=max;i++){
-           cvector_push_back(neis,graph->to[graph->oi[i]]);
-         }
-     }
-     if(mode == CGRAPH_ALL){
-        CGRAPH_INTEGER min,max;
-        min = graph->is[vid];
-        max = graph->is[vid+1]-1;
-        for(CGRAPH_INTEGER i=min;i<=max;i++){
-           cvector_push_back(neis,graph->from[graph->ii[i]]);
-        }
-        CGRAPH_INTEGER min1,max1;
-        min1 = graph->os[vid];
-        max1 = graph->os[vid+1]-1;
-        for(CGRAPH_INTEGER i=min1;i<=max1;i++){
-           cvector_push_back(neis,graph->to[graph->oi[i]]);
-        }
-        qsort(neis,cvector_size(neis),sizeof(CGRAPH_INTEGER),cmpfunc);
-     }
+  const CGRAPH_INTEGER node = vid;
+
+  if (node < 0 || node > cgraph_vcount(graph) - 1) {
+    CGRAPH_ERROR("cannot get neighbors");
+  }
+  if (mode != CGRAPH_OUT && mode != CGRAPH_IN &&
+      mode != CGRAPH_ALL) {
+    CGRAPH_ERROR("cannot get neighbors");
+  }
+
+  if (! graph->directed) {
+      mode = CGRAPH_ALL;
+  }
+
+  cgraph_ivec_setsize(*neis, 0);
+
+  if (!cgraph_is_directed(graph) || mode != CGRAPH_ALL) {
+    if (mode & CGRAPH_OUT) {
+      CGRAPH_INTEGER j = (graph->os)[node + 1];
+      for (CGRAPH_INTEGER i = (graph->os)[node]; i < j; i++) {
+        cgraph_ivec_push_back(neis, (graph->to)[ (graph->oi)[i] ]);
+      }
+    }
+    if (mode & CGRAPH_IN) {
+      CGRAPH_INTEGER j = (graph->is)[node + 1];
+      for (CGRAPH_INTEGER i = (graph->is)[node]; i < j; i++) {
+        cgraph_ivec_push_back(neis, (graph->from)[ (graph->ii)[i] ]);
+      }
+    }
+  } else {
+    /* both in- and out- neighbors in a directed graph,
+       we need to merge the two 'vectors' */
+    CGRAPH_INTEGER j1 = (graph->os)[node + 1];
+    CGRAPH_INTEGER j2 = (graph->is)[node + 1];
+    CGRAPH_INTEGER i1 = (graph->os)[node];
+    CGRAPH_INTEGER i2 = (graph->is)[node];
+    while (i1 < j1 && i2 < j2) {
+      CGRAPH_INTEGER n1 = (graph->to)[ (graph->oi)[i1] ];
+      CGRAPH_INTEGER n2 = (graph->from)[ (graph->ii)[i2] ];
+      if (n1 < n2) {
+        cgraph_ivec_push_back(neis, n1);
+        i1++;
+      } else if (n1 > n2) {
+        cgraph_ivec_push_back(neis, n2);
+        i2++;
+      } else {
+        cgraph_ivec_push_back(neis, n1);
+        cgraph_ivec_push_back(neis, n2);
+        i1++;
+        i2++;
+      }
+    }
+    while (i1 < j1) {
+      CGRAPH_INTEGER n1 = (graph->to)[ (graph->oi)[i1] ];
+      cgraph_ivec_push_back(neis, n1);
+      i1++;
+    }
+    while (i2 < j2) {
+      CGRAPH_INTEGER n2 = (graph->from)[ (graph->ii)[i2] ];
+      cgraph_ivec_push_back(neis, n2);
+      i2++;
+    }
+  }   
+  return 0;
+  }
+int cgraph_incident(const cgraph_t *graph, 
+                    cgraph_ivec_t *eids, 
+                    CGRAPH_INTEGER vid,
+                    cgraph_neimode_t mode) {
+  const CGRAPH_INTEGER node = vid;
+  if (node < 0 || node > cgraph_vcount(graph) - 1) {
+    CGRAPH_ERROR("cannot get neighbors");
+  }
+  if (mode != CGRAPH_OUT && mode != CGRAPH_IN &&
+      mode != CGRAPH_ALL) {
+    CGRAPH_ERROR("cannot get neighbors");
+  }
+
+  if (! graph->directed) {
+    mode = CGRAPH_ALL;
+  }
+
+  cgraph_ivec_setsize(*eids, 0);
+
+  if (mode & CGRAPH_OUT) {
+    CGRAPH_INTEGER j = (graph->os)[node + 1];
+    for (CGRAPH_INTEGER i = (graph->os)[node]; i < j; i++) {
+      cgraph_ivec_push_back(eids, (graph->oi)[i]);
+    }
+  }
+  if (mode & CGRAPH_IN) {
+    CGRAPH_INTEGER j = (graph->is)[node + 1];
+    for (CGRAPH_INTEGER i = (graph->is)[node]; i < j; i++) {
+      cgraph_ivec_push_back(eids, (graph->ii)[i]);
+    }
+  }
   return 0;
 }

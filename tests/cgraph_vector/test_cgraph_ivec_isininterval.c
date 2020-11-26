@@ -4,7 +4,7 @@
 #include "ut.h"
 
 int main() {
-  cgraph_ivec_t v = cvector_create_empty();
+  cgraph_ivec_t v = cgraph_ivec_create();
   int a[] = {
     0, 1,
     1, 3,
@@ -12,7 +12,7 @@ int main() {
   };
   int n = sizeof(a)/sizeof(int);
   for (int i = 0; i < n; ++i) {
-    cvector_push_back(v, (CGRAPH_INTEGER)a[i]);
+    cgraph_ivec_push_back(&v, (CGRAPH_INTEGER)a[i]);
   }
 
   if (cgraph_ivec_isininterval(v, 0, 3) != true) {

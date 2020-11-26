@@ -1,0 +1,5 @@
+cgraph_ivec_t v = cgraph_ivec_create();
+foo(&v);  // insert 100000 integer to *v
+
+expected results:
+  v[i] == i;  // i == 0..99999

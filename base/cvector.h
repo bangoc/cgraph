@@ -1,6 +1,6 @@
 
-#ifndef CVECTOR_H_
-#define CVECTOR_H_
+#ifndef BASE_CVECTOR_H_
+#define BASE_CVECTOR_H_
 
 #include <assert.h> /* for assert */
 #include <stddef.h> /* for size_t */
@@ -189,4 +189,4 @@
 
 #endif /* CVECTOR_LOGARITHMIC_GROWTH */
 
-#endif /* CVECTOR_H_ */
+#endif /* BASE_CVECTOR_H_ */

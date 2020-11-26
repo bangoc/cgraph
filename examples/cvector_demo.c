@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#include "cvector.h"
+#include "base/cvector.h"
 
 void print_vector(cvector_vector_type(int) v) {
   printf("v(%lu): {", cvector_size(v));
