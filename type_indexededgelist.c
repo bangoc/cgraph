@@ -315,12 +315,151 @@ void cgraph_destroy(cgraph_t *graph) {
     cvector_free(graph->is);
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+int cmpfunc(const void * a, const void * b){
+  return (*(int*)a-*(int*)b);
+}
+#include<stdio.h>
 int cgraph_neighbors(const cgraph_t *graph, 
                      cgraph_ivec_t neis, 
                      CGRAPH_INTEGER vid,
                      cgraph_neimode_t mode) {
   /*
     TODO: Complete this function to pass the tests
-  */
+  */ cvector_set_size(neis,0);
+     if(mode == CGRAPH_IN){
+         CGRAPH_INTEGER min,max;
+         min = graph->is[vid];
+         max = graph->is[vid+1]-1;
+         for(CGRAPH_INTEGER i=min;i<=max;i++){
+           cvector_push_back(neis,graph->from[graph->ii[i]]);
+         }
+     }
+     if(mode == CGRAPH_OUT){
+        CGRAPH_INTEGER min,max;
+        min = graph->os[vid];
+        max = graph->os[vid+1]-1;
+        for(CGRAPH_INTEGER i=min;i<=max;i++){
+           cvector_push_back(neis,graph->to[graph->oi[i]]);
+         }
+     }
+     if(mode == CGRAPH_ALL){
+        CGRAPH_INTEGER min,max;
+        min = graph->is[vid];
+        max = graph->is[vid+1]-1;
+        for(CGRAPH_INTEGER i=min;i<=max;i++){
+           cvector_push_back(neis,graph->from[graph->ii[i]]);
+        }
+        CGRAPH_INTEGER min1,max1;
+        min1 = graph->os[vid];
+        max1 = graph->os[vid+1]-1;
+        for(CGRAPH_INTEGER i=min1;i<=max1;i++){
+           cvector_push_back(neis,graph->to[graph->oi[i]]);
+        }
+        qsort(neis,cvector_size(neis),sizeof(CGRAPH_INTEGER),cmpfunc);
+     }
   return 0;
 }
