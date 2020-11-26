@@ -383,36 +383,3 @@ int cgraph_neighbors(const cgraph_t *graph,
   }   
   return 0;
   }
-int cgraph_incident(const cgraph_t *graph, 
-                    cgraph_ivec_t *eids, 
-                    CGRAPH_INTEGER vid,
-                    cgraph_neimode_t mode) {
-  const CGRAPH_INTEGER node = vid;
-  if (node < 0 || node > cgraph_vcount(graph) - 1) {
-    CGRAPH_ERROR("cannot get neighbors");
-  }
-  if (mode != CGRAPH_OUT && mode != CGRAPH_IN &&
-      mode != CGRAPH_ALL) {
-    CGRAPH_ERROR("cannot get neighbors");
-  }
-
-  if (! graph->directed) {
-    mode = CGRAPH_ALL;
-  }
-
-  cgraph_ivec_setsize(*eids, 0);
-
-  if (mode & CGRAPH_OUT) {
-    CGRAPH_INTEGER j = (graph->os)[node + 1];
-    for (CGRAPH_INTEGER i = (graph->os)[node]; i < j; i++) {
-      cgraph_ivec_push_back(eids, (graph->oi)[i]);
-    }
-  }
-  if (mode & CGRAPH_IN) {
-    CGRAPH_INTEGER j = (graph->is)[node + 1];
-    for (CGRAPH_INTEGER i = (graph->is)[node]; i < j; i++) {
-      cgraph_ivec_push_back(eids, (graph->ii)[i]);
-    }
-  }
-  return 0;
-}
