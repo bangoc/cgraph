@@ -22,6 +22,7 @@ set(cgraph_src cgraph_error.c cgraph_vector.c type_indexededgelist.c
 
 add_library(cgraph STATIC ${cgraph_src})
 
+target_include_directories(cgraph PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
 if(${BUILD_TESTING})  
   add_subdirectory(tests)
   add_test(NAME CvectorCreateEmpty COMMAND cvector_create_empty_ut)

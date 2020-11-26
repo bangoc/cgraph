@@ -1,2 +1,5 @@
 add_executable(cgraph_ivec_t_demo cgraph_ivec_t_demo.c)
 add_executable(cvector_demo cvector_demo.c)
+target_link_libraries(test PRIVATE cgraph)
+
+
