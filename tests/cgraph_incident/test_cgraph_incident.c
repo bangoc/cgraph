@@ -1,21 +1,11 @@
 #include <stdio.h>
 
-#include "cgraph.h"
+#include "gb.h"
 #include "ut.h"
 
 int main() {
   cgraph_t g;
-  cgraph_ivec_t edges = cgraph_ivec_fromarray(
-        (CGRAPH_INTEGER[]){ 0, 1, 
-                            0, 3,
-                            1, 2,
-                            1, 3,
-                            2, 4,
-                            0, 2,
-                            3, 5,
-                            3, 1,
-                            1, 4}, 18);
-  cgraph_create(&g, edges, 0, true);
+  test_create_g1(&g);
   cgraph_ivec_t v = cgraph_ivec_create();
   cgraph_incident(&g, &v, 1, CGRAPH_IN);
   if (!cgraph_ivec_equal(v, (CGRAPH_INTEGER[]){0, 7}, 2)) {

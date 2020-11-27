@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 #include "ut.h"
 
 cgraph_ivec_t cgraph_ivec_fromarray(CGRAPH_INTEGER *a, CGRAPH_INTEGER n) {
