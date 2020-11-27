@@ -14,7 +14,8 @@ int main() {
                             0, 2,
                             3, 5,
                             3, 1,
-                            1, 4}, 18);
+                            1, 4,
+                            2, 2}, 20);
   cgraph_create(&g, edges, 0, true);
   cgraph_ivec_t degree = cgraph_ivec_create();  
   bool failed = false;
@@ -46,11 +47,19 @@ int main() {
     } \
   }
   cgraph_degree_all(&g, &degree, CGRAPH_OUT, false);
-  TEST_ALL(degree, ((CGRAPH_INTEGER[]){3, 3, 1, 2, 0, 0}), 6, "All out degree");
+  TEST_ALL(degree, ((CGRAPH_INTEGER[]){3, 3, 1, 2, 0, 0}), 6, "All out degree (no loop)");
   cgraph_degree_all(&g, &degree, CGRAPH_IN, false);
-  TEST_ALL(degree, ((CGRAPH_INTEGER[]){0, 2, 2, 2, 2, 1}), 6, "All in degree");
+  TEST_ALL(degree, ((CGRAPH_INTEGER[]){0, 2, 2, 2, 2, 1}), 6, "All in degree (no loop)");
   cgraph_degree_all(&g, &degree, CGRAPH_ALL, false);
-  TEST_ALL(degree, ((CGRAPH_INTEGER[]){3, 5, 3, 4, 2, 1}), 6, "All in+out degree");
+  TEST_ALL(degree, ((CGRAPH_INTEGER[]){3, 5, 3, 4, 2, 1}), 6, "All in+out degree (no loop");
+
+  // with loop
+  cgraph_degree_all(&g, &degree, CGRAPH_OUT, true);
+  TEST_ALL(degree, ((CGRAPH_INTEGER[]){3, 3, 2, 2, 0, 0}), 6, "All out degree (with loop)");
+  cgraph_degree_all(&g, &degree, CGRAPH_IN, true);
+  TEST_ALL(degree, ((CGRAPH_INTEGER[]){0, 2, 3, 2, 2, 1}), 6, "All in degree (with loop)");
+  cgraph_degree_all(&g, &degree, CGRAPH_ALL, true);
+  TEST_ALL(degree, ((CGRAPH_INTEGER[]){3, 5, 5, 4, 2, 1}), 6, "All in+out degree (with loop)");
 #undef TEST_ALL
   if (failed) {
     return 1;
