@@ -25,7 +25,8 @@ set(cgraph_src
   type_indexededgelist.c
   structure_generators.c
   visitors.c
-  cgraph_queue.c)
+  cgraph_queue.c
+  structural_properties.c)
 
 add_library(cgraph STATIC ${cgraph_src})
 
@@ -44,4 +45,5 @@ if(${BUILD_TESTING})
   add_test(NAME CgraphBfs COMMAND cgraph_bfs_ut)
   add_test(NAME CgraphQueue COMMAND cgraph_queue_ut)
   add_test(NAME CgraphDegree COMMAND cgraph_degree_ut)
+  add_test(NAME CgraphIsDag COMMAND is_dag_ut)
 endif()

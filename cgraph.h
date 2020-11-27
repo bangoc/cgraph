@@ -5,6 +5,7 @@
 #include "cgraph_datatype.h"
 #include "cgraph_interface.h"
 #include "cgraph_queue.h"
+#include "cgraph_topology.h"
 #include "cgraph_visitor.h"
 #include "cgraph_vector.h"
 
