@@ -33,7 +33,7 @@ int main() {
                             3, 5,
                             1, 4}, 16);
   cgraph_create(&g2, edges2, 0, true);
-  ret = cgraph_is_dag(&g2, &ret);
+  cgraph_is_dag(&g2, &ret);
   if (ret == false) {
     UT_MSG_FAILED("DAG (t3)");
     failed = true;
