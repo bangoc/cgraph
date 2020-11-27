@@ -71,64 +71,86 @@ VINIT(pred);
 VINIT(succ);
 VINIT(dist);
 # undef VINIT
-
-  CGRAPH_CHECK(cgraph_iqueue_enqueue(q, actroot));
-  CGRAPH_CHECK(cgraph_iqueue_enqueue(q, 0));
-  added[actroot] = true;
-  if (father) {
-    (*father)[actroot] = -1;
-  }
-
-  pred_vec = -1;
-
+  
+  int rootpos = 0;
   cgraph_ivec_t neis = cgraph_ivec_create();
-  while (!cgraph_iqueue_empty(q)) {
-    CGRAPH_INTEGER actvect;
-    cgraph_iqueue_poll(q, &actvect);
-    CGRAPH_INTEGER actdist;
-    cgraph_iqueue_poll(q, &actdist);
-    CGRAPH_INTEGER succ_vec;
-
-    cgraph_neighbors(graph, &neis, actvect, mode);
-    long int i, n = cgraph_ivec_size(neis);
-
-    if (pred) {
-      (*pred)[actvect] = pred_vec;
+  while (1) {
+    if (rootpos == 0) {
+      actroot = root;
+      ++rootpos;
+    } else if (unreachable) {
+      if (rootpos == 1) {
+        actroot = 0;
+        ++rootpos;
+      } else if (actroot + 1 < no_of_nodes) {
+        ++actroot;
+      } else {
+        break;
+      }
+    } else {
+      break;
     }
-    if (rank) {
-      (*rank) [actvect] = act_rank;
-    }
-    if (order) {
-      (*order)[act_rank++] = actvect;
-    }
-    if (dist) {
-      (*dist)[actvect] = actdist;
+    if (added[actroot]) {
+      continue;
     }
 
-    for (i = 0; i < n; i++) {
-      CGRAPH_INTEGER nei = neis[i];
-      if (! added[nei]) {
-        added[nei] = 1;
-        CGRAPH_CHECK(cgraph_iqueue_enqueue(q, nei));
-        CGRAPH_CHECK(cgraph_iqueue_enqueue(q, actdist + 1));
-        if (father) {
-          (*father)[nei] = actvect;
+    CGRAPH_CHECK(cgraph_iqueue_enqueue(q, actroot));
+    CGRAPH_CHECK(cgraph_iqueue_enqueue(q, 0));
+    added[actroot] = true;
+    if (father) {
+      (*father)[actroot] = -1;
+    }
+
+    pred_vec = -1;
+    
+    while (!cgraph_iqueue_empty(q)) {
+      CGRAPH_INTEGER actvect;
+      cgraph_iqueue_poll(q, &actvect);
+      CGRAPH_INTEGER actdist;
+      cgraph_iqueue_poll(q, &actdist);
+      CGRAPH_INTEGER succ_vec;
+
+      cgraph_neighbors(graph, &neis, actvect, mode);
+      long int i, n = cgraph_ivec_size(neis);
+
+      if (pred) {
+        (*pred)[actvect] = pred_vec;
+      }
+      if (rank) {
+        (*rank) [actvect] = act_rank;
+      }
+      if (order) {
+        (*order)[act_rank++] = actvect;
+      }
+      if (dist) {
+        (*dist)[actvect] = actdist;
+      }
+
+      for (i = 0; i < n; i++) {
+        CGRAPH_INTEGER nei = neis[i];
+        if (!added[nei]) {
+          added[nei] = true;
+          CGRAPH_CHECK(cgraph_iqueue_enqueue(q, nei));
+          CGRAPH_CHECK(cgraph_iqueue_enqueue(q, actdist + 1));
+          if (father) {
+            (*father)[nei] = actvect;
+          }
         }
       }
-    }
 
-    if (cgraph_iqueue_empty(q)) {
-      succ_vec = -1;
-    } else {
-      cgraph_iqueue_peek(q, &succ_vec);
-    }
+      if (cgraph_iqueue_empty(q)) {
+        succ_vec = -1;
+      } else {
+        cgraph_iqueue_peek(q, &succ_vec);
+      }
      
-    if (succ) {
-      (*succ)[actvect] = succ_vec;
-    }
-    pred_vec = actvect;
+      if (succ) {
+        (*succ)[actvect] = succ_vec;
+      }
+      pred_vec = actvect;
 
-  } /* while q !empty */
+    } /* while q !empty */
+  } /* while (1) */
   free(added);
   cgraph_ivec_free(&neis);
   cgraph_iqueue_free(&q);
