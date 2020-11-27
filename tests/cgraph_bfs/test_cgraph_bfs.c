@@ -91,6 +91,24 @@ int main() {
   TEST(succ, ((CGRAPH_INTEGER[]){2, 0, 3, 4, 5, -1}), 6, "Case 3. succ");
   TEST(dist, ((CGRAPH_INTEGER[]){1, 0, 1, 1, 1, 2}), 6, "Case 3. dist");
 
+  // printf("Case 4\n");
+  cgraph_bfs(&g, 
+              /*root=*/1, 
+              /*neimode=*/ CGRAPH_OUT,
+             /*unreachable=*/ 1, 
+             /*restricted=*/ 0,
+             &order, 
+             &rank, 
+             &father, 
+             &pred, 
+             &succ, 
+             &dist);
+  TEST(order, ((CGRAPH_INTEGER[]){1, 2, 3, 4, 5, 0}), 6, "Case 4. order");
+  TEST(rank, ((CGRAPH_INTEGER[]){5, 0, 1, 2, 3, 4}), 6, "Case 4. rank");
+  TEST(father, ((CGRAPH_INTEGER[]){-1, -1, 1, 1, 1, 3}), 6, "Case 4. father");
+  TEST(pred, ((CGRAPH_INTEGER[]){-1, -1, 1, 2, 3, 4}), 6, "Case 4. pred");
+  TEST(succ, ((CGRAPH_INTEGER[]){-1, 2, 3, 4, 5, -1}), 6, "Case 4. succ");
+  TEST(dist, ((CGRAPH_INTEGER[]){0, 0, 1, 1, 1, 2}), 6, "Case 4. dist");
 #undef TEST  
   UT_MSG_OK("Test neightbors");
   return 0;
