@@ -1,0 +1,2 @@
+add_executable(cgraph_degree_ut test_cgraph_degree.c)
+target_link_libraries(cgraph_degree_ut cgraph ut_base collectc)

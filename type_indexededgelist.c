@@ -419,3 +419,24 @@ int cgraph_incident(const cgraph_t *graph,
   }
   return 0;
 }
+
+int cgraph_degree_all(const cgraph_t *graph, 
+                      cgraph_ivec_t *res,
+                      cgraph_neimode_t mode,
+                      bool loops) {
+  /*
+  TODO: Complete APIs and pass tests
+  */
+  return 0;
+}
+
+int cgraph_degree_one(const cgraph_t *graph,
+                      CGRAPH_INTEGER *res,
+                      const CGRAPH_INTEGER node,
+                      cgraph_neimode_t mode,
+                      bool loops) {
+  /*
+  TODO: Complete APIs and pass tests
+  */
+  return 0;
+}

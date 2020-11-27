@@ -26,4 +26,5 @@ void print_ivec(cgraph_ivec_t const v) {
   for (int i = 0; i < cgraph_ivec_size(v); ++i) {
     printf(" %d", v[i]);
   }
+  printf("\n");
 }
