@@ -11,6 +11,8 @@ if (${CMAKE_BUILD_TYPE} STREQUAL Debug)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g")
 endif()
 
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Werror=implicit-function-declaration -Werror=incompatible-pointer-types")
+
 include_directories(${CMAKE_SOURCE_DIR})
 add_subdirectory(examples)
 add_subdirectory(ctc)

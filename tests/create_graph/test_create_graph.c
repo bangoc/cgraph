@@ -6,31 +6,44 @@
 int main() {
   cgraph_t g;
   test_create_g1(&g);
-  if (!cgraph_ivec_equal(g.from, (CGRAPH_INTEGER[]){0, 0, 1, 1, 2, 0, 3, 3, 1}, 9)) {
-    UT_MSG_FAILED("Test from vector");
-    return 1;
-  }
-  if (!cgraph_ivec_equal(g.to, (CGRAPH_INTEGER[]){1, 3, 2, 3, 4, 2, 5, 1, 4}, 9)) {
-    UT_MSG_FAILED("Test from vector");
-    return 1;
-  }
-  if (!cgraph_ivec_equal(g.oi, (CGRAPH_INTEGER[]){0, 5, 1, 2, 3, 8, 4, 7, 6}, 9)) {
-    UT_MSG_FAILED("Test from vector");
-    return 1;
-  }
-  if (!cgraph_ivec_equal(g.ii, (CGRAPH_INTEGER[]){0, 7, 5, 2, 1, 3, 8, 4, 6}, 9)) {
-    UT_MSG_FAILED("Test from vector");
-    return 1;
-  }
-  if (!cgraph_ivec_equal(g.os, (CGRAPH_INTEGER[]){0, 3, 6, 7, 9, 9, 9}, 7)) {
-    UT_MSG_FAILED("Test from vector");
-    return 1;
-  }
-  if (!cgraph_ivec_equal(g.is, (CGRAPH_INTEGER[]){0, 0, 2, 4, 6, 8, 9}, 7)) {
-    UT_MSG_FAILED("Test from vector");
-    return 1;
-  }
+#define TEST_VEC(vec, arr, n, msg) \
+{ \
+  if (!cgraph_ivec_equal(vec, arr, n)) { \
+    UT_MSG_FAILED(msg); \
+    failed = true; \
+  } \
+}
+  bool failed = false;
+  TEST_VEC(g.from,  ((CGRAPH_INTEGER[]){0, 0, 1, 1, 2, 0, 3, 3, 1}), 9, "g1.from");
+  TEST_VEC(g.to,    ((CGRAPH_INTEGER[]){1, 3, 2, 3, 4, 2, 5, 1, 4}), 9, "g1.to");
+  TEST_VEC(g.oi,    ((CGRAPH_INTEGER[]){0, 5, 1, 2, 3, 8, 4, 7, 6}), 9, "g1.oi");
+  TEST_VEC(g.ii,    ((CGRAPH_INTEGER[]){0, 7, 5, 2, 1, 3, 8, 4, 6}), 9, "g1.ii");
+  TEST_VEC(g.os,    ((CGRAPH_INTEGER[]){0, 3, 6, 7, 9, 9, 9}), 7, "g1.os");
+  TEST_VEC(g.is,    ((CGRAPH_INTEGER[]){0, 0, 2, 4, 6, 8, 9}), 7, "g1.is");  
   cgraph_destroy(&g);
+
+  test_create_g2(&g);
+  TEST_VEC(g.from,  ((CGRAPH_INTEGER[]){0, 0, 1, 1, 2, 0, 3, 3, 1, 2}), 10, "g2.from");
+  TEST_VEC(g.to,    ((CGRAPH_INTEGER[]){1, 3, 2, 3, 4, 2, 5, 1, 4, 2}), 10, "g2.to");
+  TEST_VEC(g.oi,    ((CGRAPH_INTEGER[]){0, 5, 1, 2, 3, 8, 9, 4, 7, 6}), 10, "g2.oi");
+  TEST_VEC(g.ii,    ((CGRAPH_INTEGER[]){0, 7, 5, 2, 9, 1, 3, 8, 4, 6}), 10, "g2.ii");
+  TEST_VEC(g.os,    ((CGRAPH_INTEGER[]){0, 3, 6, 8, 10, 10, 10}), 7, "g2.os");
+  TEST_VEC(g.is,    ((CGRAPH_INTEGER[]){0, 0, 2, 5, 7, 9, 10}), 7, "g2.is");  
+  cgraph_destroy(&g);
+
+  test_create_g3(&g);
+  TEST_VEC(g.from,  ((CGRAPH_INTEGER[]){0, 0, 1, 1, 2, 0, 3, 1}), 8, "g3.from");
+  TEST_VEC(g.to,    ((CGRAPH_INTEGER[]){1, 3, 2, 3, 4, 2, 5, 4}), 8, "g3.to");
+  TEST_VEC(g.oi,    ((CGRAPH_INTEGER[]){0, 5, 1, 2, 3, 7, 4, 6}), 8, "g3.oi");
+  TEST_VEC(g.ii,    ((CGRAPH_INTEGER[]){0, 5, 2, 1, 3, 7, 4, 6}), 8, "g3.ii");
+  TEST_VEC(g.os,    ((CGRAPH_INTEGER[]){0, 3, 6, 7, 8, 8, 8}), 7, "g3.os");
+  TEST_VEC(g.is,    ((CGRAPH_INTEGER[]){0, 0, 1, 3, 5, 7, 8}), 7, "g3.is");  
+  cgraph_destroy(&g);
+
+#undef TEST_VEC
+  if (failed) {
+    return 1;
+  }
   UT_MSG_OK("Test create graph");
   return 0;
 }
