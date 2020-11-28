@@ -424,9 +424,22 @@ int cgraph_degree_all(const cgraph_t *graph,
                       cgraph_ivec_t *res,
                       cgraph_neimode_t mode,
                       bool loops) {
-  /*
-  TODO: Complete APIs and pass tests
-  */
+  CGRAPH_INTEGER no_of_nodes = cgraph_vcount(graph);
+  CGRAPH_INTEGER no_of_edges = cgraph_ecount(graph);
+  cgraph_ivec_init(res, no_of_nodes);
+  cgraph_ivec_t v = *res;
+  cgraph_ivec_fill(v, 0);
+
+  for (CGRAPH_INTEGER ed = 0; ed < no_of_edges; ++ed) {
+    if (loops || graph->from[ed] != graph->to[ed]) {
+      if (mode & CGRAPH_IN) {
+        v[ graph->to[ed] ] += 1;
+      }
+      if (mode & CGRAPH_OUT) {
+        v[ graph->from[ed] ] += 1;
+      }
+    }    
+  }
   return 0;
 }
 
@@ -435,8 +448,35 @@ int cgraph_degree_one(const cgraph_t *graph,
                       const CGRAPH_INTEGER node,
                       cgraph_neimode_t mode,
                       bool loops) {
-  /*
-  TODO: Complete APIs and pass tests
-  */
+  CGRAPH_INTEGER d = 0;
+  if (mode & CGRAPH_IN) {
+    d += (graph->is[node + 1] - graph->is[node]);
+  }
+  if (mode & CGRAPH_OUT) {
+    d += (graph->os[node + 1] - graph->os[node]);
+  }
+  if (!loops) {
+    if (mode & CGRAPH_IN) {
+      CGRAPH_INTEGER j = graph->is[node];
+      CGRAPH_INTEGER j1 = graph->is[node + 1];
+      for (CGRAPH_INTEGER i = j; i < j1; ++i) {
+        CGRAPH_INTEGER idx = graph->ii[i];
+        if (graph->from[ idx ] == graph->to[ idx ]) {
+          --d;
+        }
+      }
+    }
+    if (mode & CGRAPH_OUT) {
+      CGRAPH_INTEGER j = graph->os[node];
+      CGRAPH_INTEGER j1 = graph->os[node + 1];
+      for (CGRAPH_INTEGER i = j; i < j1; ++i) {
+        CGRAPH_INTEGER idx = graph->oi[i];
+        if (graph->from[ idx ] == graph->to[ idx ]) {
+          --d;
+        }
+      }
+    }
+  }
+  *res = d;
   return 0;
 }

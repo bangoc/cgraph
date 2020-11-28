@@ -73,8 +73,9 @@ int cgraph_ivec_setsize(cgraph_ivec_t const v, CGRAPH_INTEGER newsize) {
   CGRAPH_INTEGER capacity = (CGRAPH_INTEGER) cvector_capacity(v);
   if (newsize <= capacity) {
     cvector_set_size(v, newsize);
+    return 0;
   }
-  return 0;
+  return 1;
 }
 
 CGRAPH_INTEGER cgraph_ivec_capacity(cgraph_ivec_t const v) {
