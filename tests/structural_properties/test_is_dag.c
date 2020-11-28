@@ -8,17 +8,43 @@ int main() {
   test_create_g1(&g);
   bool ret = false, failed = false;
   cgraph_is_dag(&g, &ret);
-  if (ret == true) {
-    UT_MSG_FAILED("Not DAG (t1)");
+  if (ret != false) {
+    UT_MSG_FAILED("Not DAG (g1)");
     failed = true;
   }
-  cgraph_t g3;
-  test_create_g3(&g3);
-  cgraph_is_dag(&g3, &ret);
-  if (ret == false) {
-    UT_MSG_FAILED("DAG (t3)");
+  
+  cgraph_destroy(&g);
+  test_create_g2(&g);
+  cgraph_is_dag(&g, &ret);
+  if (ret != false) {
+    UT_MSG_FAILED("DAG (g2)");
     failed = true;
   }
+
+  cgraph_destroy(&g);
+  test_create_g3(&g);
+  cgraph_is_dag(&g, &ret);
+  if (ret != true) {
+    UT_MSG_FAILED("DAG (g3)");
+    failed = true;
+  }
+
+  cgraph_destroy(&g);
+  test_create_g4(&g);
+  cgraph_is_dag(&g, &ret);
+  if (ret != false) {
+    UT_MSG_FAILED("DAG (g4)");
+    failed = true;
+  }
+
+  cgraph_destroy(&g);
+  test_create_g5(&g);
+  cgraph_is_dag(&g, &ret);
+  if (ret != false) {
+    UT_MSG_FAILED("DAG (g5)");
+    failed = true;
+  }
+
   if (failed) {
     return 1;
   }
