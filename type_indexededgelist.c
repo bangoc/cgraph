@@ -424,6 +424,10 @@ int cgraph_degree_all(const cgraph_t *graph,
                       cgraph_ivec_t *res,
                       cgraph_neimode_t mode,
                       bool loops) {
+  if (mode != CGRAPH_OUT && mode != CGRAPH_IN &&
+      mode != CGRAPH_ALL) {
+    CGRAPH_ERROR("cannot get degree");
+  }
   if (!cgraph_is_directed(graph)) {
     mode = CGRAPH_ALL;
   }
@@ -451,6 +455,13 @@ int cgraph_degree_one(const cgraph_t *graph,
                       const CGRAPH_INTEGER node,
                       cgraph_neimode_t mode,
                       bool loops) {
+  if (node < 0 || node > cgraph_vcount(graph) - 1) {
+    CGRAPH_ERROR("cannot get degree");
+  }
+  if (mode != CGRAPH_OUT && mode != CGRAPH_IN &&
+      mode != CGRAPH_ALL) {
+    CGRAPH_ERROR("cannot get degree");
+  }
   if (!cgraph_is_directed(graph)) {
     mode = CGRAPH_ALL;
   }
