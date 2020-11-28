@@ -424,6 +424,9 @@ int cgraph_degree_all(const cgraph_t *graph,
                       cgraph_ivec_t *res,
                       cgraph_neimode_t mode,
                       bool loops) {
+  if (!cgraph_is_directed(graph)) {
+    mode = CGRAPH_ALL;
+  }
   CGRAPH_INTEGER no_of_nodes = cgraph_vcount(graph);
   CGRAPH_INTEGER no_of_edges = cgraph_ecount(graph);
   cgraph_ivec_init(res, no_of_nodes);
@@ -448,6 +451,9 @@ int cgraph_degree_one(const cgraph_t *graph,
                       const CGRAPH_INTEGER node,
                       cgraph_neimode_t mode,
                       bool loops) {
+  if (!cgraph_is_directed(graph)) {
+    mode = CGRAPH_ALL;
+  }
   CGRAPH_INTEGER d = 0;
   if (mode & CGRAPH_IN) {
     d += (graph->is[node + 1] - graph->is[node]);
