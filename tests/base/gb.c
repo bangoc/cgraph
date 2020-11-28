@@ -95,3 +95,28 @@ int test_create_g4(cgraph_t *g) {
                             1, 4}, 16);
   return cgraph_create(g, edges, 0, false);
 }
+
+/*
+n = 6
+directed = false
+from = {1, 3, 2, 3, 4, 2, 5, 4, 2}
+to   = {0, 0, 1, 1, 2, 0, 3, 1, 2}
+oi   = {0, 5, 2, 8, 1, 3, 7, 4, 6}
+ii   = {0, 5, 1, 2, 3, 7, 8, 4, 6}
+os   = {0, 0, 1, 4, 6, 8, 9}
+is   = {0, 3, 6, 8, 9, 9, 9}
+*/
+int test_create_g5(cgraph_t *g) {
+  cgraph_ivec_t edges = cgraph_ivec_fromarray(
+        (CGRAPH_INTEGER[]){ 0, 1, 
+                            0, 3,
+                            1, 2,
+                            1, 3,
+                            2, 4,
+                            0, 2,
+                            3, 5,
+                            1, 4,
+                            2, 2
+                           }, 18);
+  return cgraph_create(g, edges, 0, false);
+}
