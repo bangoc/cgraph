@@ -156,3 +156,22 @@ VINIT(dist);
   cgraph_iqueue_free(&q);
   return 0;
 }
+
+int cgraph_simple_bfs(const cgraph_t *graph,
+               CGRAPH_INTEGER root,
+               cgraph_neimode_t mode, 
+               bool unreachable,
+               cgraph_ivec_t *father,
+               cgraph_ivec_t *dist) {
+  return cgraph_bfs(graph, 
+      root, 
+      mode,
+      unreachable,
+      0, 
+      0,
+      0,
+      father,
+      0,
+      0,
+      dist);
+}
