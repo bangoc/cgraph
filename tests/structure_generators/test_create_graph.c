@@ -40,6 +40,27 @@ int main() {
   TEST_VEC(g.is,    ((CGRAPH_INTEGER[]){0, 0, 1, 3, 5, 7, 8}), 7, "g3.is");  
   cgraph_destroy(&g);
 
+  test_create_g4(&g);
+  if (cgraph_vcount(&g) != 6) {
+    UT_MSG_FAILED("g4.Count vertices");
+    failed = true;
+  }
+  if (cgraph_ecount(&g) != 8) {
+    UT_MSG_FAILED("g4.Count edges");
+    failed = true;
+  }
+  if (cgraph_is_directed(&g) == true) {
+    UT_MSG_FAILED("g4.directed");
+    failed = true;
+  }
+  TEST_VEC(g.from,  ((CGRAPH_INTEGER[]){1, 3, 2, 3, 4, 2, 5, 4}), 8, "g4.from");
+  TEST_VEC(g.to,    ((CGRAPH_INTEGER[]){0, 0, 1, 1, 2, 0, 3, 1}), 8, "g4.to");
+  TEST_VEC(g.oi,    ((CGRAPH_INTEGER[]){0, 5, 2, 1, 3, 7, 4, 6}), 8, "g4.oi");
+  TEST_VEC(g.ii,    ((CGRAPH_INTEGER[]){0, 5, 1, 2, 3, 7, 4, 6}), 8, "g4.ii");
+  TEST_VEC(g.os,    ((CGRAPH_INTEGER[]){0, 0, 1, 3, 5, 7, 8}), 7, "g4.os");
+  TEST_VEC(g.is,    ((CGRAPH_INTEGER[]){0, 3, 6, 7, 8, 8, 8}), 7, "g4.is");  
+  cgraph_destroy(&g);
+
 #undef TEST_VEC
   if (failed) {
     return 1;
