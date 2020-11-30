@@ -62,6 +62,7 @@ int cgraph_ivec_order(cgraph_ivec_t const v,
     res[i] = i;
   }
   qsort(res, n, sizeof(CGRAPH_INTEGER), ref_cmp);
+  return 0;
 }
 
 int cgraph_ivec_null(cgraph_ivec_t const v) {
