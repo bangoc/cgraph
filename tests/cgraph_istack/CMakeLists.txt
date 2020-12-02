@@ -1,2 +1,2 @@
 add_executable(cgraph_istack_ut test_cgraph_istack.c)
-target_link_libraries(cgraph_istack_ut  cgraph collectc ut_base)
+target_link_libraries(cgraph_istack_ut cgraph ut_base)

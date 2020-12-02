@@ -1,48 +1,49 @@
 #include "cgraph_istack.h"
+#include "cgraph_ivec.h"
+
+struct cgraph_istack_s {
+  cgraph_ivec_t items;
+};
 
 cgraph_istack_t cgraph_istack_create() {
-  cgraph_istack_t s;
-  if (stack_new(&s) == CC_OK) {
-    return s;
+  cgraph_istack_t s = malloc(sizeof(CGraphIStack));
+  if (s != NULL) {
+    s->items = cgraph_ivec_create();
   }
-  return NULL;
+  return s;
 }
 
 int cgraph_istack_push(cgraph_istack_t s, CGRAPH_INTEGER element) {
-  CGRAPH_INTEGER *data = (CGRAPH_INTEGER*)malloc(sizeof(CGRAPH_INTEGER));
-  *data = element;
-  if (stack_push(s, data) == CC_OK) {
-    return 0;
-  }
-  return 1;
+  return cgraph_ivec_push_back(&(s->items), element);
 }
 
 int cgraph_istack_pop(cgraph_istack_t s, CGRAPH_INTEGER *out) {
-  void *data;
-  if (stack_pop(s, &data) == CC_OK) {
-    if (out) {
-      *out = *((CGRAPH_INTEGER*)data);
-    }
-    return 0;
+  int ret = 0;
+  if (out) {
+    ret = cgraph_istack_top(s, out);
   }
-  return 1;
+  if (ret != 0) {
+    return ret;
+  }
+  return cgraph_ivec_setsize(s->items, cgraph_ivec_size(s->items) - 1);
 }
 
 void cgraph_istack_free(cgraph_istack_t *s) {
-  stack_destroy(*s);
+  cgraph_ivec_free(&((*s)->items));
+  free(*s);
 }
 
 int cgraph_istack_top(cgraph_istack_const_t const s, CGRAPH_INTEGER *out) {
-  void *data;
-  if (stack_peek(s, &data) == CC_OK) {
-    *out = *((CGRAPH_INTEGER*)data);
-    return 0;
+  size_t sz = cgraph_ivec_size(s->items);
+  if (sz == 0) {
+    return 1;
   }
-  return 1;
+  *out = (s->items)[sz - 1];
+  return 0;
 }
 
 size_t cgraph_istack_size(cgraph_istack_const_t const s) {
-  return stack_size(s);
+  return cgraph_ivec_size(s->items);
 }
 
 bool cgraph_istack_empty(cgraph_istack_const_t const s) {

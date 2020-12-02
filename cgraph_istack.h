@@ -2,10 +2,10 @@
 #define CGRAPH_ISTACK_H_
 
 #include "cgraph_datatype.h"
-#include "ctc/stack.h"
 
-typedef Stack *cgraph_istack_t;
-typedef const Stack *cgraph_istack_const_t;
+typedef struct cgraph_istack_s CGraphIStack;
+typedef CGraphIStack *cgraph_istack_t;
+typedef const CGraphIStack *cgraph_istack_const_t;
 
 cgraph_istack_t cgraph_istack_create();
 int cgraph_istack_pop(cgraph_istack_t s, CGRAPH_INTEGER *out);

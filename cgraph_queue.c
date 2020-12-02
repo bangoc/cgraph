@@ -9,7 +9,6 @@ typedef struct _cgraph_queue_node {
 
 struct cgraph_queue_s {
   int size;
-  int max_size;
   CGraphQueueNode *head;
   CGraphQueueNode *tail;
 };
