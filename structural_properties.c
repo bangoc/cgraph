@@ -2,9 +2,9 @@
 #include "cgraph_datatype.h"
 #include "cgraph_error.h"
 #include "cgraph_interface.h"
-#include "cgraph_queue.h"
+#include "cgraph_iqueue.h"
 #include "cgraph_topology.h"
-#include "cgraph_vector.h"
+#include "cgraph_ivec.h"
 
 int cgraph_is_dag(const cgraph_t *graph, bool *res) {
   if (!cgraph_is_directed(graph)) {

@@ -1,4 +1,4 @@
-#include "cgraph_stack.h"
+#include "cgraph_istack.h"
 
 cgraph_istack_t cgraph_istack_create() {
   cgraph_istack_t s;

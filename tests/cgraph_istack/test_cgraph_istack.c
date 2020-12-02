@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#include "cgraph_stack.h"
+#include "cgraph_istack.h"
 #include "ut.h"
 
 int main() {

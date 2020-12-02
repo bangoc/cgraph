@@ -1,7 +1,7 @@
 #include "cgraph_constructors.h"
 #include "cgraph_error.h"
 #include "cgraph_interface.h"
-#include "cgraph_vector.h"
+#include "cgraph_ivec.h"
 
 int cgraph_create(cgraph_t *graph, 
           cgraph_ivec_t const edges,

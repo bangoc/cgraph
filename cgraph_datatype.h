@@ -2,7 +2,7 @@
 #define CGRAPH_DATATYPE_H_
 
 #include "cgraph_basic_types.h"
-#include "cgraph_vector.h"
+#include "cgraph_ivec.h"
 
 /**
  * \ingroup internal

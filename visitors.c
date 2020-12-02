@@ -1,8 +1,8 @@
 #include "cgraph_error.h"
 #include "cgraph_interface.h"
-#include "cgraph_queue.h"
-#include "cgraph_stack.h"
-#include "cgraph_vector.h"
+#include "cgraph_iqueue.h"
+#include "cgraph_istack.h"
+#include "cgraph_ivec.h"
 #include "cgraph_visitor.h"
 
 // igraph_bfs

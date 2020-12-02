@@ -1,6 +1,6 @@
 #include <stdlib.h>
 
-#include "cgraph_vector.h"
+#include "cgraph_ivec.h"
 
 CGRAPH_INTEGER cgraph_ivec_max(cgraph_ivec_t const v) {
   CGRAPH_INTEGER max = v[0];

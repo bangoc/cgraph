@@ -4,9 +4,10 @@
 #include "cgraph_constructors.h"
 #include "cgraph_datatype.h"
 #include "cgraph_interface.h"
-#include "cgraph_queue.h"
+#include "cgraph_iqueue.h"
 #include "cgraph_topology.h"
 #include "cgraph_visitor.h"
-#include "cgraph_vector.h"
+#include "cgraph_ivec.h"
+#include "cgraph_istack.h"
 
 #endif  // CGRAPH_H_

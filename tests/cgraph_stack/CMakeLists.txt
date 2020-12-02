@@ -1,2 +1,0 @@
-add_executable(cgraph_stack_ut test_cgraph_stack.c)
-target_link_libraries(cgraph_stack_ut  cgraph collectc ut_base)

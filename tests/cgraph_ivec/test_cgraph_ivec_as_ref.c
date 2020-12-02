@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#include "cgraph_vector.h"
+#include "cgraph_ivec.h"
 #include "ut.h"
 
 #define N 100000

@@ -1,5 +1,5 @@
-#ifndef CGRAPH_QUEUE_H_
-#define CGRAPH_QUEUE_H_
+#ifndef CGRAPH_IQUEUE_H_
+#define CGRAPH_IQUEUE_H_
 
 /*
   Collections-C queue wrapper for integer type
@@ -22,4 +22,4 @@ bool cgraph_iqueue_empty(cgraph_iqueue_t const q);
 
 void cgraph_iqueue_free(cgraph_iqueue_t *q);
 
-#endif  // CGRAPH_QUEUE_H_
+#endif  // CGRAPH_IQUEUE_H_

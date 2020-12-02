@@ -1,5 +1,5 @@
-#ifndef CGRAPH_VECTOR_H_
-#define CGRAPH_VECTOR_H_
+#ifndef CGRAPH_IVEC_H_
+#define CGRAPH_IVEC_H_
 
 #include "cgraph_basic_types.h"
 #include "base/cvector.h"
@@ -45,4 +45,4 @@ int cgraph_ivec_push_back(cgraph_ivec_t *v,
                           CGRAPH_INTEGER value);
 int cgraph_ivec_free(cgraph_ivec_t *v);
 
-#endif  // CGRAPH_VECTOR_H_
+#endif  // CGRAPH_IVEC_H_

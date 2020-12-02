@@ -23,13 +23,13 @@ endif()
 
 set(cgraph_src 
   cgraph_error.c 
-  cgraph_vector.c 
+  cgraph_ivec.c 
   type_indexededgelist.c
   structure_generators.c
   visitors.c
-  cgraph_queue.c
+  cgraph_iqueue.c
   structural_properties.c
-  cgraph_stack.c)
+  cgraph_istack.c)
 
 add_library(cgraph STATIC ${cgraph_src})
 
@@ -46,10 +46,10 @@ if(${BUILD_TESTING})
   add_test(NAME CgraphIvecAsValue COMMAND cgraph_ivec_as_value_ut)
   add_test(NAME CgraphIvecAsRef COMMAND cgraph_ivec_as_ref_ut)
   add_test(NAME CgraphBfs COMMAND cgraph_bfs_ut)
-  add_test(NAME CgraphQueue COMMAND cgraph_queue_ut)
+  add_test(NAME CgraphIQueue COMMAND cgraph_iqueue_ut)
   add_test(NAME CgraphDegree COMMAND cgraph_degree_ut)
   add_test(NAME CgraphIsDag COMMAND cgraph_is_dag_ut)
   add_test(NAME CgraphSimpleBfs COMMAND cgraph_simple_bfs_ut)
-  add_test(NAME CgraphStack COMMAND cgraph_stack_ut)
+  add_test(NAME CgraphIStack COMMAND cgraph_istack_ut)
   add_test(NAME CgraphDfs COMMAND cgraph_dfs_ut)
 endif()

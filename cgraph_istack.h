@@ -1,5 +1,5 @@
-#ifndef CGRAPH_STACK_H_
-#define CGRAPH_STACK_H_
+#ifndef CGRAPH_ISTACK_H_
+#define CGRAPH_ISTACK_H_
 
 #include "cgraph_datatype.h"
 #include "ctc/stack.h"
@@ -16,4 +16,4 @@ int cgraph_istack_top(cgraph_istack_const_t const s, CGRAPH_INTEGER *out);
 size_t cgraph_istack_size(cgraph_istack_const_t const s);
 bool cgraph_istack_empty(cgraph_istack_const_t const s);
 
-#endif  // CGRAPH_STACK_H_
+#endif  // CGRAPH_ISTACK_H_

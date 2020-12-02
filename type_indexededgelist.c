@@ -1,6 +1,6 @@
 #include "cgraph_error.h"
 #include "cgraph_interface.h"
-#include "cgraph_vector.h"
+#include "cgraph_ivec.h"
 
 /**
  * \ingroup interface

@@ -1,7 +1,7 @@
 #ifndef TESTS_BASE_UT_H_
 #define TESTS_BASE_UT_H_
 
-#include "cgraph_vector.h"
+#include "cgraph_ivec.h"
 
 cgraph_ivec_t cgraph_ivec_fromarray(CGRAPH_INTEGER *a, CGRAPH_INTEGER n);
 

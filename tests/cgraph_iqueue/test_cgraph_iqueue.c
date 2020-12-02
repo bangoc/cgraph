@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#include "cgraph_queue.h"
+#include "cgraph_iqueue.h"
 #include "ut.h"
 
 int main() {
