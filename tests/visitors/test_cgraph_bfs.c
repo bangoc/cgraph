@@ -101,5 +101,6 @@ int main() {
   TEST(dist, ((CGRAPH_INTEGER[]){0, 0, 1, 1, 1, 2}), 6, "Case 4. dist");
 #undef TEST  
   UT_MSG_OK("Test neightbors");
+  cgraph_destroy(&g);
   return 0;
 }
