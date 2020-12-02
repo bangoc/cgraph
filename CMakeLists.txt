@@ -28,7 +28,8 @@ set(cgraph_src
   structure_generators.c
   visitors.c
   cgraph_queue.c
-  structural_properties.c)
+  structural_properties.c
+  cgraph_stack.c)
 
 add_library(cgraph STATIC ${cgraph_src})
 
