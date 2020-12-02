@@ -1,53 +1,44 @@
 #include "cgraph_iqueue.h"
 
 cgraph_iqueue_t cgraph_iqueue_create() {
-  cgraph_iqueue_t q;
-  if (queue_new(&q) == CC_OK) {
-    return q;
-  }
-  return NULL;
+  return cgraph_queue_create();
 }
 
 int cgraph_iqueue_peek (cgraph_iqueue_const_t const q, CGRAPH_INTEGER *out) {
   void *data;
-  if (queue_peek(q, &data) == CC_OK) {
-    if (out) {
-      *out = *((CGRAPH_INTEGER*)data);
-    }
-    return 0;
+  int ret = cgraph_queue_peek(q, &data);
+  if (ret != 0) {
+    return ret;
   }
-  return 1;
+  *out = *((CGRAPH_INTEGER*)data);
+  return 0;
 }
 
 int cgraph_iqueue_poll (cgraph_iqueue_t q, CGRAPH_INTEGER *out) {
   void *data;
-  if (queue_poll(q, &data) == CC_OK) {
-    if (out) {
-      *out = *((CGRAPH_INTEGER*)data);
-    }
-    return 0;
-  }  
-  return 1;
+  int ret = cgraph_queue_poll(q, &data);
+  if (ret != 0) {
+    return ret;
+  }
+  *out = *((CGRAPH_INTEGER*)data);
+  free(data);
+  return 0;
 }
 
 int cgraph_iqueue_enqueue(cgraph_iqueue_t q, CGRAPH_INTEGER element) {
   CGRAPH_INTEGER *data = (CGRAPH_INTEGER*)malloc(sizeof(CGRAPH_INTEGER));
   *data = element;
-  if (queue_enqueue(q, data) == CC_OK) {
-    return 0;
-  }
-  free(data);
-  return 1;
+  return cgraph_queue_enqueue(q, data);
 }
 
 size_t cgraph_iqueue_size(cgraph_iqueue_const_t const q) {
-  return queue_size(q);
+  return cgraph_queue_size(q);
 }
 
 void cgraph_iqueue_free(cgraph_iqueue_t *q) {
-  queue_destroy(*q);
+  cgraph_queue_free(*q);
 }
 
 bool cgraph_iqueue_empty(cgraph_iqueue_t const q) {
-  return cgraph_iqueue_size(q) == 0;
+  return cgraph_queue_empty(q);
 }

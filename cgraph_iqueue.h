@@ -6,10 +6,10 @@
 */
 
 #include "cgraph_datatype.h"
-#include "ctc/queue.h"
+#include "cgraph_queue.h"
 
-typedef Queue *cgraph_iqueue_t;
-typedef const Queue *cgraph_iqueue_const_t;
+typedef CGraphQueue *cgraph_iqueue_t;
+typedef const CGraphQueue *cgraph_iqueue_const_t;
 
 cgraph_iqueue_t cgraph_iqueue_create();
 

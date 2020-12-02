@@ -30,7 +30,7 @@ int main() {
       return 1;
     }
   }
-  UT_MSG_OK("Queue test: Ok");
+  UT_MSG_OK("Queue test");
   cgraph_iqueue_free(&q);
   return 0;
 }
