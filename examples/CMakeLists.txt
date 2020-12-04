@@ -8,3 +8,4 @@ target_link_libraries(ivec_as_param cgraph)
 target_link_libraries(ivec_as_param2 cgraph)
 
 add_subdirectory(ctc)
+add_subdirectory(application)

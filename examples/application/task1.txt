@@ -1,0 +1,32 @@
+Được biết có N công việc và giữa hai công việc A và B bất kỳ có thể tồn tại quan hệ thứ tự
+dạng A B, nghĩa là phải thực hiện song công việc A thì mới được bắt đầu thực hiện công việc B.
+Trong một tệp input.txt, dòng đầu tiên có chứa một số N (số lượng công việc) và một số M (số lượng các phụ thuộc), được ngăn cách bởi một dấu cách:
+N dòng tiếp theo mỗi dòng chứa tên một công việc, không có dấu cách trong tên các công việc
+M dòng tiếp theo mô tả các phụ thuộc.
+Yêu cầu:
+Viết chương trình đọc tệp input.txt và in ra tệp output.txt một trình tự tuần tự thực hiện các công việc (mỗi công việc một dòng) thỏa mãn các yêu cầu thứ tự nếu có thể, hoặc in ra -1 nếu không thể.
+
+Ví dụ 1:
+input.txt
+3 3
+A
+B
+C
+A B
+A C
+B C
+output.txt:
+A
+B
+C
+Ví dụ 2:
+input.txt
+3 3
+A
+B
+C
+A B
+B C
+C A
+output.txt
+-1
