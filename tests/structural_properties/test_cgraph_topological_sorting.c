@@ -1,10 +1,11 @@
 #include <stdbool.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "gb.h"
 #include "ut.h"
 
-bool is_valid_topological_order(cgraph_t *g, 
+bool is_valid_topological_order(cgraph_t *g,
                                 cgraph_ivec_t const v,
                                 cgraph_neimode_t mode) {
   cgraph_neimode_t deg_mode;
@@ -14,7 +15,7 @@ bool is_valid_topological_order(cgraph_t *g,
     deg_mode = CGRAPH_IN;
   }
   CGRAPH_INTEGER no_of_nodes = cgraph_vcount(g);
-  cgraph_ivec_t degrees = cgraph_ivec_create(), 
+  cgraph_ivec_t degrees = cgraph_ivec_create(),
                 neis = cgraph_ivec_create();
   cgraph_degree_all(g, &degrees, deg_mode, true);
 
@@ -29,7 +30,7 @@ bool is_valid_topological_order(cgraph_t *g,
     removed[ v[i] ] = true;
     CGRAPH_INTEGER node = v[i];
     cgraph_neighbors(g, &neis, node, mode);
-    for (CGRAPH_INTEGER i = 0; 
+    for (CGRAPH_INTEGER i = 0;
          i < cgraph_ivec_size(neis); i++) {
       CGRAPH_INTEGER nei = neis[i];
       degrees[nei]--;
@@ -62,7 +63,7 @@ int main() {
   if (!is_valid_topological_order(&g, res, CGRAPH_IN) || cgraph_ivec_size(res) != 6) {
     UT_MSG_FAILED("In topological sorting on G3");
     any = true;
-  }  
+  }
   cgraph_ivec_free(&res);
   cgraph_destroy(&g);
   if (any) {

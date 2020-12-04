@@ -1,3 +1,5 @@
+#include <stdlib.h>
+
 #include "cgraph_iqueue.h"
 
 cgraph_iqueue_t cgraph_iqueue_create() {

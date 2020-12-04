@@ -1,3 +1,5 @@
+#include <stdlib.h>
+
 #include "cgraph_istack.h"
 #include "cgraph_ivec.h"
 

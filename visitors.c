@@ -1,3 +1,5 @@
+#include <stdlib.h>
+
 #include "cgraph_error.h"
 #include "cgraph_interface.h"
 #include "cgraph_iqueue.h"
@@ -8,13 +10,13 @@
 // igraph_bfs
 int cgraph_bfs(const cgraph_t *graph,
                CGRAPH_INTEGER root,
-               cgraph_neimode_t mode, 
+               cgraph_neimode_t mode,
                bool unreachable,
                cgraph_ivec_t const restricted,
-               cgraph_ivec_t *order, 
+               cgraph_ivec_t *order,
                cgraph_ivec_t *rank,
                cgraph_ivec_t *father,
-               cgraph_ivec_t *pred, 
+               cgraph_ivec_t *pred,
                cgraph_ivec_t *succ,
                cgraph_ivec_t *dist) {
   cgraph_iqueue_t q = cgraph_iqueue_create();
@@ -43,7 +45,7 @@ int cgraph_bfs(const cgraph_t *graph,
   if (!cgraph_is_directed(graph)) {
      mode = CGRAPH_ALL;
   }
-  
+
   bool *added = (bool*)calloc(no_of_nodes, sizeof(bool));
 
 /* Mark the vertices that are not in the restricted set, as already
@@ -72,7 +74,7 @@ VINIT(pred);
 VINIT(succ);
 VINIT(dist);
 # undef VINIT
-  
+
   int rootpos = 0;
   cgraph_ivec_t neis = cgraph_ivec_create();
   while (1) {
@@ -103,7 +105,7 @@ VINIT(dist);
     }
 
     pred_vec = -1;
-    
+
     while (!cgraph_iqueue_empty(q)) {
       CGRAPH_INTEGER actvect;
       cgraph_iqueue_poll(q, &actvect);
@@ -144,7 +146,7 @@ VINIT(dist);
       } else {
         cgraph_iqueue_peek(q, &succ_vec);
       }
-     
+
       if (succ) {
         (*succ)[actvect] = succ_vec;
       }
@@ -160,15 +162,15 @@ VINIT(dist);
 
 int cgraph_simple_bfs(const cgraph_t *graph,
                CGRAPH_INTEGER root,
-               cgraph_neimode_t mode, 
+               cgraph_neimode_t mode,
                bool unreachable,
                cgraph_ivec_t *father,
                cgraph_ivec_t *dist) {
-  return cgraph_bfs(graph, 
-      root, 
+  return cgraph_bfs(graph,
+      root,
       mode,
       unreachable,
-      0, 
+      0,
       0,
       0,
       father,
@@ -181,7 +183,7 @@ int cgraph_simple_bfs(const cgraph_t *graph,
 /**
  * Depth-first search
  *
- * A simple depth-first search, 
+ * A simple depth-first search,
  * It is allowed to supply null pointers as the output arguments the
  * user is not interested in, in this case they will be ignored.
  *
@@ -223,10 +225,10 @@ int cgraph_simple_bfs(const cgraph_t *graph,
  */
 int cgraph_dfs(const cgraph_t *graph,
                CGRAPH_INTEGER root,
-               cgraph_neimode_t mode, 
+               cgraph_neimode_t mode,
                bool unreachable,
                cgraph_ivec_t *order,
-               cgraph_ivec_t *order_out, 
+               cgraph_ivec_t *order_out,
                cgraph_ivec_t *father,
                cgraph_ivec_t *dist) {
   CGRAPH_INTEGER no_of_nodes = cgraph_vcount(graph);
@@ -312,7 +314,7 @@ int cgraph_dfs(const cgraph_t *graph,
 
       /* Search for a neighbor that was not yet visited */
       bool any = 0;
-      CGRAPH_INTEGER nei, 
+      CGRAPH_INTEGER nei,
                      *ptr = nptr + actvect;
       while (!any && (*ptr) < n) {
         nei = neis[*ptr];
