@@ -10,11 +10,11 @@ if (NOT CMAKE_BUILD_TYPE)
 endif (NOT CMAKE_BUILD_TYPE)
 
 if (${CMAKE_BUILD_TYPE} STREQUAL Debug)
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g")  
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g")
 endif()
 
 if (WARN_ERROR)
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Werror")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Werror -Wall")
 endif ()
 
 include_directories(${CMAKE_SOURCE_DIR})
@@ -25,9 +25,9 @@ if (${CMAKE_PROJECT_NAME} STREQUAL cgraph)
   include(CTest)
 endif()
 
-set(cgraph_src 
-  cgraph_error.c 
-  cgraph_ivec.c 
+set(cgraph_src
+  cgraph_error.c
+  cgraph_ivec.c
   type_indexededgelist.c
   structure_generators.c
   visitors.c
@@ -38,7 +38,7 @@ set(cgraph_src
 
 add_library(cgraph STATIC ${cgraph_src})
 
-if(${BUILD_TESTING})  
+if(${BUILD_TESTING})
   add_subdirectory(tests)
   add_test(NAME CvectorCreateEmpty COMMAND cvector_create_empty_ut)
   add_test(NAME CGraphIVecMax COMMAND cgraph_ivec_max_ut)

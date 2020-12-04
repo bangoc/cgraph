@@ -18,13 +18,19 @@ int cgraph_ivec_minmax(cgraph_ivec_t const v, CGRAPH_INTEGER *min, CGRAPH_INTEGE
   for (CGRAPH_INTEGER i = 1; i < cgraph_ivec_size(v); ++i) {
     if (v[i] > _max) {
       _max = v[i];
-    }
-    if (v[i] < _min) {
+    } else if (v[i] < _min) {
       _min = v[i];
     }
   }
-  *min = _min;
-  *max = _max;
+  if (min) {
+    *min = _min;
+  }
+  if (max) {
+    *max = _max;
+  }
+  if (!min && !max) {
+    return 1;
+  }
   return 0;
 }
 
