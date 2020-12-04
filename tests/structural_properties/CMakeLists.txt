@@ -1,2 +1,5 @@
 add_executable(cgraph_is_dag_ut test_cgraph_is_dag.c)
-target_link_libraries(cgraph_is_dag_ut ut_base cgraph)
+add_executable(cgraph_topological_sorting_ut test_cgraph_topological_sorting.c)
+foreach (t cgraph_is_dag_ut cgraph_topological_sorting_ut)
+  target_link_libraries(${t} ut_base cgraph)
+endforeach()
