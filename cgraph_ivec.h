@@ -17,6 +17,10 @@ typedef cvector_vector_type(CGRAPH_INTEGER) cgraph_ivec_t;
 //              e.g, v[i]
 //   looked so attractive, right? 
 
+#ifdef __cplusplus
+extern "C"{
+#endif 
+
 cgraph_ivec_t cgraph_ivec_create();
 
 /* Pass vector pointer by value */
@@ -44,5 +48,9 @@ int cgraph_ivec_init(cgraph_ivec_t *v,
 int cgraph_ivec_push_back(cgraph_ivec_t *v,
                           CGRAPH_INTEGER value);
 int cgraph_ivec_free(cgraph_ivec_t *v);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif  // CGRAPH_IVEC_H_

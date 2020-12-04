@@ -4,6 +4,10 @@
 #include "cgraph_datatype.h"
 #include "cgraph_constants.h"
 
+#ifdef __cplusplus
+extern "C"{
+#endif 
+
 int cgraph_empty(cgraph_t *graph, CGRAPH_INTEGER n, bool directed);
 int cgraph_add_vertices(cgraph_t *graph, CGRAPH_INTEGER nv);
 void cgraph_destroy(cgraph_t *graph);
@@ -30,5 +34,9 @@ int cgraph_degree_one(const cgraph_t *graph,
                       const CGRAPH_INTEGER node,
                       cgraph_neimode_t mode,
                       bool loops);
+
+#ifdef __cplusplus
+}
+#endif 
 
 #endif  // CGRAPH_INTERFACE_H_

@@ -4,6 +4,10 @@
 #include "cgraph_datatype.h"
 #include "cgraph_constants.h"
 
+#ifdef __cplusplus
+extern "C"{
+#endif 
+
 int cgraph_bfs(const cgraph_t *graph,
                CGRAPH_INTEGER root,
                cgraph_neimode_t mode, 
@@ -31,5 +35,9 @@ int cgraph_dfs(const cgraph_t *graph,
                cgraph_ivec_t *order_out, 
                cgraph_ivec_t *father,
                cgraph_ivec_t *dist);
+
+#ifdef __cplusplus
+}
+#endif 
 
 #endif  // CGRAPH_VISITOR_H_

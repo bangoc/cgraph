@@ -17,6 +17,10 @@ typedef void cgraph_error_handler_t(
             CGRAPH_ERROR("API failed"); \
         } } while (0)
 
+#ifdef __cplusplus
+extern "C"{
+#endif 
+
 void cgraph_error_handler_ignore(const char *, const char *, int);
 
 int cgraph_error(const char *reason, 
@@ -25,5 +29,9 @@ int cgraph_error(const char *reason,
 
 cgraph_error_handler_t* cgraph_set_error_handler(
     cgraph_error_handler_t* new_handler);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif  // CGRAPH_ERROR_H_
