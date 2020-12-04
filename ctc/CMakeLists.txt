@@ -15,7 +15,8 @@ set(source_files
   stack.c 
   treeset.c
   treetable.c 
-  tsttable.c)
+  tsttable.c
+  my/hsi.c)
 set(header_files 
   array.h
   common.h
@@ -30,7 +31,8 @@ set(header_files
   stack.h
   treeset.h
   treetable.h 
-  tsttable.h)
+  tsttable.h
+  my/hsi.h)
 
 add_library(${PROJECT_NAME} STATIC ${source_files})
 include_directories(./include)
