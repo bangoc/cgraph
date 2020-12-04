@@ -39,7 +39,7 @@ int main() {
     fprintf(out, "-1");
   } else {
     for (int i = 0; i < cgraph_ivec_size(order); ++i) {
-      fprintf(out, "%s\n", id_to_name[i]);
+      fprintf(out, "%s\n", id_to_name[ order[i] ]);
     }
   }
   fclose(out);
