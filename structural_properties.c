@@ -98,6 +98,54 @@ int cgraph_is_dag(const cgraph_t *graph, bool *res) {
 int cgraph_topological_sorting(const cgraph_t *graph,
                                cgraph_ivec_t *res,
                                cgraph_neimode_t mode) {
-  /* TODO: Provide an implementation and pass tests */
+  CGRAPH_INTEGER no_of_nodes = cgraph_vcount(graph);
+  cgraph_ivec_t degrees = cgraph_ivec_create(),
+                neis = cgraph_ivec_create();
+  cgraph_iqueue_t sources = cgraph_iqueue_create();
+  cgraph_neimode_t deg_mode;
+
+  if (mode == CGRAPH_ALL || !cgraph_is_directed(graph)) {
+    CGRAPH_ERROR("topological sorting does not make sense for undirected graphs");
+  } else if (mode == CGRAPH_OUT) {
+    deg_mode = CGRAPH_IN;
+  } else if (mode == CGRAPH_IN) {
+    deg_mode = CGRAPH_OUT;
+  } else {
+    CGRAPH_ERROR("invalid mode");
+  }
+
+  /* with loops, igraph doesn't count loop */
+  CGRAPH_CHECK(cgraph_degree_all(graph, &degrees, deg_mode, 1));
+
+  cgraph_ivec_setsize(*res, 0);
+  /* Do we have nodes with no incoming vertices? */
+  for (CGRAPH_INTEGER i = 0; i < no_of_nodes; i++) {
+    if (degrees[i] == 0) {
+      CGRAPH_CHECK(cgraph_iqueue_enqueue(sources, i));
+    }
+  }
+
+  /* Take all nodes with no incoming vertices and remove them */
+  while (!cgraph_iqueue_empty(sources)) {
+    CGRAPH_INTEGER node;
+    cgraph_iqueue_poll(sources, &node);
+    cgraph_ivec_push_back(res, node);
+    degrees[node] = -1;
+    CGRAPH_CHECK(cgraph_neighbors(graph, &neis, node, mode));
+    for (CGRAPH_INTEGER i = 0; i < cgraph_ivec_size(neis); i++) {
+      degrees[neis[i]]--;
+      if (degrees[neis[i]] == 0) {
+        CGRAPH_CHECK(cgraph_iqueue_enqueue(sources, neis[i]));
+      }
+    }
+  }
+
+  if (cgraph_ivec_size(*res) < no_of_nodes) {
+    CGRAPH_ERROR("graph contains a cycle, partial result is returned");
+  }
+
+  cgraph_ivec_free(&degrees);
+  cgraph_ivec_free(&neis);
+  cgraph_iqueue_free(&sources);
   return 0;
 }
