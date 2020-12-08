@@ -34,3 +34,11 @@ int hsi_get(HSI tbl, char *key, int **out) {
 int hsi_contains(HSI tbl, char *key) {
   return hashtable_contains_key(tbl, key);
 }
+
+void hsi_foreach_kv(HSI tbl,
+                    void (*op)(const char*, int*, void*),
+                    void *user_data) {
+  void *key;
+  void *value;
+  HASHTABLE_FOREACH(tbl, key, value, op(key, value, user_data););
+}

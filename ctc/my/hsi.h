@@ -12,4 +12,8 @@ int hsi_add(HSI tbl, char *key, int val);
 int hsi_get(HSI tbl, char *key, int **out);
 int hsi_contains(HSI tbl, char *key);
 
+void hsi_foreach_kv(HSI tbl,
+                    void (*op)(const char*, int*, void*),
+                    void *user_data);
+
 #endif  // CTC_MY_SI_H_
