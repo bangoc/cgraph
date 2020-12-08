@@ -35,6 +35,21 @@ set(cgraph_src
   cgraph_queue.c
   structural_properties.c
   cgraph_istack.c)
+set(cgraph_inc
+  cgraph.h
+  cgraph_basic_types.h
+  cgraph_constants.h
+  cgraph_constructors.h
+  cgraph_datatype.h
+  cgraph_error.h
+  cgraph_interface.h
+  cgraph_iqueue.h
+  cgraph_istack.h
+  cgraph_ivec.h
+  cgraph_queue.h
+  cgraph_topology.h
+  cgraph_visitor.h
+)
 
 add_library(cgraph STATIC ${cgraph_src})
 
@@ -59,3 +74,11 @@ if(${BUILD_TESTING})
   add_test(NAME CgraphDfs COMMAND cgraph_dfs_ut)
   add_test(NAME CgraphTopologicalSorting COMMAND cgraph_topological_sorting_ut)
 endif()
+
+# e.g. copy libries headers and binary to bkc
+# cmake .. -DCMAKE_INSTALL_PREFIX=bkc
+MESSAGE(STATUS "Install prefix: ${CMAKE_INSTALL_PREFIX}")
+set(cgraph_include_dest "cgraph")
+set(cgraph_lib_dest "lib")
+install(TARGETS cgraph DESTINATION "${cgraph_lib_dest}")
+install(FILES ${cgraph_inc} DESTINATION "${cgraph_include_dest}")
