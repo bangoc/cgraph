@@ -3,8 +3,9 @@
 #include "cgraph_error.h"
 #include "cgraph_interface.h"
 #include "cgraph_iqueue.h"
-#include "cgraph_topology.h"
 #include "cgraph_ivec.h"
+#include "cgraph_paths.h"
+#include "cgraph_topology.h"
 
 int cgraph_is_dag(const cgraph_t *graph, bool *res) {
   if (!cgraph_is_directed(graph)) {
@@ -147,5 +148,56 @@ int cgraph_topological_sorting(const cgraph_t *graph,
   cgraph_ivec_free(&degrees);
   cgraph_ivec_free(&neis);
   cgraph_iqueue_free(&sources);
+  return 0;
+}
+
+/**
+ * \function  cgraph_get_shortest_path_dijkstra
+ *            igraph_get_shortest_path_dijkstra
+ * Weighted shortest path from one vertex to another one.
+ *
+ * Calculates a single (positively) weighted shortest path from
+ * a single vertex to another one, using Dijkstra's algorithm.
+ *
+ * </para><para>This function is a special case (and a wrapper) to
+ * \ref igraph_get_shortest_paths_dijkstra().
+ *
+ * \param graph The input graph, it can be directed or undirected.
+ * \param vertices Pointer to an initialized vector or a null
+ *        pointer. If not a null pointer, then the vertex ids along
+ *        the path are stored here, including the source and target
+ *        vertices.
+ * \param edges Pointer to an uninitialized vector or a null
+ *        pointer. If not a null pointer, then the edge ids along the
+ *        path are stored here.
+ * \param from The id of the source vertex.
+ * \param to The id of the target vertex.
+ * \param weights Vector of edge weights, in the order of edge
+ *        ids. They must be non-negative, otherwise the algorithm does
+ *        not work.
+ * \param mode A constant specifying how edge directions are
+ *        considered in directed graphs. \c IGRAPH_OUT follows edge
+ *        directions, \c IGRAPH_IN follows the opposite directions,
+ *        and \c IGRAPH_ALL ignores edge directions. This argument is
+ *        ignored for undirected graphs.
+ * \return Error code.
+ *
+ * Time complexity: O(|E|log|E|+|V|), |V| is the number of vertices,
+ * |E| is the number of edges in the graph.
+ *
+ * \sa \ref igraph_get_shortest_paths_dijkstra() for the version with
+ * more target vertices.
+ */
+
+int cgraph_get_shortest_path_dijkstra(const cgraph_t *graph,
+        cgraph_ivec_t *vertices,
+        cgraph_ivec_t *edges,
+        CGRAPH_INTEGER from,
+        CGRAPH_INTEGER to,
+        const double *weights,
+        cgraph_neimode_t mode) {
+  /*
+    TODO: Implementation
+  */
   return 0;
 }
