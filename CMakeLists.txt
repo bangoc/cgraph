@@ -49,6 +49,7 @@ set(cgraph_inc
   cgraph_queue.h
   cgraph_topology.h
   cgraph_visitor.h
+  cgraph_paths.h
 )
 
 add_library(cgraph STATIC ${cgraph_src})

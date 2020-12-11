@@ -32,11 +32,15 @@ set(header_files
   treeset.h
   treetable.h
   tsttable.h
-  my/hsi.h)
+)
+set(my_header_files
+  my/hsi.h
+)
 
 add_library(${PROJECT_NAME} STATIC ${source_files})
 
 set(ctc_include_dest "ctc")
 set(ctc_lib_dest "lib")
 install(FILES ${header_files} DESTINATION ${ctc_include_dest})
+install(FILES ${my_header_files} DESTINATION ${ctc_include_dest}/my)
 install(TARGETS ${PROJECT_NAME} DESTINATION ${ctc_lib_dest})
