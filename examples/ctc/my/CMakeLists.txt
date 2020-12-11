@@ -1,2 +1,5 @@
 add_executable(hsi_demo hsi_demo.c)
-target_link_libraries(hsi_demo collectc)
+add_executable(pq_demo pqueue_demo.c)
+foreach(app hsi_demo pq_demo)
+  target_link_libraries(${app} collectc)
+endforeach()
