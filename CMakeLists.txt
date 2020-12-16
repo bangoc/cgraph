@@ -74,6 +74,7 @@ if(${BUILD_TESTING})
   add_test(NAME CgraphIStack COMMAND cgraph_istack_ut)
   add_test(NAME CgraphDfs COMMAND cgraph_dfs_ut)
   add_test(NAME CgraphTopologicalSorting COMMAND cgraph_topological_sorting_ut)
+  add_test(NAME CgraphSingleShortestPathDijkstra COMMAND cgraph_single_shortest_path_dijkstra_ut)
 endif()
 
 # e.g. copy libries headers and binary to bkc

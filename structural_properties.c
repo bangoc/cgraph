@@ -196,8 +196,6 @@ int cgraph_get_shortest_path_dijkstra(const cgraph_t *graph,
         CGRAPH_INTEGER to,
         const double *weights,
         cgraph_neimode_t mode) {
-  /*
-    TODO: Implementation
-  */
+
   return 0;
 }
