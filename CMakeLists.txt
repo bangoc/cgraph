@@ -35,7 +35,10 @@ set(cgraph_src
   cgraph_queue.c
   structural_properties.c
   cgraph_istack.c
-  cgraph_rvec.c)
+  cgraph_rvec.c
+  heap.c
+)
+
 set(cgraph_inc
   cgraph.h
   cgraph_basic_types.h
@@ -52,6 +55,7 @@ set(cgraph_inc
   cgraph_visitor.h
   cgraph_paths.h
   cgraph_rvec.h
+  cgraph_type_internal.h
 )
 
 add_library(cgraph STATIC ${cgraph_src})
@@ -77,6 +81,7 @@ if(${BUILD_TESTING})
   add_test(NAME CgraphDfs COMMAND cgraph_dfs_ut)
   add_test(NAME CgraphTopologicalSorting COMMAND cgraph_topological_sorting_ut)
   add_test(NAME CgraphSingleShortestPathDijkstra COMMAND cgraph_single_shortest_path_dijkstra_ut)
+  add_test(NAME Cgraph2wHeap COMMAND cgraph_2wheap_ut)
 endif()
 
 # e.g. copy libries headers and binary to bkc

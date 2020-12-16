@@ -1,0 +1,2 @@
+add_executable(cgraph_2wheap_ut test_cgraph_2wheap.c)
+target_link_libraries(cgraph_2wheap_ut cgraph)

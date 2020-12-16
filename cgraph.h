@@ -11,5 +11,6 @@
 #include "cgraph_istack.h"
 #include "cgraph_paths.h"
 #include "cgraph_rvec.h"
+#include "cgraph_types_internal.h"
 
 #endif  // CGRAPH_H_
