@@ -21,6 +21,10 @@ typedef struct cgraph_2wheap_t {
     cgraph_ivec_t index2;
 } cgraph_2wheap_t;
 
+#ifdef __cplusplus
+extern "C"{
+#endif
+
 int cgraph_2wheap_init(cgraph_2wheap_t *h, CGRAPH_INTEGER size);
 void cgraph_2wheap_free(cgraph_2wheap_t *h);
 int cgraph_2wheap_clear(cgraph_2wheap_t *h);
@@ -39,5 +43,9 @@ CGRAPH_REAL cgraph_2wheap_delete_max(cgraph_2wheap_t *h);
 CGRAPH_REAL cgraph_2wheap_delete_max_index(cgraph_2wheap_t *h, CGRAPH_INTEGER *idx);
 int cgraph_2wheap_modify(cgraph_2wheap_t *h, CGRAPH_INTEGER idx, CGRAPH_REAL elem);
 int cgraph_2wheap_check(cgraph_2wheap_t *h);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif  // CGRAPH_TYPES_INTERNAL_H_
