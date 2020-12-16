@@ -40,6 +40,7 @@ int cgraph_ivec_setsize(cgraph_ivec_t const v,
 CGRAPH_INTEGER cgraph_ivec_capacity(cgraph_ivec_t const v);
 CGRAPH_INTEGER cgraph_ivec_size(cgraph_ivec_t const v);
 int cgraph_ivec_fill(cgraph_ivec_t const v, CGRAPH_INTEGER data);
+int cgraph_ivec_print(cgraph_ivec_t const v);
 
 /* Pass vector pointer by reference */
 int cgraph_ivec_grow(cgraph_ivec_t *v,

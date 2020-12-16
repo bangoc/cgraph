@@ -28,4 +28,5 @@ int main() {
   }
   print_vector(v);
   cgraph_ivec_free(&v);
+  return 0;
 }

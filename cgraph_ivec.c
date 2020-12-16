@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdlib.h>
 
 #include "cgraph_ivec.h"
@@ -101,10 +102,20 @@ int cgraph_ivec_fill(cgraph_ivec_t const v, CGRAPH_INTEGER data) {
   return 0;
 }
 
+int cgraph_ivec_print(cgraph_ivec_t const v) {
+  printf("size: %lld, cap: %lld, elems: ",
+              (long long)cgraph_ivec_size(v),
+              (long long)cgraph_ivec_capacity(v));
+  for (CGRAPH_INTEGER i = 0; i < cgraph_ivec_size(v); ++i) {
+    printf(" %lld", (long long)v[i]);
+  }
+  printf("\n");
+  return 0;
+}
+
 cgraph_ivec_t cgraph_ivec_create() {
   return (cgraph_ivec_t)&((size_t*)calloc(2, sizeof(size_t)))[2];
 }
-
 
 int cgraph_ivec_grow(cgraph_ivec_t *v, CGRAPH_INTEGER newcapacity) {
   CGRAPH_INTEGER capacity = (CGRAPH_INTEGER) cgraph_ivec_capacity((*v));
