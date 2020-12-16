@@ -123,7 +123,7 @@ CGRAPH_REAL cgraph_2wheap_max(const cgraph_2wheap_t *h) {
   return h->data[0];
 }
 
-CGRAPH_INTEGER igraph_2wheap_max_index(const cgraph_2wheap_t *h) {
+CGRAPH_INTEGER cgraph_2wheap_max_index(const cgraph_2wheap_t *h) {
   return h->index[0];
 }
 

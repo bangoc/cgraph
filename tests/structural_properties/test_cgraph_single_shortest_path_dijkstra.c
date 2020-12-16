@@ -8,7 +8,12 @@
 int main() {
   cgraph_t g;
   test_create_g1(&g);
-  double weights[] = {3, 30, 5, 5, 10, 12, 11, 1, 6};
+  double w[] = {3, 30, 5, 5, 10, 12, 11, 1, 6};
+  int n = sizeof(w) / sizeof(double);
+  cgraph_rvec_t weights = cgraph_rvec_create();
+  for (int i = 0; i < n; ++i) {
+    cgraph_rvec_push_back(&weights, w[i]);
+  }
   // g1-weighted.png
 
   cgraph_ivec_t vpath = cgraph_ivec_create(),
@@ -74,7 +79,7 @@ int main() {
     any = true;
   }
   cgraph_get_shortest_path_dijkstra(&g, &vpath, &epath, 3, 3, weights, CGRAPH_OUT);
-  if (!cgraph_ivec_equal(vpath, (CGRAPH_INTEGER[]){0}, 1)) {
+  if (!cgraph_ivec_equal(vpath, (CGRAPH_INTEGER[]){3}, 1)) {
     cgraph_ivec_print(vpath);
     UT_MSG_FAILED("Case 6. vpath contains to if from==to, 3-3 (out)");
     any = true;

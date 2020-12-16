@@ -6,6 +6,9 @@
 #include "cgraph_ivec.h"
 #include "cgraph_paths.h"
 #include "cgraph_topology.h"
+#include "cgraph_types_internal.h"
+
+#include <stdlib.h>
 
 int cgraph_is_dag(const cgraph_t *graph, bool *res) {
   if (!cgraph_is_directed(graph)) {
@@ -194,8 +197,92 @@ int cgraph_get_shortest_path_dijkstra(const cgraph_t *graph,
         cgraph_ivec_t *edges,
         CGRAPH_INTEGER from,
         CGRAPH_INTEGER to,
-        const double *weights,
+        cgraph_rvec_t weights,
         cgraph_neimode_t mode) {
+  CGRAPH_INTEGER no_of_nodes = cgraph_vcount(graph);
+  CGRAPH_INTEGER no_of_edges = cgraph_ecount(graph);
+  cgraph_2wheap_t Q;
+  cgraph_rvec_t dists = cgraph_rvec_create();
+  if (cgraph_rvec_size(weights) != no_of_edges) {
+    CGRAPH_ERROR("Weight vector length does not match");
+  }
+  CGRAPH_CHECK(cgraph_2wheap_init(&Q, no_of_nodes));
+  cgraph_rvec_init(&dists, no_of_edges);
+  for (CGRAPH_INTEGER i = 0; i < no_of_nodes; ++i) {
+    dists[i] = -1.0;
+  }
+  CGRAPH_INTEGER *parents = malloc(sizeof(CGRAPH_INTEGER) * no_of_nodes);
+  dists[from] = 0.0;
+  parents[from] = -1;  /* no dirty hack in back trace */
+  cgraph_2wheap_push_with_index(&Q, from, 0);
+  cgraph_ivec_t neis = cgraph_ivec_create();
+  bool found = false;
+  while (!cgraph_2wheap_empty(&Q) && !found) {
+    CGRAPH_INTEGER nlen, minnei = cgraph_2wheap_max_index(&Q);
+    CGRAPH_REAL mindist = -cgraph_2wheap_delete_max(&Q); /* dirty hack to avoid using infinity */
+    if (minnei == to) {
+      found = true;
+    }
+    cgraph_incident(graph, &neis, minnei, mode);
+    nlen = cgraph_ivec_size(neis);
+    for (CGRAPH_INTEGER i = 0; i < nlen; ++i) {
+      CGRAPH_INTEGER edge = neis[i];
+      CGRAPH_INTEGER tto = CGRAPH_OTHER(graph, edge, minnei);
+      CGRAPH_REAL altdist = mindist + weights[edge];
+      CGRAPH_REAL curdist = dists[tto];
+      if (curdist < 0) {
+        dists[tto] = altdist;
+        parents[tto] = edge;
+        CGRAPH_CHECK(cgraph_2wheap_push_with_index(&Q, tto, -altdist));
+      } else if (altdist < curdist) {
+        dists[tto] = altdist;
+        parents[tto] = edge;
+        CGRAPH_CHECK(cgraph_2wheap_modify(&Q, tto, -altdist));
+      }
+    }
+  }
+  if (!found) {
+    CGRAPH_ERROR("Path not found");
+    cgraph_ivec_setsize(*vertices, 0);
+    cgraph_ivec_push_back(vertices, to);
+    cgraph_ivec_setsize(*edges, 0);
+    return 0;
+  }
 
+  if (vertices || edges) {
+    cgraph_ivec_t vvec, evec;
+    CGRAPH_INTEGER act = to;
+    CGRAPH_INTEGER size = 0;
+    CGRAPH_INTEGER edge;
+    while (parents[act] != -1) {
+      ++size;
+      edge = parents[act];
+      act = CGRAPH_OTHER(graph, edge, act);
+    }
+    if (vertices) {
+      CGRAPH_CHECK(cgraph_ivec_init(vertices, size + 1));
+      vvec = *vertices;
+      vvec[size] = to;
+    }
+    if (edges) {
+      CGRAPH_CHECK(cgraph_ivec_init(edges, size));
+      evec = *edges;
+    }
+    act = to;
+    while (parents[act] != -1) {
+      edge = parents[act];
+      act = CGRAPH_OTHER(graph, edge, act);
+      --size;
+      if (vertices) {
+        vvec[size] = act;
+      }
+      if (edges) {
+        evec[size] = edge;
+      }
+    }
+  }
+  cgraph_2wheap_free(&Q);
+  cgraph_rvec_free(&dists);
+  free(parents);
   return 0;
 }
