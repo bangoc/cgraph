@@ -89,6 +89,18 @@ int main() {
     UT_MSG_FAILED("Case 6. epath empty if from==to, 3-3 (out)");
     any = true;
   }
+
+  cgraph_get_shortest_path_dijkstra(&g, &vpath, &epath, 0, 5, NULL, CGRAPH_OUT);
+  if (!cgraph_ivec_equal(vpath, (CGRAPH_INTEGER[]){0, 3, 5}, 3)) {
+    cgraph_ivec_print(vpath);
+    UT_MSG_FAILED("Case 7. No weight 0-5 (out)");
+    any = true;
+  }
+  if (!cgraph_ivec_equal(epath, (CGRAPH_INTEGER[]){1, 6}, 2)) {
+    cgraph_ivec_print(epath);
+    UT_MSG_FAILED("Case 7. No weight 0-5 (out)");
+    any = true;
+  }
   if (any) {
     return 1;
   }
