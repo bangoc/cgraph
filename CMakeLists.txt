@@ -34,7 +34,8 @@ set(cgraph_src
   cgraph_iqueue.c
   cgraph_queue.c
   structural_properties.c
-  cgraph_istack.c)
+  cgraph_istack.c
+  cgraph_rvec.c)
 set(cgraph_inc
   cgraph.h
   cgraph_basic_types.h
@@ -50,6 +51,7 @@ set(cgraph_inc
   cgraph_topology.h
   cgraph_visitor.h
   cgraph_paths.h
+  cgraph_rvec.h
 )
 
 add_library(cgraph STATIC ${cgraph_src})

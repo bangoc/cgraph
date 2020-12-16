@@ -10,5 +10,6 @@
 #include "cgraph_ivec.h"
 #include "cgraph_istack.h"
 #include "cgraph_paths.h"
+#include "cgraph_rvec.h"
 
 #endif  // CGRAPH_H_

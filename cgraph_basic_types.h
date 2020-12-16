@@ -8,6 +8,10 @@
 #define CGRAPH_INTEGER int32_t
 #endif
 
+#ifndef CGRAPH_REAL
+#define CGRAPH_REAL double
+#endif
+
 #if defined(NAN)
     #define CGRAPH_NAN NAN
 #elif defined(INFINITY)
