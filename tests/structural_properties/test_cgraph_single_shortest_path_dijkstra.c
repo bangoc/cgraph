@@ -101,6 +101,14 @@ int main() {
     UT_MSG_FAILED("Case 7. No weight 0-5 (out)");
     any = true;
   }
+
+  /* crash test in the no path case*/
+  cgraph_get_shortest_path_dijkstra(&g, NULL, &epath, 3, 0, weights, CGRAPH_OUT);
+  cgraph_get_shortest_path_dijkstra(&g, &vpath, NULL, 3, 0, weights, CGRAPH_OUT);
+
+  /* A little bit silly because it's a useless processing */
+  cgraph_get_shortest_path_dijkstra(&g, NULL, NULL, 3, 0, weights, CGRAPH_OUT);
+
   if (any) {
     return 1;
   }

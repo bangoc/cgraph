@@ -247,8 +247,12 @@ int cgraph_get_shortest_path_dijkstra(const cgraph_t *graph,
   }
   if (!found) {
     CGRAPH_ERROR("Path not found");
-    cgraph_ivec_setsize(*vertices, 0);
-    cgraph_ivec_setsize(*edges, 0);
+    if (vertices) {
+      cgraph_ivec_setsize(*vertices, 0);
+    }
+    if (edges) {
+      cgraph_ivec_setsize(*edges, 0);
+    }
     return 0;
   }
 
