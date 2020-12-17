@@ -68,9 +68,9 @@ int main() {
   }
 
   cgraph_get_shortest_path_dijkstra(&g, &vpath, &epath, 3, 0, weights, CGRAPH_OUT);
-  if (!cgraph_ivec_equal(vpath, (CGRAPH_INTEGER[]){0}, 1)) {
+  if (cgraph_ivec_size(vpath) > 0) {
     cgraph_ivec_print(vpath);
-    UT_MSG_FAILED("Case 5. vpath contains only to if no path. 3-0 (out)");
+    UT_MSG_FAILED("Case 5. vpath empty if no path. 3-0 (out)");
     any = true;
   }
   if (cgraph_ivec_size(epath) > 0) {

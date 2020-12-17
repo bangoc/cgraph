@@ -225,6 +225,7 @@ int cgraph_get_shortest_path_dijkstra(const cgraph_t *graph,
     CGRAPH_REAL mindist = -cgraph_2wheap_delete_max(&Q); /* dirty hack to avoid using infinity */
     if (minnei == to) {
       found = true;
+      break;
     }
     cgraph_incident(graph, &neis, minnei, mode);
     nlen = cgraph_ivec_size(neis);
@@ -247,7 +248,6 @@ int cgraph_get_shortest_path_dijkstra(const cgraph_t *graph,
   if (!found) {
     CGRAPH_ERROR("Path not found");
     cgraph_ivec_setsize(*vertices, 0);
-    cgraph_ivec_push_back(vertices, to);
     cgraph_ivec_setsize(*edges, 0);
     return 0;
   }
