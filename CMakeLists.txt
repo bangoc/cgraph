@@ -55,7 +55,7 @@ set(cgraph_inc
   cgraph_visitor.h
   cgraph_paths.h
   cgraph_rvec.h
-  cgraph_type_internal.h
+  cgraph_types_internal.h
 )
 
 add_library(cgraph STATIC ${cgraph_src})
