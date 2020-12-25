@@ -82,6 +82,7 @@ if(${BUILD_TESTING})
   add_test(NAME CgraphTopologicalSorting COMMAND cgraph_topological_sorting_ut)
   add_test(NAME CgraphSingleShortestPathDijkstra COMMAND cgraph_single_shortest_path_dijkstra_ut)
   add_test(NAME Cgraph2wHeap COMMAND cgraph_2wheap_ut)
+  add_test(NAME CgraphEdge COMMAND cgraph_edge_ut)
 endif()
 
 # e.g. copy libries headers and binary to bkc

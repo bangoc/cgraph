@@ -13,7 +13,7 @@ is    = {0, 0, 2, 4, 6, 8, 9}
 */
 int test_create_g1(cgraph_t *g) {
   cgraph_ivec_t edges = cgraph_ivec_fromarray(
-        (CGRAPH_INTEGER[]){ 0, 1, 
+        (CGRAPH_INTEGER[]){ 0, 1,
                             0, 3,
                             1, 2,
                             1, 3,
@@ -37,7 +37,7 @@ is   = {0, 0, 2, 5, 7, 9, 10}
 */
 int test_create_g2(cgraph_t *g) {
   cgraph_ivec_t edges = cgraph_ivec_fromarray(
-        (CGRAPH_INTEGER[]){ 0, 1, 
+        (CGRAPH_INTEGER[]){ 0, 1,
                             0, 3,
                             1, 2,
                             1, 3,
@@ -47,7 +47,7 @@ int test_create_g2(cgraph_t *g) {
                             3, 1,
                             1, 4,
                             2, 2}, 20);
-  return cgraph_create(g, edges, 0, true);  
+  return cgraph_create(g, edges, 0, true);
 }
 
 /*
@@ -62,7 +62,7 @@ is   = {0, 0, 1, 3, 5, 7, 8}
 */
 int test_create_g3(cgraph_t *g) {
   cgraph_ivec_t edges = cgraph_ivec_fromarray(
-        (CGRAPH_INTEGER[]){ 0, 1, 
+        (CGRAPH_INTEGER[]){ 0, 1,
                             0, 3,
                             1, 2,
                             1, 3,
@@ -85,12 +85,12 @@ is   = {0, 3, 6, 7, 8, 8, 8}
 */
 int test_create_g4(cgraph_t *g) {
   cgraph_ivec_t edges = cgraph_ivec_fromarray(
-        (CGRAPH_INTEGER[]){ 0, 1, 
-                            0, 3,
+        (CGRAPH_INTEGER[]){ 0, 1,
+                            3, 0,
                             1, 2,
                             1, 3,
                             2, 4,
-                            0, 2,
+                            2, 0,
                             3, 5,
                             1, 4}, 16);
   return cgraph_create(g, edges, 0, false);
@@ -108,7 +108,7 @@ is   = {0, 3, 6, 8, 9, 9, 9}
 */
 int test_create_g5(cgraph_t *g) {
   cgraph_ivec_t edges = cgraph_ivec_fromarray(
-        (CGRAPH_INTEGER[]){ 0, 1, 
+        (CGRAPH_INTEGER[]){ 0, 1,
                             0, 3,
                             1, 2,
                             1, 3,

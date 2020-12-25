@@ -77,7 +77,7 @@ static int cgraph_i_create_start(
             idx++; res[idx] = 0;
         }
         for (i = 1; i < no_of_edges; i++) {
-            CGRAPH_INTEGER n = 
+            CGRAPH_INTEGER n =
               (CGRAPH_INTEGER) (EDGE(i) - EDGE(res[idx]));
             for (j = 0; j < n; j++) {
                 idx++; res[idx] = i;
@@ -184,7 +184,7 @@ int cgraph_add_edges(cgraph_t *graph, cgraph_ivec_t const edges) {
     long int i = 0;
     cgraph_error_handler_t *oldhandler;
     bool ret1, ret2;
-    cgraph_ivec_t newoi = cgraph_ivec_create(), 
+    cgraph_ivec_t newoi = cgraph_ivec_create(),
                   newii = cgraph_ivec_create();
     bool directed = cgraph_is_directed(graph);
 
@@ -315,8 +315,8 @@ void cgraph_destroy(cgraph_t *graph) {
     cgraph_ivec_free(&graph->is);
 }
 
-int cgraph_neighbors(const cgraph_t *graph, 
-                     cgraph_ivec_t *neis, 
+int cgraph_neighbors(const cgraph_t *graph,
+                     cgraph_ivec_t *neis,
                      CGRAPH_INTEGER vid,
                      cgraph_neimode_t mode) {
   const CGRAPH_INTEGER node = vid;
@@ -381,13 +381,13 @@ int cgraph_neighbors(const cgraph_t *graph,
       cgraph_ivec_push_back(neis, n2);
       i2++;
     }
-  }   
+  }
 
   return 0;
 }
 
-int cgraph_incident(const cgraph_t *graph, 
-                    cgraph_ivec_t *eids, 
+int cgraph_incident(const cgraph_t *graph,
+                    cgraph_ivec_t *eids,
                     CGRAPH_INTEGER vid,
                     cgraph_neimode_t mode) {
   const CGRAPH_INTEGER node = vid;
@@ -420,7 +420,7 @@ int cgraph_incident(const cgraph_t *graph,
   return 0;
 }
 
-int cgraph_degree_all(const cgraph_t *graph, 
+int cgraph_degree_all(const cgraph_t *graph,
                       cgraph_ivec_t *res,
                       cgraph_neimode_t mode,
                       bool loops) {
@@ -445,7 +445,7 @@ int cgraph_degree_all(const cgraph_t *graph,
       if (mode & CGRAPH_OUT) {
         v[ graph->from[ed] ] += 1;
       }
-    }    
+    }
   }
   return 0;
 }
@@ -496,4 +496,39 @@ int cgraph_degree_one(const cgraph_t *graph,
   }
   *res = d;
   return 0;
+}
+
+/**
+ * \function Cgraph_edge
+ * \brief Gives the head and tail vertices of an edge.
+ *
+ * \param graph The graph object.
+ * \param eid The edge id.
+ * \param from Pointer to an \type igraph_integer_t. The tail of the edge
+ * will be placed here.
+ * \param to Pointer to an \type igraph_integer_t. The head of the edge
+ * will be placed here.
+ * \return Error code. The current implementation always returns with
+ * success.
+ * for undirected graph, in the output from <= to
+ * \sa \ref cgraph_get_eid() for the opposite operation;
+ *     \ref CGRAPH_TO(), \ref CGRAPH_FROM() and \ref CGRAPH_OTHER() for
+ *     a faster but non-error-checked version.
+ *
+ * Added in version 0.2.</para><para>
+ *
+ * Time complexity: O(1).
+ */
+
+int cgraph_edge(const cgraph_t *graph, CGRAPH_INTEGER eid,
+               CGRAPH_INTEGER *from, CGRAPH_INTEGER *to) {
+    if (cgraph_is_directed(graph)) {
+        *from = (CGRAPH_INTEGER) (graph->from)[eid];
+        *to   = (CGRAPH_INTEGER) (graph->to  )[eid];
+    } else {
+        *from = (CGRAPH_INTEGER) (graph->to  )[eid];
+        *to   = (CGRAPH_INTEGER) (graph->from)[eid];
+    }
+
+    return 0;
 }

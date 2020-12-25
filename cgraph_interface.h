@@ -34,6 +34,8 @@ int cgraph_degree_one(const cgraph_t *graph,
                       const CGRAPH_INTEGER node,
                       cgraph_neimode_t mode,
                       bool loops);
+int cgraph_edge(const cgraph_t *graph, CGRAPH_INTEGER eid,
+               CGRAPH_INTEGER *from, CGRAPH_INTEGER *to);
 
 #ifdef __cplusplus
 }
