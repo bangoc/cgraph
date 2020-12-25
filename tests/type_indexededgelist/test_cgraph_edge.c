@@ -43,7 +43,7 @@ int main() {
   for (int eid = 0; eid < cgraph_ecount(&g); ++eid) {
     cgraph_edge(&g, eid, &from, &to);
     if (from != edges[2 * eid] || to != edges[2 * eid + 1]) {
-      UT_MSG_FAILED("Case 1. Edge from -> to");
+      UT_MSG_FAILED("Case 2. Undirected from -- to");
       fprintf(stderr, "%d %d vs %d %d\n", from, to, edges[2 * eid], edges[2 * eid + 1]);
       any = true;
       break;

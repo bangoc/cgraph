@@ -532,3 +532,100 @@ int cgraph_edge(const cgraph_t *graph, CGRAPH_INTEGER eid,
 
     return 0;
 }
+
+/**
+ * \function cgraph_get_eid
+ * \brief Get the edge id from the end points of an edge.
+ *
+ * For undirected graphs \c pfrom and \c pto are exchangeable.
+ *
+ * \param graph The graph object.
+ * \param eid Pointer to an integer, the edge id will be stored here.
+ * \param pfrom The starting point of the edge.
+ * \param pto The end point of the edge.
+ * \param directed Logical constant, whether to search for directed
+ *        edges in a directed graph. Ignored for undirected graphs.
+ * \return Error code.
+ * \sa \ref igraph_edge() for the opposite operation.
+ *
+ * Time complexity: O(log (d)), where d is smaller of the out-degree
+ * of \c pfrom and in-degree of \c pto if \p directed is true. If \p directed
+ * is false, then it is O(log(d)+log(d2)), where d is the same as before and
+ * d2 is the minimum of the out-degree of \c pto and the in-degree of \c pfrom.
+ *
+ * \example examples/simple/igraph_get_eid.c
+ *
+ * Added in version 0.2.</para><para>
+ */
+
+#define BINSEARCH(start,end,value,iindex,edgelist,N,pos) \
+  do {                                                   \
+    while ((start) < (end)) {                            \
+      CGRAPH_INTEGER mid = (start)+((end)-(start))/2;    \
+      CGRAPH_INTEGER e = (iindex)[mid];                  \
+      if ((edgelist)[e] < (value)) {                     \
+        (start)=mid+1;                                   \
+      } else {                                           \
+        (end)=mid;                                       \
+      }                                                  \
+    }                                                    \
+    if ((start)<(N)) {                                   \
+      CGRAPH_INTEGER e=(iindex)[(start)];                \
+      if ((edgelist)[e] == (value)) {                    \
+        *(pos)=(CGRAPH_INTEGER) e;                       \
+      }                                                  \
+    }                                                    \
+  } while(0)
+
+#define FIND_DIRECTED_EDGE(graph,xfrom,xto,eid)          \
+    do {                                                 \
+        CGRAPH_INTEGER start = (graph->os)[xfrom];       \
+        CGRAPH_INTEGER end = (graph->os)[xfrom+1];       \
+        CGRAPH_INTEGER N = end;                          \
+        CGRAPH_INTEGER start2 = (graph->is)[xto];        \
+        CGRAPH_INTEGER end2 = (graph->is)[xto+1];        \
+        CGRAPH_INTEGER N2 = end2;                        \
+        if (end - start < end2 - start2) {                                \
+            BINSEARCH(start,end,xto,graph->oi,graph->to,N,eid);           \
+        } else {                                                          \
+            BINSEARCH(start2,end2,xfrom,graph->ii,graph->from,N2,eid);    \
+        }                                                                 \
+    } while (0)
+
+#define FIND_UNDIRECTED_EDGE(graph,from,to,eid)         \
+    do {                                                \
+        CGRAPH_INTEGER xfrom1= from > to ? from : to;   \
+        CGRAPH_INTEGER xto1= from > to ? to : from;     \
+        FIND_DIRECTED_EDGE(graph,xfrom1,xto1,eid);      \
+    } while (0)
+
+int cgraph_get_eid(const cgraph_t *graph, CGRAPH_INTEGER *eid,
+                   CGRAPH_INTEGER pfrom, CGRAPH_INTEGER pto,
+                   bool directed) {
+
+    CGRAPH_INTEGER from = pfrom, to = pto;
+    CGRAPH_INTEGER nov = cgraph_vcount(graph);
+
+    if (from < 0 || to < 0 || from > nov - 1 || to > nov - 1) {
+      CGRAPH_ERROR("cannot get edge id");
+    }
+
+    *eid = -1;
+    if (cgraph_is_directed(graph)) {
+
+      /* Directed graph */
+      FIND_DIRECTED_EDGE(graph, from, to, eid);
+      if (!directed && *eid < 0) {
+        FIND_DIRECTED_EDGE(graph, to, from, eid);
+      }
+    } else {
+      /* Undirected graph, they only have one mode */
+      FIND_UNDIRECTED_EDGE(graph, from, to, eid);
+    }
+
+    if (*eid < 0) {
+      CGRAPH_ERROR("Cannot get edge id, no such edge");
+    }
+
+    return 0;
+}
