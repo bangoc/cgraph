@@ -40,7 +40,7 @@ int cgraph_rvec_grow(cgraph_rvec_t *v, CGRAPH_INTEGER newcapacity) {
   if (capacity < newcapacity) {
     const size_t __sz = newcapacity * sizeof(CGRAPH_REAL) + (sizeof(size_t) * 2);
     size_t *__p1 = &((size_t *)(*v))[-2];
-    size_t *__p2 = realloc(__p1, (__sz));
+    size_t *__p2 = (size_t *)realloc(__p1, (__sz));
     assert(__p2);
     (*v) = (cgraph_rvec_t)(&__p2[2]);
     cgraph_rvec_t vec = *v;

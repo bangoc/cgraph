@@ -214,7 +214,8 @@ int cgraph_get_shortest_path_dijkstra(const cgraph_t *graph,
   for (CGRAPH_INTEGER i = 0; i < no_of_nodes; ++i) {
     dists[i] = -1.0;
   }
-  CGRAPH_INTEGER *parents = malloc(sizeof(CGRAPH_INTEGER) * no_of_nodes);
+  CGRAPH_INTEGER *parents =
+    (CGRAPH_INTEGER *)malloc(sizeof(CGRAPH_INTEGER) * no_of_nodes);
   dists[from] = 0.0;
   parents[from] = -1;  /* no dirty hack in back trace */
   cgraph_2wheap_push_with_index(&Q, from, 0);

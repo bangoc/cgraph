@@ -275,7 +275,8 @@ int cgraph_dfs(const cgraph_t *graph,
 
   cgraph_ivec_t nptr = cgraph_ivec_create();
   cgraph_ivec_init(&nptr, no_of_nodes);
-  cgraph_ivec_t *neis_cache = calloc(no_of_nodes, sizeof(cgraph_ivec_t));
+  cgraph_ivec_t *neis_cache =
+    (cgraph_ivec_t *)calloc(no_of_nodes, sizeof(cgraph_ivec_t));
   cgraph_ivec_t neis = NULL;
   for (actroot = 0; actroot < no_of_nodes; ) {
 

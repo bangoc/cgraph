@@ -122,7 +122,7 @@ int cgraph_ivec_grow(cgraph_ivec_t *v, CGRAPH_INTEGER newcapacity) {
   if (capacity < newcapacity) {
     const size_t __sz = newcapacity * sizeof(CGRAPH_INTEGER) + (sizeof(size_t) * 2);
     size_t *__p1 = &((size_t *)(*v))[-2];
-    size_t *__p2 = realloc(__p1, (__sz));
+    size_t *__p2 = (size_t *)realloc(__p1, (__sz));
     assert(__p2);
     (*v) = (cgraph_ivec_t)(&__p2[2]);
     cgraph_ivec_t vec = *v;

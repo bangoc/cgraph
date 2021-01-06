@@ -14,8 +14,8 @@ struct cgraph_queue_s {
 };
 
 CGraphQueue* cgraph_queue_create() {
-  CGraphQueue *q;
-  q = malloc(sizeof(CGraphQueue));
+  CGraphQueue *q =
+    (CGraphQueue *)malloc(sizeof(CGraphQueue));
 
   if (q == NULL) {
     return q;
@@ -42,7 +42,8 @@ void cgraph_queue_free(CGraphQueue *q) {
 }
 
 int cgraph_queue_enqueue(CGraphQueue *q, void *value) {
-  CGraphQueueNode *node = malloc(sizeof(CGraphQueueNode));
+  CGraphQueueNode *node =
+    (CGraphQueueNode *)malloc(sizeof(CGraphQueueNode));
 
   if (node == NULL) {
     return 1;

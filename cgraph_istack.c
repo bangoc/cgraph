@@ -8,7 +8,7 @@ struct cgraph_istack_s {
 };
 
 cgraph_istack_t cgraph_istack_create() {
-  cgraph_istack_t s = malloc(sizeof(CGraphIStack));
+  cgraph_istack_t s = (cgraph_istack_t)malloc(sizeof(CGraphIStack));
   if (s != NULL) {
     s->items = cgraph_ivec_create();
   }
