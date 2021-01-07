@@ -13,6 +13,10 @@ if (${CMAKE_BUILD_TYPE} STREQUAL Debug)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g")
 endif()
 
+if (${CMAKE_BUILD_TYPE} STREQUAL Release)
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O2")
+endif()
+
 if (WARN_ERROR)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Werror -Wall")
 endif ()
@@ -89,7 +93,31 @@ endif()
 # e.g. copy libries headers and binary to bkc
 # cmake .. -DCMAKE_INSTALL_PREFIX=bkc
 MESSAGE(STATUS "Install prefix: ${CMAKE_INSTALL_PREFIX}")
-set(cgraph_include_dest "cgraph")
+set(cgraph_include_dest "include/bkc")
 set(cgraph_lib_dest "lib")
-install(TARGETS cgraph DESTINATION "${cgraph_lib_dest}")
 install(FILES ${cgraph_inc} DESTINATION "${cgraph_include_dest}")
+install(TARGETS cgraph DESTINATION "${cgraph_lib_dest}")
+
+set(CPACK_PACKAGE_INSTALL_DIRECTORY "/usr")
+set(CPACK_GENERATOR "DEB")
+set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Nguyen Ba Ngoc")
+set(CPACK_DEBIAN_PACKAGE_DESCRIPTION
+              "A library of graph algorithms built on top of C \
+              standard libraries.")
+set(CMAKE_PROJECT_HOMEPAGE_URL "https://github.com/bangoc/cgraph")
+set(CPACK_DEBIAN_PACKAGE_PRIORITY "standard")
+set(CPACK_DEBIAN_PACKAGE_SECTION "devel")
+
+file (READ ${CMAKE_SOURCE_DIR}/VERSION CGRAPH_VERSION)
+
+# Set a Package Version
+set(CPACK_PACKAGE_VERSION ${CGRAPH_VERSION})
+include(CPack)
+
+# To build a debian package
+# cmake .. -DCMAKE_BUILD_TYPE=Release
+# make -j 2
+# make package
+#
+# To install the debian package
+# sudo dpkg -i package.deb

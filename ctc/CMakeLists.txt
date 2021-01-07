@@ -39,7 +39,7 @@ set(my_header_files
 
 add_library(${PROJECT_NAME} STATIC ${source_files})
 
-set(ctc_include_dest "ctc")
+set(ctc_include_dest "include/bkc/ctc")
 set(ctc_lib_dest "lib")
 install(FILES ${header_files} DESTINATION ${ctc_include_dest})
 install(FILES ${my_header_files} DESTINATION ${ctc_include_dest}/my)
