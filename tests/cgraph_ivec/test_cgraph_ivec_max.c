@@ -14,9 +14,8 @@ int main() {
     2, 3
   };
   int n = sizeof(a)/sizeof(int);
-  for (int i = 0; i < n; ++i) {
-    cgraph_ivec_push_back(&v, (CGRAPH_INTEGER)a[i]);
-  }
+  cgraph_ivec_append(&v, a, n);
+
   if (cgraph_ivec_max(v) == 5) {
     UT_MSG_OK(k_test_name);
     return 0;
