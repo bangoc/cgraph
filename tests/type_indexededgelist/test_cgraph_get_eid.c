@@ -6,7 +6,7 @@
 int main() {
   cgraph_t g;
   test_create_g1(&g);
-  cgraph_ivec_t edges = cgraph_ivec_fromarray(
+  cgraph_ivec_t edges = cgraph_ivec_from_array(
       (CGRAPH_INTEGER[]){ 0, 1,
                           0, 3,
                           1, 2,

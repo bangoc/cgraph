@@ -89,6 +89,7 @@ if(${BUILD_TESTING})
   add_test(NAME CgraphEdge COMMAND cgraph_edge_ut)
   add_test(NAME CgraphGetEid COMMAND cgraph_get_eid_ut)
   add_test(NAME CgraphIvecAppend COMMAND cgraph_ivec_append_ut)
+  add_test(NAME CgraphIvecFromArray COMMAND cgraph_ivec_from_array_ut)
 endif()
 
 # e.g. copy libries headers and binary to bkc

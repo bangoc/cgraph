@@ -2,6 +2,25 @@
 #include <stdlib.h>
 
 #include "cgraph_ivec.h"
+#include "cgraph_error.h"
+
+cgraph_ivec_t cgraph_ivec_create() {
+  return (cgraph_ivec_t)&((size_t*)calloc(2, sizeof(size_t)))[2];
+}
+
+cgraph_ivec_t cgraph_ivec_from_array(CGRAPH_INTEGER *a,
+                                    CGRAPH_INTEGER n) {
+  cgraph_ivec_t v = cgraph_ivec_create();
+  int ret = 0;
+  for (CGRAPH_INTEGER i = 0; i < n; ++i) {
+    ret += cgraph_ivec_push_back(&v, a[i]);
+  }
+  if (ret) {
+    CGRAPH_ERROR("Can not create a vector from an array");
+    cgraph_ivec_free(&v);
+  }
+  return ret ==0? v: NULL;
+}
 
 CGRAPH_INTEGER cgraph_ivec_max(cgraph_ivec_t const v) {
   CGRAPH_INTEGER max = v[0];
@@ -111,10 +130,6 @@ int cgraph_ivec_print(cgraph_ivec_t const v) {
   }
   printf("\n");
   return 0;
-}
-
-cgraph_ivec_t cgraph_ivec_create() {
-  return (cgraph_ivec_t)&((size_t*)calloc(2, sizeof(size_t)))[2];
 }
 
 int cgraph_ivec_grow(cgraph_ivec_t *v, CGRAPH_INTEGER newcapacity) {

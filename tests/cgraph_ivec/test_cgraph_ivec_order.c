@@ -5,8 +5,8 @@
 #include "ut.h"
 
 int main() {
-  cgraph_ivec_t v = cgraph_ivec_fromarray((CGRAPH_INTEGER []){1, 0, 2, 2, 3, 1}, 6);
-  cgraph_ivec_t v2 = cgraph_ivec_fromarray((CGRAPH_INTEGER []){3, 2, 1, 3, 2, 0}, 6);
+  cgraph_ivec_t v = cgraph_ivec_from_array((CGRAPH_INTEGER []){1, 0, 2, 2, 3, 1}, 6);
+  cgraph_ivec_t v2 = cgraph_ivec_from_array((CGRAPH_INTEGER []){3, 2, 1, 3, 2, 0}, 6);
   cgraph_ivec_t res = cgraph_ivec_create();
   CGRAPH_CHECK(cgraph_ivec_init(&res, 6));
   cgraph_ivec_order(v, v2, res);

@@ -24,6 +24,8 @@ extern "C"{
 #endif
 
 cgraph_ivec_t cgraph_ivec_create();
+cgraph_ivec_t cgraph_ivec_from_array(CGRAPH_INTEGER *a,
+                                    CGRAPH_INTEGER n);
 
 /* Pass vector pointer by value */
 CGRAPH_INTEGER cgraph_ivec_max(cgraph_ivec_t const v);
