@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 project(cgraph)
 
-option(WARN_ERROR "Turn all warnings into errors" ON)
+option(WARN_ERROR "Turn all warnings into errors" OFF)
 
 set(CMAKE_C_STANDARD 99)
 
@@ -10,7 +10,7 @@ if (NOT CMAKE_BUILD_TYPE)
 endif (NOT CMAKE_BUILD_TYPE)
 
 if (${CMAKE_BUILD_TYPE} STREQUAL Debug)
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -Wall")
 endif()
 
 if (${CMAKE_BUILD_TYPE} STREQUAL Release)
@@ -18,7 +18,7 @@ if (${CMAKE_BUILD_TYPE} STREQUAL Release)
 endif()
 
 if (WARN_ERROR)
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Werror -Wall")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Werror")
 endif ()
 
 include_directories(${CMAKE_SOURCE_DIR})

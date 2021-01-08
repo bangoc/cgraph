@@ -16,7 +16,6 @@ int main() {
                           3, 5,
                           3, 1,
                           1, 4}, 18);
-  CGRAPH_INTEGER from, to;
   bool any = false;
   CGRAPH_INTEGER id = 0, id2 = 0;
   for (int eid = 0; eid < cgraph_ecount(&g); ++eid) {
