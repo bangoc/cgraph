@@ -150,6 +150,15 @@ int cgraph_ivec_push_back(cgraph_ivec_t *v, CGRAPH_INTEGER value) {
   return 0;
 }
 
+int cgraph_ivec_append(cgraph_ivec_t *v,
+                CGRAPH_INTEGER *a, CGRAPH_INTEGER n) {
+  int ret = 0;
+  for (CGRAPH_INTEGER i = 0; i < n; ++i) {
+    ret += cgraph_ivec_push_back(v, a[i]);
+  }
+  return ret;
+}
+
 int cgraph_ivec_free(cgraph_ivec_t *v) {
   cgraph_ivec_t vec = *v;
   if (vec) {

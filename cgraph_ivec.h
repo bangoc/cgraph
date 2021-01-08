@@ -50,6 +50,8 @@ int cgraph_ivec_init(cgraph_ivec_t *v,
 
 int cgraph_ivec_push_back(cgraph_ivec_t *v,
                           CGRAPH_INTEGER value);
+int cgraph_ivec_append(cgraph_ivec_t *v,
+                CGRAPH_INTEGER *a, CGRAPH_INTEGER n);
 int cgraph_ivec_free(cgraph_ivec_t *v);
 
 #ifdef __cplusplus
