@@ -21,7 +21,7 @@ if (WARN_ERROR)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Werror")
 endif ()
 
-include_directories(${CMAKE_SOURCE_DIR})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 add_subdirectory(examples)
 add_subdirectory(ctc)
 
@@ -110,7 +110,7 @@ set(CMAKE_PROJECT_HOMEPAGE_URL "https://github.com/bangoc/cgraph")
 set(CPACK_DEBIAN_PACKAGE_PRIORITY "standard")
 set(CPACK_DEBIAN_PACKAGE_SECTION "devel")
 
-file (READ ${CMAKE_SOURCE_DIR}/VERSION CGRAPH_VERSION)
+file (READ ${CMAKE_CURRENT_SOURCE_DIR}/VERSION CGRAPH_VERSION)
 
 # Set a Package Version
 set(CPACK_PACKAGE_VERSION ${CGRAPH_VERSION})
