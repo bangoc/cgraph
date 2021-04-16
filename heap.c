@@ -219,7 +219,7 @@ int cgraph_2wheap_check(cgraph_2wheap_t *h) {
   }
 
   if (error) {
-    CGRAPH_ERROR("Inconsistent heap");
+    CGRAPH_ERROR("Inconsistent heap", CGRAPH_FAILURE);
     return 1;
   }
 

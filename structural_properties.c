@@ -57,7 +57,7 @@ int cgraph_is_dag(const cgraph_t *graph, bool *res) {
 
   *res = (vertices_left == 0);
   if (vertices_left < 0) {
-    CGRAPH_ERROR("vertices_left < 0 in cgraph_is_dag, possible bug");
+    CGRAPH_ERROR("vertices_left < 0 in cgraph_is_dag, possible bug", CGRAPH_FAILURE);
   }
 
   cgraph_ivec_free(&degrees);
@@ -109,13 +109,13 @@ int cgraph_topological_sorting(const cgraph_t *graph,
   cgraph_neimode_t deg_mode;
 
   if (mode == CGRAPH_ALL || !cgraph_is_directed(graph)) {
-    CGRAPH_ERROR("topological sorting does not make sense for undirected graphs");
+    CGRAPH_ERROR("topological sorting does not make sense for undirected graphs", CGRAPH_FAILURE);
   } else if (mode == CGRAPH_OUT) {
     deg_mode = CGRAPH_IN;
   } else if (mode == CGRAPH_IN) {
     deg_mode = CGRAPH_OUT;
   } else {
-    CGRAPH_ERROR("invalid mode");
+    CGRAPH_ERROR("invalid mode", CGRAPH_FAILURE);
   }
 
   /* with loops, igraph doesn't count loop */
@@ -145,7 +145,7 @@ int cgraph_topological_sorting(const cgraph_t *graph,
   }
 
   if (cgraph_ivec_size(*res) < no_of_nodes) {
-    CGRAPH_ERROR("graph contains a cycle, partial result is returned");
+    CGRAPH_ERROR("graph contains a cycle, partial result is returned", CGRAPH_FAILURE);
   }
 
   cgraph_ivec_free(&degrees);
@@ -207,7 +207,7 @@ int cgraph_get_shortest_path_dijkstra(const cgraph_t *graph,
   cgraph_2wheap_t Q;
   cgraph_rvec_t dists = cgraph_rvec_create();
   if (cgraph_rvec_size(weights) != no_of_edges) {
-    CGRAPH_ERROR("Weight vector length does not match");
+    CGRAPH_ERROR("Weight vector length does not match", CGRAPH_FAILURE);
   }
   CGRAPH_CHECK(cgraph_2wheap_init(&Q, no_of_nodes));
   cgraph_rvec_init(&dists, no_of_edges);
@@ -247,7 +247,7 @@ int cgraph_get_shortest_path_dijkstra(const cgraph_t *graph,
     }
   }
   if (!found) {
-    CGRAPH_ERROR("Path not found");
+    CGRAPH_ERROR("Path not found", CGRAPH_FAILURE);
     if (vertices) {
       cgraph_ivec_setsize(*vertices, 0);
     }

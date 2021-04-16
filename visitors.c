@@ -27,19 +27,19 @@ int cgraph_bfs(const cgraph_t *graph,
   CGRAPH_INTEGER pred_vec = -1;
 
   if (root < 0 || root >= no_of_nodes) {
-    CGRAPH_ERROR("Invalid root vertex in BFS");
+    CGRAPH_ERROR("Invalid root vertex in BFS", CGRAPH_FAILURE);
   }
 
   if (restricted) {
     CGRAPH_INTEGER min, max;
     cgraph_ivec_minmax(restricted, &min, &max);
     if (min < 0 || max >= no_of_nodes) {
-      CGRAPH_ERROR("Invalid vertex id in restricted set");
+      CGRAPH_ERROR("Invalid vertex id in restricted set", CGRAPH_FAILURE);
     }
   }
 
   if (mode != CGRAPH_OUT && mode != CGRAPH_IN && mode != CGRAPH_ALL) {
-    CGRAPH_ERROR("Invalid mode argument");
+    CGRAPH_ERROR("Invalid mode argument", CGRAPH_FAILURE);
   }
 
   if (!cgraph_is_directed(graph)) {
@@ -237,11 +237,11 @@ int cgraph_dfs(const cgraph_t *graph,
   CGRAPH_INTEGER actroot, act_rank = 0, rank_out = 0, act_dist = 0;
 
   if (root < 0 || root >= no_of_nodes) {
-    CGRAPH_ERROR("Invalid root vertex for DFS");
+    CGRAPH_ERROR("Invalid root vertex for DFS", CGRAPH_FAILURE);
   }
 
   if (mode != CGRAPH_OUT && mode != CGRAPH_IN && mode != CGRAPH_ALL) {
-    CGRAPH_ERROR("Invalid mode argument");
+    CGRAPH_ERROR("Invalid mode argument", CGRAPH_FAILURE);
   }
 
   if (!cgraph_is_directed(graph)) {

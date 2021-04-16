@@ -131,7 +131,7 @@ static int cgraph_i_create_start(
 int cgraph_empty(cgraph_t *graph, CGRAPH_INTEGER n, bool directed) {
 
   if (n < 0) {
-    CGRAPH_ERROR("cannot create empty graph with negative number of vertices");
+    CGRAPH_ERROR("cannot create empty graph with negative number of vertices", CGRAPH_FAILURE);
   }
 
   graph->n = 0;
@@ -189,10 +189,10 @@ int cgraph_add_edges(cgraph_t *graph, cgraph_ivec_t const edges) {
     bool directed = cgraph_is_directed(graph);
 
     if (cgraph_ivec_size(edges) % 2 != 0) {
-        CGRAPH_ERROR("invalid (odd) length of edges vector");
+        CGRAPH_ERROR("invalid (odd) length of edges vector", CGRAPH_FAILURE);
     }
     if (!cgraph_ivec_isininterval(edges, 0, cgraph_vcount(graph) - 1)) {
-        CGRAPH_ERROR("cannot add edges");
+        CGRAPH_ERROR("cannot add edges", CGRAPH_FAILURE);
     }
 
     /* from & to */
@@ -219,7 +219,7 @@ int cgraph_add_edges(cgraph_t *graph, cgraph_ivec_t const edges) {
         cgraph_ivec_setsize(graph->from, no_of_edges); /* gets smaller */
         cgraph_ivec_setsize(graph->to, no_of_edges);   /* gets smaller */
         cgraph_set_error_handler(oldhandler);
-        CGRAPH_ERROR("cannot add edges");
+        CGRAPH_ERROR("cannot add edges", CGRAPH_FAILURE);
     }
     ret1 = cgraph_ivec_order(graph->from, graph->to, newoi);
     ret2 = cgraph_ivec_order(graph->to, graph->from, newii);
@@ -229,7 +229,7 @@ int cgraph_add_edges(cgraph_t *graph, cgraph_ivec_t const edges) {
         cgraph_ivec_free(&newoi);
         cgraph_ivec_free(&newii);
         cgraph_set_error_handler(oldhandler);
-        CGRAPH_ERROR("cannot add edges");
+        CGRAPH_ERROR("cannot add edges", CGRAPH_FAILURE);
     }
 
     /* os & is, its length does not change, error safe */
@@ -272,7 +272,7 @@ int cgraph_add_vertices(cgraph_t *graph, CGRAPH_INTEGER nv) {
   long int i;
 
   if (nv < 0) {
-    CGRAPH_ERROR("cannot add negative number of vertices");
+    CGRAPH_ERROR("cannot add negative number of vertices", CGRAPH_FAILURE);
   }
 
   CGRAPH_CHECK(cgraph_ivec_grow(&graph->os, graph->n + nv + 1));
@@ -322,11 +322,11 @@ int cgraph_neighbors(const cgraph_t *graph,
   const CGRAPH_INTEGER node = vid;
 
   if (node < 0 || node > cgraph_vcount(graph) - 1) {
-    CGRAPH_ERROR("cannot get neighbors");
+    CGRAPH_ERROR("cannot get neighbors", CGRAPH_FAILURE);
   }
   if (mode != CGRAPH_OUT && mode != CGRAPH_IN &&
       mode != CGRAPH_ALL) {
-    CGRAPH_ERROR("cannot get neighbors");
+    CGRAPH_ERROR("cannot get neighbors", CGRAPH_FAILURE);
   }
 
   if (! graph->directed) {
@@ -392,11 +392,11 @@ int cgraph_incident(const cgraph_t *graph,
                     cgraph_neimode_t mode) {
   const CGRAPH_INTEGER node = vid;
   if (node < 0 || node > cgraph_vcount(graph) - 1) {
-    CGRAPH_ERROR("cannot get neighbors");
+    CGRAPH_ERROR("cannot get neighbors", CGRAPH_FAILURE);
   }
   if (mode != CGRAPH_OUT && mode != CGRAPH_IN &&
       mode != CGRAPH_ALL) {
-    CGRAPH_ERROR("cannot get neighbors");
+    CGRAPH_ERROR("cannot get neighbors", CGRAPH_FAILURE);
   }
 
   if (! graph->directed) {
@@ -426,7 +426,7 @@ int cgraph_degree_all(const cgraph_t *graph,
                       bool loops) {
   if (mode != CGRAPH_OUT && mode != CGRAPH_IN &&
       mode != CGRAPH_ALL) {
-    CGRAPH_ERROR("cannot get degree");
+    CGRAPH_ERROR("cannot get degree", CGRAPH_FAILURE);
   }
   if (!cgraph_is_directed(graph)) {
     mode = CGRAPH_ALL;
@@ -456,11 +456,11 @@ int cgraph_degree_one(const cgraph_t *graph,
                       cgraph_neimode_t mode,
                       bool loops) {
   if (node < 0 || node > cgraph_vcount(graph) - 1) {
-    CGRAPH_ERROR("cannot get degree");
+    CGRAPH_ERROR("cannot get degree", CGRAPH_FAILURE);
   }
   if (mode != CGRAPH_OUT && mode != CGRAPH_IN &&
       mode != CGRAPH_ALL) {
-    CGRAPH_ERROR("cannot get degree");
+    CGRAPH_ERROR("cannot get degree", CGRAPH_FAILURE);
   }
   if (!cgraph_is_directed(graph)) {
     mode = CGRAPH_ALL;
@@ -607,7 +607,7 @@ int cgraph_get_eid(const cgraph_t *graph, CGRAPH_INTEGER *eid,
     CGRAPH_INTEGER nov = cgraph_vcount(graph);
 
     if (from < 0 || to < 0 || from > nov - 1 || to > nov - 1) {
-      CGRAPH_ERROR("cannot get edge id");
+      CGRAPH_ERROR("cannot get edge id, invalid input", CGRAPH_FAILURE);
     }
 
     *eid = -1;
@@ -624,7 +624,7 @@ int cgraph_get_eid(const cgraph_t *graph, CGRAPH_INTEGER *eid,
     }
 
     if (*eid < 0) {
-      CGRAPH_ERROR("Cannot get edge id, no such edge");
+      CGRAPH_ERROR("Cannot get edge id, no such edge", CGRAPH_FAILURE);
     }
 
     return 0;

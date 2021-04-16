@@ -3,22 +3,22 @@
 #include "cgraph_interface.h"
 #include "cgraph_ivec.h"
 
-int cgraph_create(cgraph_t *graph, 
+int cgraph_create(cgraph_t *graph,
           cgraph_ivec_t const edges,
-          CGRAPH_INTEGER n, 
+          CGRAPH_INTEGER n,
           bool directed) {
   bool has_edges = cgraph_ivec_size(edges) > 0;
   CGRAPH_INTEGER max = has_edges ? cgraph_ivec_max(edges) + 1 : 0;
 
   if (cgraph_ivec_size(edges) % 2 != 0) {
-    CGRAPH_ERROR("Invalid (odd) edges vector");
+    CGRAPH_ERROR("Invalid (odd) edges vector", CGRAPH_FAILURE);
   }
   if (has_edges && !cgraph_ivec_isininterval(edges, 0, max - 1)) {
-    CGRAPH_ERROR("Invalid (negative) vertex id");
+    CGRAPH_ERROR("Invalid (negative) vertex id", CGRAPH_FAILURE);
   }
 
   CGRAPH_CHECK(cgraph_empty(graph, n, directed));
-  
+
   if (has_edges) {
     CGRAPH_INTEGER vc = cgraph_vcount(graph);
     if (vc < max) {
