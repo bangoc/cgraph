@@ -4,7 +4,7 @@
 #include "ut.h"
 
 int main() {
-  cgraph_p g = test_create_g1();
+  cgraph_t g = test_create_g1();
   bool ret = false, failed = false;
   cgraph_is_dag(g, &ret);
   if (ret != false) {

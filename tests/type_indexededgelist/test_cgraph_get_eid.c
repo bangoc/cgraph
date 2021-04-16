@@ -4,7 +4,7 @@
 #include "ut.h"
 
 int main() {
-  cgraph_p g = test_create_g1();
+  cgraph_t g = test_create_g1();
   cgraph_ivec_t edges = cgraph_ivec_from_array(
       (CGRAPH_INTEGER[]){ 0, 1,
                           0, 3,

@@ -15,7 +15,7 @@
  * Time complexity: O(1)
  */
 ;
-CGRAPH_INTEGER cgraph_vcount(const cgraph_p graph) {
+CGRAPH_INTEGER cgraph_vcount(const cgraph_t graph) {
   return graph->n;
 }
 
@@ -29,7 +29,7 @@ CGRAPH_INTEGER cgraph_vcount(const cgraph_p graph) {
  *
  * Time complexity: O(1)
  */
-CGRAPH_INTEGER cgraph_ecount(const cgraph_p graph) {
+CGRAPH_INTEGER cgraph_ecount(const cgraph_t graph) {
   return (CGRAPH_INTEGER) cgraph_ivec_size(graph->from);
 }
 
@@ -47,7 +47,7 @@ CGRAPH_INTEGER cgraph_ecount(const cgraph_p graph) {
  * \example examples/simple/igraph_is_directed.c
  */
 
-bool cgraph_is_directed(const cgraph_p graph) {
+bool cgraph_is_directed(const cgraph_t graph) {
     return graph->directed;
 }
 
@@ -123,7 +123,7 @@ static int cgraph_i_create_start(
  *
  * \example examples/simple/igraph_add_edges.c
  */
-int cgraph_add_edges(cgraph_p graph, cgraph_ivec_t const edges) {
+int cgraph_add_edges(cgraph_t graph, cgraph_ivec_t const edges) {
     long int no_of_edges = cgraph_ecount(graph);
     long int edges_to_add = cgraph_ivec_size(edges) / 2;
     long int i = 0;
@@ -212,7 +212,7 @@ int cgraph_add_edges(cgraph_p graph, cgraph_ivec_t const edges) {
  *
  * \example examples/simple/igraph_add_vertices.c
  */
-int cgraph_add_vertices(cgraph_p graph, CGRAPH_INTEGER nv) {
+int cgraph_add_vertices(cgraph_t graph, CGRAPH_INTEGER nv) {
   long int ec = cgraph_ecount(graph);
   long int i;
 
@@ -251,8 +251,8 @@ int cgraph_add_vertices(cgraph_p graph, CGRAPH_INTEGER nv) {
  *
  * Time complexity: operating system specific.
  */
-void cgraph_destroy(cgraph_p *graph) {
-  cgraph_p g = *graph;
+void cgraph_destroy(cgraph_t *graph) {
+  cgraph_t g = *graph;
   cgraph_ivec_free(&g->from);
   cgraph_ivec_free(&g->to);
   cgraph_ivec_free(&g->oi);
@@ -263,7 +263,7 @@ void cgraph_destroy(cgraph_p *graph) {
   g = NULL;
 }
 
-int cgraph_neighbors(const cgraph_p graph,
+int cgraph_neighbors(const cgraph_t graph,
                      cgraph_ivec_t *neis,
                      CGRAPH_INTEGER vid,
                      cgraph_neimode_t mode) {
@@ -334,7 +334,7 @@ int cgraph_neighbors(const cgraph_p graph,
   return 0;
 }
 
-int cgraph_incident(const cgraph_p graph,
+int cgraph_incident(const cgraph_t graph,
                     cgraph_ivec_t *eids,
                     CGRAPH_INTEGER vid,
                     cgraph_neimode_t mode) {
@@ -368,7 +368,7 @@ int cgraph_incident(const cgraph_p graph,
   return 0;
 }
 
-int cgraph_degree_all(const cgraph_p graph,
+int cgraph_degree_all(const cgraph_t graph,
                       cgraph_ivec_t *res,
                       cgraph_neimode_t mode,
                       bool loops) {
@@ -398,7 +398,7 @@ int cgraph_degree_all(const cgraph_p graph,
   return 0;
 }
 
-int cgraph_degree_one(const cgraph_p graph,
+int cgraph_degree_one(const cgraph_t graph,
                       CGRAPH_INTEGER *res,
                       const CGRAPH_INTEGER node,
                       cgraph_neimode_t mode,
@@ -468,7 +468,7 @@ int cgraph_degree_one(const cgraph_p graph,
  * Time complexity: O(1).
  */
 
-int cgraph_edge(const cgraph_p graph, CGRAPH_INTEGER eid,
+int cgraph_edge(const cgraph_t graph, CGRAPH_INTEGER eid,
                CGRAPH_INTEGER *from, CGRAPH_INTEGER *to) {
     if (cgraph_is_directed(graph)) {
         *from = (CGRAPH_INTEGER) (graph->from)[eid];
@@ -547,7 +547,7 @@ int cgraph_edge(const cgraph_p graph, CGRAPH_INTEGER eid,
         FIND_DIRECTED_EDGE(graph,xfrom1,xto1,eid);      \
     } while (0)
 
-int cgraph_get_eid(const cgraph_p graph, CGRAPH_INTEGER *eid,
+int cgraph_get_eid(const cgraph_t graph, CGRAPH_INTEGER *eid,
                    CGRAPH_INTEGER pfrom, CGRAPH_INTEGER pto,
                    bool directed) {
 

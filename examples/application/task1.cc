@@ -27,7 +27,7 @@ int main() {
     cgraph_ivec_push_back(&edges, name_to_id[job2]);
   }
 
-  cgraph_p g = cgraph_create(edges, 0, true);
+  cgraph_t g = cgraph_create(edges, 0, true);
   cgraph_ivec_t order = cgraph_ivec_create();
   cgraph_topological_sorting(g, &order, CGRAPH_OUT);
   std::ofstream out("output.txt");

@@ -51,6 +51,6 @@ typedef struct cgraph_s {
     cgraph_ivec_t os;
     cgraph_ivec_t is;
     void *attr;
-} cgraph_t, *cgraph_p;
+} *cgraph_t;
 
 #endif  // CGRAPH_DATATYPE_H_

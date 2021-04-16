@@ -6,7 +6,7 @@
 #include "ut.h"
 
 int main() {
-  cgraph_p g = test_create_g1();
+  cgraph_t g = test_create_g1();
   double w[] = {3, 30, 5, 5, 10, 12, 11, 1, 6};
   int n = sizeof(w) / sizeof(double);
   cgraph_rvec_t weights = cgraph_rvec_create();

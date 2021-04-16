@@ -10,7 +10,7 @@
 
 #include <stdlib.h>
 
-int cgraph_is_dag(const cgraph_p graph, bool *res) {
+int cgraph_is_dag(const cgraph_t graph, bool *res) {
   if (!cgraph_is_directed(graph)) {
     *res = false;
     return 0;
@@ -99,7 +99,7 @@ int cgraph_is_dag(const cgraph_p graph, bool *res) {
  *
  * \example examples/simple/igraph_topological_sorting.c
  */
-int cgraph_topological_sorting(const cgraph_p graph,
+int cgraph_topological_sorting(const cgraph_t graph,
                                cgraph_ivec_t *res,
                                cgraph_neimode_t mode) {
   CGRAPH_INTEGER no_of_nodes = cgraph_vcount(graph);
@@ -192,7 +192,7 @@ int cgraph_topological_sorting(const cgraph_p graph,
  * more target vertices.
  */
 
-int cgraph_get_shortest_path_dijkstra(const cgraph_p graph,
+int cgraph_get_shortest_path_dijkstra(const cgraph_t graph,
         cgraph_ivec_t *vertices,
         cgraph_ivec_t *edges,
         CGRAPH_INTEGER from,
@@ -295,7 +295,7 @@ int cgraph_get_shortest_path_dijkstra(const cgraph_p graph,
   return 0;
 }
 
-int cgraph_get_shortest_path(const cgraph_p graph,
+int cgraph_get_shortest_path(const cgraph_t graph,
         cgraph_ivec_t *vertices,
         cgraph_ivec_t *edges,
         CGRAPH_INTEGER from,

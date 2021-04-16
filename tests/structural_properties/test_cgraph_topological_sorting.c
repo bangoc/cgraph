@@ -5,7 +5,7 @@
 #include "gb.h"
 #include "ut.h"
 
-bool is_valid_topological_order(cgraph_p g,
+bool is_valid_topological_order(cgraph_t g,
                                 cgraph_ivec_t const v,
                                 cgraph_neimode_t mode) {
   cgraph_neimode_t deg_mode;
@@ -46,7 +46,7 @@ bool is_valid_topological_order(cgraph_p g,
 }
 
 int main() {
-  cgraph_p g = test_create_g3();
+  cgraph_t g = test_create_g3();
   bool any = false;
   cgraph_ivec_t res = cgraph_ivec_create();
   /*

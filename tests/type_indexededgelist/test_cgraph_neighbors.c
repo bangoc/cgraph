@@ -4,7 +4,7 @@
 #include "ut.h"
 
 int main() {
-  cgraph_p g = test_create_g1();
+  cgraph_t g = test_create_g1();
   cgraph_ivec_t v = cgraph_ivec_create();
   cgraph_neighbors(g, &v, 1, CGRAPH_IN);
   if (!cgraph_ivec_equal(v, (CGRAPH_INTEGER[]){0, 3}, 2)) {

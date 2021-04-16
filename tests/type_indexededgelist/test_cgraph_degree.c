@@ -5,7 +5,7 @@
 #include "ut.h"
 
 int main() {
-  cgraph_p g = test_create_g2();
+  cgraph_t g = test_create_g2();
   cgraph_ivec_t degree = cgraph_ivec_create();
   bool failed = false;
 

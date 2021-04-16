@@ -4,7 +4,7 @@
 #include "ut.h"
 
 int main() {
-  cgraph_p g = test_create_g1();
+  cgraph_t g = test_create_g1();
   cgraph_ivec_t order     = cgraph_ivec_create(),
                 order_out = cgraph_ivec_create(),
                 father    = cgraph_ivec_create(),

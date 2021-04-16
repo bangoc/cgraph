@@ -8,7 +8,7 @@
 extern "C"{
 #endif
 
-int cgraph_bfs(const cgraph_p graph,
+int cgraph_bfs(const cgraph_t graph,
                CGRAPH_INTEGER root,
                cgraph_neimode_t mode,
                bool unreachable,
@@ -20,14 +20,14 @@ int cgraph_bfs(const cgraph_p graph,
                cgraph_ivec_t *succ,
                cgraph_ivec_t *dist);
 
-int cgraph_simple_bfs(const cgraph_p graph,
+int cgraph_simple_bfs(const cgraph_t graph,
                CGRAPH_INTEGER root,
                cgraph_neimode_t mode,
                bool unreachable,
                cgraph_ivec_t *father,
                cgraph_ivec_t *dist);
 
-int cgraph_dfs(const cgraph_p graph,
+int cgraph_dfs(const cgraph_t graph,
                CGRAPH_INTEGER root,
                cgraph_neimode_t mode,
                bool unreachable,

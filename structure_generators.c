@@ -38,14 +38,14 @@
  * \example examples/simple/igraph_empty.c
  */
 
-cgraph_p cgraph_create_empty(CGRAPH_INTEGER n, bool directed) {
+cgraph_t cgraph_create_empty(CGRAPH_INTEGER n, bool directed) {
 
   if (n < 0) {
     CGRAPH_ERROR("cannot create empty graph with negative number of vertices", CGRAPH_FAILURE);
     return NULL;
   }
 
-  cgraph_p graph = malloc(sizeof(struct cgraph_s));
+  cgraph_t graph = malloc(sizeof(struct cgraph_s));
 
   graph->n = 0;
   graph->directed = directed;
@@ -65,7 +65,7 @@ cgraph_p cgraph_create_empty(CGRAPH_INTEGER n, bool directed) {
   return graph;
 }
 
-cgraph_p cgraph_create(cgraph_ivec_t const edges,
+cgraph_t cgraph_create(cgraph_ivec_t const edges,
           CGRAPH_INTEGER n,
           bool directed) {
   bool has_edges = cgraph_ivec_size(edges) > 0;
@@ -78,7 +78,7 @@ cgraph_p cgraph_create(cgraph_ivec_t const edges,
     CGRAPH_ERROR("Invalid (negative) vertex id", CGRAPH_FAILURE);
   }
 
-  cgraph_p graph = cgraph_create_empty(n, directed);
+  cgraph_t graph = cgraph_create_empty(n, directed);
 
   if (has_edges) {
     CGRAPH_INTEGER vc = cgraph_vcount(graph);
