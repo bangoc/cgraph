@@ -73,9 +73,11 @@ cgraph_t cgraph_create(cgraph_ivec_t const edges,
 
   if (cgraph_ivec_size(edges) % 2 != 0) {
     CGRAPH_ERROR("Invalid (odd) edges vector", CGRAPH_FAILURE);
+    return NULL;
   }
   if (has_edges && !cgraph_ivec_isininterval(edges, 0, max - 1)) {
     CGRAPH_ERROR("Invalid (negative) vertex id", CGRAPH_FAILURE);
+    return NULL;
   }
 
   cgraph_t graph = cgraph_create_empty(n, directed);

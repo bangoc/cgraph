@@ -2,12 +2,22 @@
 
 #include <assert.h>
 
+cgraph_error_t cgraph_last_errno = CGRAPH_SUCCESS;
+
 static cgraph_error_handler_t *cgraph_i_error_handler = 0;
 
 static const char *cgraph_error_strings[] = {
     [CGRAPH_SUCCESS] = "No error",
     [CGRAPH_FAILURE] = "Failed"
 };
+
+void cgraph_reset_last_errno() {
+  cgraph_last_errno = CGRAPH_SUCCESS;
+}
+
+bool cgraph_last_op_success() {
+  return (cgraph_last_errno == CGRAPH_SUCCESS);
+}
 
 const char* cgraph_strerror(const cgraph_error_t cgraph_errno) {
   static_assert(sizeof(cgraph_error_strings) / sizeof(char *) == CGRAPH_ERROR_NO_COUNT,
@@ -30,9 +40,10 @@ int cgraph_error(const char *reason,
                  const char *file,
                  int line,
                  cgraph_error_t errno) {
-    if (cgraph_i_error_handler) {
-        cgraph_i_error_handler(reason, file, line, errno);
-    }
+  if (cgraph_i_error_handler) {
+    cgraph_i_error_handler(reason, file, line, errno);
+  }
+  cgraph_last_errno = errno;
   return 0;
 }
 

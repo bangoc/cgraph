@@ -1,11 +1,19 @@
 #ifndef CGRAPH_ERROR_H_
 #define CGRAPH_ERROR_H_
 
+#include <stdbool.h>
+
 typedef enum {
   CGRAPH_SUCCESS           = 0,
   CGRAPH_FAILURE           = 1,
   CGRAPH_ERROR_NO_COUNT
 } cgraph_error_t;
+
+extern cgraph_error_t cgraph_last_errno;
+
+void cgraph_reset_last_errno();
+
+bool cgraph_last_op_success();
 
 typedef void cgraph_error_handler_t(
                   const char * reason,

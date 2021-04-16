@@ -6,7 +6,7 @@
 int main() {
   cgraph_t g = test_create_g1();
   bool ret = false, failed = false;
-  cgraph_is_dag(g, &ret);
+  ret = cgraph_is_dag(g);
   if (ret != false) {
     UT_MSG_FAILED("Not DAG (g1)");
     failed = true;
@@ -14,7 +14,7 @@ int main() {
 
   cgraph_destroy(&g);
   g = test_create_g2();
-  cgraph_is_dag(g, &ret);
+  ret = cgraph_is_dag(g);
   if (ret != false) {
     UT_MSG_FAILED("DAG (g2)");
     failed = true;
@@ -22,7 +22,7 @@ int main() {
 
   cgraph_destroy(&g);
   g = test_create_g3();
-  cgraph_is_dag(g, &ret);
+  ret = cgraph_is_dag(g);
   if (ret != true) {
     UT_MSG_FAILED("DAG (g3)");
     failed = true;
@@ -30,7 +30,7 @@ int main() {
 
   cgraph_destroy(&g);
   g = test_create_g4();
-  cgraph_is_dag(g, &ret);
+  ret = cgraph_is_dag(g);
   if (ret != false) {
     UT_MSG_FAILED("DAG (g4)");
     failed = true;
@@ -38,7 +38,7 @@ int main() {
 
   cgraph_destroy(&g);
   g = test_create_g5(g);
-  cgraph_is_dag(g, &ret);
+  ret = cgraph_is_dag(g);
   if (ret != false) {
     UT_MSG_FAILED("DAG (g5)");
     failed = true;

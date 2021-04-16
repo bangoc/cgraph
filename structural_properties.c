@@ -10,10 +10,9 @@
 
 #include <stdlib.h>
 
-int cgraph_is_dag(const cgraph_t graph, bool *res) {
+bool cgraph_is_dag(const cgraph_t graph) {
   if (!cgraph_is_directed(graph)) {
-    *res = false;
-    return 0;
+    return false;
   }
 
   CGRAPH_INTEGER no_of_nodes = cgraph_vcount(graph);
@@ -55,7 +54,6 @@ int cgraph_is_dag(const cgraph_t graph, bool *res) {
     }
   }
 
-  *res = (vertices_left == 0);
   if (vertices_left < 0) {
     CGRAPH_ERROR("vertices_left < 0 in cgraph_is_dag, possible bug", CGRAPH_FAILURE);
   }
@@ -64,7 +62,7 @@ int cgraph_is_dag(const cgraph_t graph, bool *res) {
   cgraph_ivec_free(&neis);
   cgraph_iqueue_free(&sources);
 
-  return 0;
+  return (vertices_left == 0);
 }
 
 /**

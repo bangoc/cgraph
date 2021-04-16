@@ -214,7 +214,8 @@ int cgraph_2wheap_check(cgraph_2wheap_t *h) {
       break;
     }
     if (h->data[RIGHTCHILD(i)] > h->data[i]) {
-      error = 1; break;
+      error = 1;
+      break;
     }
   }
 
