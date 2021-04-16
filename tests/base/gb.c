@@ -11,7 +11,7 @@ ii    = {0, 7, 5, 2, 1, 3, 8, 4, 6}
 os    = {0, 3, 6, 7, 9, 9, 9}
 is    = {0, 0, 2, 4, 6, 8, 9}
 */
-int test_create_g1(cgraph_t *g) {
+int test_create_g1(cgraph_p g) {
   cgraph_ivec_t edges = cgraph_ivec_from_array(
         (CGRAPH_INTEGER[]){ 0, 1,
                             0, 3,
@@ -35,7 +35,7 @@ ii   = {0, 7, 5, 2, 9, 1, 3, 8, 4, 6}
 os   = {0, 3, 6, 8, 10, 10, 10}
 is   = {0, 0, 2, 5, 7, 9, 10}
 */
-int test_create_g2(cgraph_t *g) {
+int test_create_g2(cgraph_p g) {
   cgraph_ivec_t edges = cgraph_ivec_from_array(
         (CGRAPH_INTEGER[]){ 0, 1,
                             0, 3,
@@ -60,7 +60,7 @@ ii   = {0, 5, 2, 1, 3, 7, 4, 6}
 os   = {0, 3, 6, 7, 8, 8, 8}
 is   = {0, 0, 1, 3, 5, 7, 8}
 */
-int test_create_g3(cgraph_t *g) {
+int test_create_g3(cgraph_p g) {
   cgraph_ivec_t edges = cgraph_ivec_from_array(
         (CGRAPH_INTEGER[]){ 0, 1,
                             0, 3,
@@ -83,7 +83,7 @@ ii   = {0, 5, 1, 2, 3, 7, 4, 6}
 os   = {0, 0, 1, 3, 5, 7, 8}
 is   = {0, 3, 6, 7, 8, 8, 8}
 */
-int test_create_g4(cgraph_t *g) {
+int test_create_g4(cgraph_p g) {
   cgraph_ivec_t edges = cgraph_ivec_from_array(
         (CGRAPH_INTEGER[]){ 0, 1,
                             3, 0,
@@ -106,7 +106,7 @@ ii   = {0, 5, 1, 2, 3, 7, 8, 4, 6}
 os   = {0, 0, 1, 4, 6, 8, 9}
 is   = {0, 3, 6, 8, 9, 9, 9}
 */
-int test_create_g5(cgraph_t *g) {
+int test_create_g5(cgraph_p g) {
   cgraph_ivec_t edges = cgraph_ivec_from_array(
         (CGRAPH_INTEGER[]){ 0, 1,
                             0, 3,

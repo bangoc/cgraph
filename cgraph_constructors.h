@@ -5,11 +5,11 @@
 
 #ifdef __cplusplus
 extern "C"{
-#endif 
+#endif
 
-int cgraph_create(cgraph_t *graph, 
-                  cgraph_ivec_t const edges, 
-                  CGRAPH_INTEGER n, 
+int cgraph_create(cgraph_p graph,
+                  cgraph_ivec_t const edges,
+                  CGRAPH_INTEGER n,
                   bool directed);
 
 #ifdef __cplusplus

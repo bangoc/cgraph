@@ -8,7 +8,7 @@
 #include "cgraph_visitor.h"
 
 // igraph_bfs
-int cgraph_bfs(const cgraph_t *graph,
+int cgraph_bfs(const cgraph_p graph,
                CGRAPH_INTEGER root,
                cgraph_neimode_t mode,
                bool unreachable,
@@ -160,7 +160,7 @@ VINIT(dist);
   return 0;
 }
 
-int cgraph_simple_bfs(const cgraph_t *graph,
+int cgraph_simple_bfs(const cgraph_p graph,
                CGRAPH_INTEGER root,
                cgraph_neimode_t mode,
                bool unreachable,
@@ -223,7 +223,7 @@ int cgraph_simple_bfs(const cgraph_t *graph,
  * Time complexity: O(|V|+|E|), linear in the number of vertices and
  * edges.
  */
-int cgraph_dfs(const cgraph_t *graph,
+int cgraph_dfs(const cgraph_p graph,
                CGRAPH_INTEGER root,
                cgraph_neimode_t mode,
                bool unreachable,

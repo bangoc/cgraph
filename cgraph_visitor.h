@@ -6,38 +6,38 @@
 
 #ifdef __cplusplus
 extern "C"{
-#endif 
+#endif
 
-int cgraph_bfs(const cgraph_t *graph,
+int cgraph_bfs(const cgraph_p graph,
                CGRAPH_INTEGER root,
-               cgraph_neimode_t mode, 
+               cgraph_neimode_t mode,
                bool unreachable,
                cgraph_ivec_t const restricted,
-               cgraph_ivec_t *order, 
+               cgraph_ivec_t *order,
                cgraph_ivec_t *rank,
                cgraph_ivec_t *father,
-               cgraph_ivec_t *pred, 
+               cgraph_ivec_t *pred,
                cgraph_ivec_t *succ,
                cgraph_ivec_t *dist);
 
-int cgraph_simple_bfs(const cgraph_t *graph,
+int cgraph_simple_bfs(const cgraph_p graph,
                CGRAPH_INTEGER root,
-               cgraph_neimode_t mode, 
+               cgraph_neimode_t mode,
                bool unreachable,
                cgraph_ivec_t *father,
                cgraph_ivec_t *dist);
 
-int cgraph_dfs(const cgraph_t *graph,
+int cgraph_dfs(const cgraph_p graph,
                CGRAPH_INTEGER root,
-               cgraph_neimode_t mode, 
+               cgraph_neimode_t mode,
                bool unreachable,
                cgraph_ivec_t *order,
-               cgraph_ivec_t *order_out, 
+               cgraph_ivec_t *order_out,
                cgraph_ivec_t *father,
                cgraph_ivec_t *dist);
 
 #ifdef __cplusplus
 }
-#endif 
+#endif
 
 #endif  // CGRAPH_VISITOR_H_

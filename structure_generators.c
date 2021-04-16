@@ -3,7 +3,7 @@
 #include "cgraph_interface.h"
 #include "cgraph_ivec.h"
 
-int cgraph_create(cgraph_t *graph,
+int cgraph_create(cgraph_p graph,
           cgraph_ivec_t const edges,
           CGRAPH_INTEGER n,
           bool directed) {

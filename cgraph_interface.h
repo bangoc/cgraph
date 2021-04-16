@@ -8,35 +8,35 @@
 extern "C"{
 #endif
 
-int cgraph_empty(cgraph_t *graph, CGRAPH_INTEGER n, bool directed);
-int cgraph_add_vertices(cgraph_t *graph, CGRAPH_INTEGER nv);
-void cgraph_destroy(cgraph_t *graph);
-int cgraph_add_edges(cgraph_t *graph, cgraph_ivec_t const edges);
-CGRAPH_INTEGER cgraph_vcount(const cgraph_t *graph);
-CGRAPH_INTEGER cgraph_ecount(const cgraph_t *graph);
-bool cgraph_is_directed(const cgraph_t *graph);
-int cgraph_neighbors(const cgraph_t *graph,
+int cgraph_empty(cgraph_p graph, CGRAPH_INTEGER n, bool directed);
+int cgraph_add_vertices(cgraph_p graph, CGRAPH_INTEGER nv);
+void cgraph_destroy(cgraph_p graph);
+int cgraph_add_edges(cgraph_p graph, cgraph_ivec_t const edges);
+CGRAPH_INTEGER cgraph_vcount(const cgraph_p graph);
+CGRAPH_INTEGER cgraph_ecount(const cgraph_p graph);
+bool cgraph_is_directed(const cgraph_p graph);
+int cgraph_neighbors(const cgraph_p graph,
                      cgraph_ivec_t* neis,
                      CGRAPH_INTEGER vid,
                      cgraph_neimode_t mode);
-int cgraph_incident(const cgraph_t *graph,
+int cgraph_incident(const cgraph_p graph,
                     cgraph_ivec_t* eids,
                     CGRAPH_INTEGER vid,
                     cgraph_neimode_t mode);
 
-int cgraph_degree_all(const cgraph_t *graph,
+int cgraph_degree_all(const cgraph_p graph,
                       cgraph_ivec_t *res,
                       cgraph_neimode_t mode,
                       bool loops);
 
-int cgraph_degree_one(const cgraph_t *graph,
+int cgraph_degree_one(const cgraph_p graph,
                       CGRAPH_INTEGER *res,
                       const CGRAPH_INTEGER node,
                       cgraph_neimode_t mode,
                       bool loops);
-int cgraph_edge(const cgraph_t *graph, CGRAPH_INTEGER eid,
+int cgraph_edge(const cgraph_p graph, CGRAPH_INTEGER eid,
                CGRAPH_INTEGER *from, CGRAPH_INTEGER *to);
-int cgraph_get_eid(const cgraph_t *graph, CGRAPH_INTEGER *eid,
+int cgraph_get_eid(const cgraph_p graph, CGRAPH_INTEGER *eid,
                    CGRAPH_INTEGER pfrom, CGRAPH_INTEGER pto,
                    bool directed);
 

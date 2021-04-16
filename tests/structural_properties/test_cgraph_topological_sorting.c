@@ -5,7 +5,7 @@
 #include "gb.h"
 #include "ut.h"
 
-bool is_valid_topological_order(cgraph_t *g,
+bool is_valid_topological_order(cgraph_p g,
                                 cgraph_ivec_t const v,
                                 cgraph_neimode_t mode) {
   cgraph_neimode_t deg_mode;
