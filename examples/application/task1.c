@@ -30,10 +30,9 @@ int main() {
     cgraph_ivec_push_back(&edges, *j2);
   }
 
-  cgraph_t g;
-  cgraph_create(&g, edges, 0, true);
+  cgraph_p g = cgraph_create(edges, 0, true);
   cgraph_ivec_t order = cgraph_ivec_create();
-  cgraph_topological_sorting(&g, &order, CGRAPH_OUT);
+  cgraph_topological_sorting(g, &order, CGRAPH_OUT);
   FILE *out = fopen("output.txt", "w");
   if (cgraph_ivec_size(order) < n) {
     fprintf(out, "-1");

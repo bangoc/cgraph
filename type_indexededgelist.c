@@ -2,6 +2,8 @@
 #include "cgraph_interface.h"
 #include "cgraph_ivec.h"
 
+#include <stdlib.h>
+
 /**
  * \ingroup interface
  * \function igraph_vcount
@@ -93,63 +95,6 @@ static int cgraph_i_create_start(
 
 # undef EDGE
     return 0;
-}
-
-/**
- * \ingroup interface
- * \function igraph_empty
- * \brief Creates an empty graph with some vertices and no edges.
- *
- * </para><para>
- * The most basic constructor, all the other constructors should call
- * this to create a minimal graph object. Our use of the term "empty graph"
- * in the above description should be distinguished from the mathematical
- * definition of the empty or null graph. Strictly speaking, the empty or null
- * graph in graph theory is the graph with no vertices and no edges. However
- * by "empty graph" as used in \c igraph we mean a graph having zero or more
- * vertices, but no edges.
- * \param graph Pointer to a not-yet initialized graph object.
- * \param n The number of vertices in the graph, a non-negative
- *      integer number is expected.
- * \param directed Boolean; whether the graph is directed or not. Supported
- *    values are:
- *    \clist
- *    \cli IGRAPH_DIRECTED
- *      The graph will be \em directed.
- *    \cli IGRAPH_UNDIRECTED
- *      The graph will be \em undirected.
- *    \endclist
- * \return Error code:
- *     \c IGRAPH_EINVAL: invalid number of vertices.
- *
- * Time complexity: O(|V|) for a graph with
- * |V| vertices (and no edges).
- *
- * \example examples/simple/igraph_empty.c
- */
-
-int cgraph_empty(cgraph_p graph, CGRAPH_INTEGER n, bool directed) {
-
-  if (n < 0) {
-    CGRAPH_ERROR("cannot create empty graph with negative number of vertices", CGRAPH_FAILURE);
-  }
-
-  graph->n = 0;
-  graph->directed = directed;
-  graph->from = cgraph_ivec_create();
-  graph->to = cgraph_ivec_create();
-  graph->oi = cgraph_ivec_create();
-  graph->ii = cgraph_ivec_create();
-  graph->os = cgraph_ivec_create();
-  graph->is = cgraph_ivec_create();
-
-  cgraph_ivec_push_back(&graph->os, 0);
-  cgraph_ivec_push_back(&graph->is, 0);
-
-  /* add the vertices */
-  CGRAPH_CHECK(cgraph_add_vertices(graph, n));
-
-  return 0;
 }
 
 /**
@@ -306,13 +251,16 @@ int cgraph_add_vertices(cgraph_p graph, CGRAPH_INTEGER nv) {
  *
  * Time complexity: operating system specific.
  */
-void cgraph_destroy(cgraph_p graph) {
-    cgraph_ivec_free(&graph->from);
-    cgraph_ivec_free(&graph->to);
-    cgraph_ivec_free(&graph->oi);
-    cgraph_ivec_free(&graph->ii);
-    cgraph_ivec_free(&graph->os);
-    cgraph_ivec_free(&graph->is);
+void cgraph_destroy(cgraph_p *graph) {
+  cgraph_p g = *graph;
+  cgraph_ivec_free(&g->from);
+  cgraph_ivec_free(&g->to);
+  cgraph_ivec_free(&g->oi);
+  cgraph_ivec_free(&g->ii);
+  cgraph_ivec_free(&g->os);
+  cgraph_ivec_free(&g->is);
+  free(g);
+  g = NULL;
 }
 
 int cgraph_neighbors(const cgraph_p graph,

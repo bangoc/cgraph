@@ -8,9 +8,8 @@
 extern "C"{
 #endif
 
-int cgraph_empty(cgraph_p graph, CGRAPH_INTEGER n, bool directed);
 int cgraph_add_vertices(cgraph_p graph, CGRAPH_INTEGER nv);
-void cgraph_destroy(cgraph_p graph);
+void cgraph_destroy(cgraph_p *graph);
 int cgraph_add_edges(cgraph_p graph, cgraph_ivec_t const edges);
 CGRAPH_INTEGER cgraph_vcount(const cgraph_p graph);
 CGRAPH_INTEGER cgraph_ecount(const cgraph_p graph);

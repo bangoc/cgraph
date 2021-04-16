@@ -6,8 +6,7 @@
 #include "ut.h"
 
 int main() {
-  cgraph_t g;
-  test_create_g1(&g);
+  cgraph_p g = test_create_g1();
   double w[] = {3, 30, 5, 5, 10, 12, 11, 1, 6};
   int n = sizeof(w) / sizeof(double);
   cgraph_rvec_t weights = cgraph_rvec_create();
@@ -18,7 +17,7 @@ int main() {
 
   cgraph_ivec_t vpath = cgraph_ivec_create(),
                 epath = cgraph_ivec_create();
-  cgraph_get_shortest_path_dijkstra(&g, &vpath, &epath, 0, 5, weights, CGRAPH_OUT);
+  cgraph_get_shortest_path_dijkstra(g, &vpath, &epath, 0, 5, weights, CGRAPH_OUT);
   bool any = false;
   if (!cgraph_ivec_equal(vpath, (CGRAPH_INTEGER[]){0, 1, 3, 5}, 4)) {
     cgraph_ivec_print(vpath);
@@ -31,7 +30,7 @@ int main() {
     any = true;
   }
 
-  cgraph_get_shortest_path_dijkstra(&g, &vpath, &epath, 0, 4, weights, CGRAPH_OUT);
+  cgraph_get_shortest_path_dijkstra(g, &vpath, &epath, 0, 4, weights, CGRAPH_OUT);
   if (!cgraph_ivec_equal(vpath, (CGRAPH_INTEGER[]){0, 1, 4}, 3)) {
     cgraph_ivec_print(vpath);
     UT_MSG_FAILED("Case 2. Test vertices sequence 0-4 (out)");
@@ -43,7 +42,7 @@ int main() {
     any = true;
   }
 
-  cgraph_get_shortest_path_dijkstra(&g, &vpath, &epath, 2, 3, weights, CGRAPH_IN);
+  cgraph_get_shortest_path_dijkstra(g, &vpath, &epath, 2, 3, weights, CGRAPH_IN);
   if (!cgraph_ivec_equal(vpath, (CGRAPH_INTEGER[]){2, 1, 3}, 3)) {
     cgraph_ivec_print(vpath);
     UT_MSG_FAILED("Case 3. Test vertices sequence 2-3 (in)");
@@ -55,7 +54,7 @@ int main() {
     any = true;
   }
 
-  cgraph_get_shortest_path_dijkstra(&g, &vpath, &epath, 4, 5, weights, CGRAPH_ALL);
+  cgraph_get_shortest_path_dijkstra(g, &vpath, &epath, 4, 5, weights, CGRAPH_ALL);
   if (!cgraph_ivec_equal(vpath, (CGRAPH_INTEGER[]){4, 1, 3, 5}, 4)) {
     cgraph_ivec_print(vpath);
     UT_MSG_FAILED("Case 4. Test vertices sequence 4-5 (all)");
@@ -67,7 +66,7 @@ int main() {
     any = true;
   }
 
-  cgraph_get_shortest_path_dijkstra(&g, &vpath, &epath, 3, 0, weights, CGRAPH_OUT);
+  cgraph_get_shortest_path_dijkstra(g, &vpath, &epath, 3, 0, weights, CGRAPH_OUT);
   if (cgraph_ivec_size(vpath) > 0) {
     cgraph_ivec_print(vpath);
     UT_MSG_FAILED("Case 5. vpath empty if no path. 3-0 (out)");
@@ -78,7 +77,7 @@ int main() {
     UT_MSG_FAILED("Case 5. epath empty if no path. 3-0 (out)");
     any = true;
   }
-  cgraph_get_shortest_path_dijkstra(&g, &vpath, &epath, 3, 3, weights, CGRAPH_OUT);
+  cgraph_get_shortest_path_dijkstra(g, &vpath, &epath, 3, 3, weights, CGRAPH_OUT);
   if (!cgraph_ivec_equal(vpath, (CGRAPH_INTEGER[]){3}, 1)) {
     cgraph_ivec_print(vpath);
     UT_MSG_FAILED("Case 6. vpath contains to if from==to, 3-3 (out)");
@@ -90,7 +89,7 @@ int main() {
     any = true;
   }
 
-  cgraph_get_shortest_path_dijkstra(&g, &vpath, &epath, 0, 5, NULL, CGRAPH_OUT);
+  cgraph_get_shortest_path_dijkstra(g, &vpath, &epath, 0, 5, NULL, CGRAPH_OUT);
   if (!cgraph_ivec_equal(vpath, (CGRAPH_INTEGER[]){0, 3, 5}, 3)) {
     cgraph_ivec_print(vpath);
     UT_MSG_FAILED("Case 7. No weight 0-5 (out)");
@@ -103,11 +102,11 @@ int main() {
   }
 
   /* crash test in the no path case*/
-  cgraph_get_shortest_path_dijkstra(&g, NULL, &epath, 3, 0, weights, CGRAPH_OUT);
-  cgraph_get_shortest_path_dijkstra(&g, &vpath, NULL, 3, 0, weights, CGRAPH_OUT);
+  cgraph_get_shortest_path_dijkstra(g, NULL, &epath, 3, 0, weights, CGRAPH_OUT);
+  cgraph_get_shortest_path_dijkstra(g, &vpath, NULL, 3, 0, weights, CGRAPH_OUT);
 
   /* A little bit silly because it's a useless processing */
-  cgraph_get_shortest_path_dijkstra(&g, NULL, NULL, 3, 0, weights, CGRAPH_OUT);
+  cgraph_get_shortest_path_dijkstra(g, NULL, NULL, 3, 0, weights, CGRAPH_OUT);
 
   if (any) {
     return 1;

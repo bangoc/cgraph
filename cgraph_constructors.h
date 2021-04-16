@@ -7,8 +7,9 @@
 extern "C"{
 #endif
 
-int cgraph_create(cgraph_p graph,
-                  cgraph_ivec_t const edges,
+cgraph_p cgraph_create_empty(CGRAPH_INTEGER n, bool directed);
+
+cgraph_p cgraph_create(cgraph_ivec_t const edges,
                   CGRAPH_INTEGER n,
                   bool directed);
 

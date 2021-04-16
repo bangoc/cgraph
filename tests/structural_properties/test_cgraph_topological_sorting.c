@@ -46,21 +46,20 @@ bool is_valid_topological_order(cgraph_p g,
 }
 
 int main() {
-  cgraph_t g;
-  test_create_g3(&g);
+  cgraph_p g = test_create_g3();
   bool any = false;
   cgraph_ivec_t res = cgraph_ivec_create();
   /*
   out: {0, 1, 2, 3, 4, 5}
   in: {4, 5, 2, 3, 1, 0}
   */
-  cgraph_topological_sorting(&g, &res, CGRAPH_OUT);
-  if (!is_valid_topological_order(&g, res, CGRAPH_OUT) || cgraph_ivec_size(res) != 6) {
+  cgraph_topological_sorting(g, &res, CGRAPH_OUT);
+  if (!is_valid_topological_order(g, res, CGRAPH_OUT) || cgraph_ivec_size(res) != 6) {
     UT_MSG_FAILED("Out topological sorting on G3");
     any = true;
   }
-  cgraph_topological_sorting(&g, &res, CGRAPH_IN);
-  if (!is_valid_topological_order(&g, res, CGRAPH_IN) || cgraph_ivec_size(res) != 6) {
+  cgraph_topological_sorting(g, &res, CGRAPH_IN);
+  if (!is_valid_topological_order(g, res, CGRAPH_IN) || cgraph_ivec_size(res) != 6) {
     UT_MSG_FAILED("In topological sorting on G3");
     any = true;
   }
