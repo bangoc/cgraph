@@ -7,35 +7,28 @@
 
 /**
  * \ingroup interface
- * \function igraph_empty
- * \brief Creates an empty graph with some vertices and no edges.
+ * \function cgraph_create_empty
+ * \brief Tạo một đồ thị rỗng với số lượng đỉnh được cho nhưng không
+ * có cạnh.
  *
  * </para><para>
- * The most basic constructor, all the other constructors should call
- * this to create a minimal graph object. Our use of the term "empty graph"
- * in the above description should be distinguished from the mathematical
- * definition of the empty or null graph. Strictly speaking, the empty or null
- * graph in graph theory is the graph with no vertices and no edges. However
- * by "empty graph" as used in \c igraph we mean a graph having zero or more
- * vertices, but no edges.
- * \param graph Pointer to a not-yet initialized graph object.
- * \param n The number of vertices in the graph, a non-negative
- *      integer number is expected.
- * \param directed Boolean; whether the graph is directed or not. Supported
- *    values are:
+ * Đây là hàm tạo cơ bản, các hàm tạo khác cần gọi hàm tạo này để tạo
+ * đối tượng đồ thị tối thiểu.
+ * \param n Số lượng đỉnh của đồ thị, phải là một số nguyên không âm.
+ * \param directed Kiểu bool xác định tính chất có hướng của đồ thị.
+ * Các giá trị được hỗ trợ là:
  *    \clist
  *    \cli IGRAPH_DIRECTED
- *      The graph will be \em directed.
- *    \cli IGRAPH_UNDIRECTED
- *      The graph will be \em undirected.
+ *      Đồ thị \em có hướng.
+ *    \cli CGRAPH_UNDIRECTED
+ *      Đồ thị \em vô hướng.
  *    \endclist
- * \return Error code:
- *     \c IGRAPH_EINVAL: invalid number of vertices.
+ * \return NULL nếu không thể tạo đồ thị, hoặc con trỏ đồ thị mới
+ * được tạo.
  *
- * Time complexity: O(|V|) for a graph with
- * |V| vertices (and no edges).
+ * Độ phức tạp: O(|V|) đối với một đồ thị với
+ * |V| đỉnh (và không có cạnh).
  *
- * \example examples/simple/igraph_empty.c
  */
 
 cgraph_t cgraph_create_empty(CGRAPH_INTEGER n, bool directed) {
