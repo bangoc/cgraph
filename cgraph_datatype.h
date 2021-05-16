@@ -5,40 +5,42 @@
 #include "cgraph_ivec.h"
 
 /**
- * \ingroup internal
- * \struct igraph_t
- * \brief The internal data structure for storing graphs.
+ * \brief Cấu trúc dữ liệu biểu diễn đồ thị
+ * \tham khảo: igraph_t
  *
- * It is simple and efficient. It has the following members:
- * - <b>n</b> The number of vertices, reduntant.
- * - <b>directed</b> Whether the graph is directed.
- * - <b>from</b> The first column of the edge list.
- * - <b>to</b> The second column of the edge list.
- * - <b>oi</b> The index of the edge list by the first column. Thus
- *   the first edge according to this order goes from
- *   \c from[oi[0]] to \c to[oi[0]]. The length of
- *   this vector is the same as the number of edges in the graph.
- * - <b>ii</b> The index of the edge list by the second column.
- *   The length of this vector is the same as the number of edges.
- * - <b>os</b> Contains pointers to the edgelist (\c from
- *   and \c to for every vertex. The first edge \em from
- *   vertex \c v is edge no. \c from[oi[os[v]]] if
- *   \c os[v]<os[v+1]. If \c os[v]==os[v+1] then
- *   there are no edges \em from node \c v. Its length is
- *   the number of vertices plus one, the last element is always the
- *   same as the number of edges and is contained only to ease the
- *   queries.
- * - <b>is</b> This is basically the same as <b>os</b>, but this time
- *   for the incoming edges.
+ * Cấu trúc chỉ mục 2 tầng cho biểu diễn đồ thị dạng danh sách cạnh.
+ * Nó có các thành phần sau:
+ * - <b>n</b> Số lượng đỉnh, các đỉnh được quy ước là số nguyên không
+ * âm có giá trị từ 0 đến n-1.
+ * - <b>directed</b> Đồ thị có hướng (directed == true) hoặc vô
+ * hướng (directed == false).
+ * - <b>from</b> Cột đầu tiên của danh sách cạnh.
+ * - <b>to</b> Cột thứ hai của danh sách cạnh.
+ * - <b>oi</b> Chỉ số của cạnh được sắp xếp tăng dần theo cột thứ
+ * nhất rồi đến cột thứ hai. Cạnh đầu tiên theo thứ tự này là
+ * from[oi[0]], to[oi[0]], trong đó from[oi[0]] là nhỏ nhất trong tất * cả các giá trị from (sắp xếp chỉ số). Độ dài vec-tơ này bằng số
+ * lượng cạnh có trong đồ thị.
+ * - <b>ii</b> Chỉ số của cạnh được sắp xếp tăng dần theo cột thứ hai
+ * rồi đến cột thứ nhất. Cạnh đầu tiên theo thứ tự này là
+ * from[ii[0]] , to[ii[0]], trong đó to[ii[0]] có giá trị nhỏ nhất
+ * trong tất cả các giá trị ii (sắp xếp chỉ số). Độ dài vec-tơ này
+ * bằng số lượng cạnh có trong đồ thị.
+ * - <b>os</b> Chứa các con trỏ tới danh sách cạnh đi ra từ tất cả
+ * các đỉnh. Cạnh đầu tiên \em từ đỉnh v là cạnh \c from[oi[os[v]]],
+ * to [oi[os[v]]] nếu \c os[v] < os[v+1]. Nếu \c os[v] == os[v+1] thì
+ * không có cạnh đi ra từ đỉnh v. Độ dài của vec-tơ os bằng số lượng
+ * đỉnh cộng 1, phần tử cuối cùng luôn bằng số lượng cạnh và được sử
+ * dụng để tra cứu các cạnh cho đỉnh n-1.
+ * - <b>is</b> Về cơ bản tương tự như <b>os</b>, nhưng đối với
+ * các cạnh đi vào (vec-tơ ii).
  *
- * For undirected graph, the same edge list is stored, ie. an
- * undirected edge is stored only once, and for checking whether there
- * is an undirected edge from \c v1 to \c v2 one
- * should search for both \c from=v1, \c to=v2 and
- * \c from=v2, \c to=v1.
+ * Đối với đồ thị vô hướng, cùng một danh sách cạnh được lưu, nghĩa
+ * là một cạnh vô hướng chỉ được lưu một lần. Để kiểm tra có một cạnh
+ * vô hướng từ \c v1 tới \c v2 hay không? - Chúng ta phải kiểm tra cả
+ * hai trường hợp \c from=v1, \c to=v2 và \c from=v2, \c to=v1.
  *
- * The storage requirements for a graph with \c |V| vertices
- * and \c |E| edges is \c O(|E|+|V|).
+ * Yêu cầu lưu trữ đồ thị với \c |V| đỉnh và \c |E| cạnh là
+ * \c O(|E| + |V|)
  */
 
 typedef struct cgraph_s {
