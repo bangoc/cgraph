@@ -45,27 +45,29 @@ int cgraph_get_eid(const cgraph_t graph, CGRAPH_INTEGER *eid,
 
 /**
  * \define CGRAPH_FROM
- * \brief The source vertex of an edge.
+ * \brief Đỉnh nguồn của một cạnh
  *
- * Faster than \ref igraph_edge(), but no error checking is done: \p eid is assumed to be valid.
+ * Nhanh hơn cgraph_edge nhưng không kiểm tra lỗi và giả sử eid
+ * hợp lệ
  *
- * \param graph The graph.
- * \param eid   The edge ID.
- * \return The source vertex of the edge.
- * \sa \ref igraph_edge() if error checking is desired.
+ * \param graph Đối tượng đồ thị.
+ * \param eid   Chỉ số cạnh.
+ * \return Trả về đỉnh nguồn của cạnh.
+ * \sa \ref cgraph_edge() Nếu muốn có kiểm tra lỗi.
  */
 #define CGRAPH_FROM(graph,eid) ((CGRAPH_INTEGER)(graph->from[(long int)(eid)]))
 
 /**
  * \define CGRAPH_TO
- * \brief The target vertex of an edge.
+ * \brief Đỉnh đích của một cạnh.
  *
- * Faster than \ref igraph_edge(), but no error checking is done: \p eid is assumed to be valid.
+ * Nhanh hơn \ref cgraph_edge nhưng không kiểm tra lỗi và giả sử eid
+ * hợp lệ.
  *
- * \param graph The graph object.
- * \param eid   The edge ID.
- * \return The target vertex of the edge.
- * \sa \ref igraph_edge() if error checking is desired.
+ * \param graph Đối tượng đồ thị.
+ * \param eid   Chỉ số của cạnh.
+ * \return Trả về đỉnh đích của cạnh.
+ * \sa \ref cgraph_edge() Nếu muốn có kiểm tra lỗi.
  */
 #define CGRAPH_TO(graph,eid)   ((CGRAPH_INTEGER)(graph->to[(long int)(eid)]))
 

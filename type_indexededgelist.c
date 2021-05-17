@@ -447,25 +447,22 @@ int cgraph_degree_one(const cgraph_t graph,
 }
 
 /**
- * \function Cgraph_edge
- * \brief Gives the head and tail vertices of an edge.
+ * \function cgraph_edge
+ * \brief Trả về các đỉnh nguồn và đích của một cạnh.
  *
- * \param graph The graph object.
- * \param eid The edge id.
- * \param from Pointer to an \type igraph_integer_t. The tail of the edge
- * will be placed here.
- * \param to Pointer to an \type igraph_integer_t. The head of the edge
- * will be placed here.
- * \return Error code. The current implementation always returns with
- * success.
- * for undirected graph, in the output from <= to
- * \sa \ref cgraph_get_eid() for the opposite operation;
- *     \ref CGRAPH_TO(), \ref CGRAPH_FROM() and \ref CGRAPH_OTHER() for
- *     a faster but non-error-checked version.
+ * \param graph Đối tượng đồ thị.
+ * \param eid Chỉ số của cạnh.
+ * \param from Con trỏ tới một biến CGRAPH_INTEGER. Đỉnh nguồn của
+ * cạnh sẽ được lưu ở đây.
+ * \param to Con trỏ tới một biến CGRAPH_INTEGER. Đỉnh đích của cạnh
+ * sẽ được lưu ở đây.
+ * \return Mã lỗi. Triển khai hiện tại luôn trả về mã thành công.
+ * Đối với đồ thị vô hướng, trả về from <= to.
+ * \sa \ref cgraph_get_eid() cho thao tác ngược lại;
+ *     \ref CGRAPH_TO(), \ref CGRAPH_FROM() và \ref CGRAPH_OTHER()
+ * cho phiên bản nhanh hơn nhưng không kiểm tra lỗi.
  *
- * Added in version 0.2.</para><para>
- *
- * Time complexity: O(1).
+ * Độ phức tạp thời gian: O(1).
  */
 
 int cgraph_edge(const cgraph_t graph, CGRAPH_INTEGER eid,
