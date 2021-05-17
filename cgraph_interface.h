@@ -73,18 +73,18 @@ int cgraph_get_eid(const cgraph_t graph, CGRAPH_INTEGER *eid,
 
 /**
  * \define CGRAPH_OTHER
- * \brief The other endpoint of an edge.
+ * \brief Đỉnh phía bên kia của một cạnh.
  *
- * Typically used with undirected edges when one endpoint of the edge is known,
- * and the other endpoint is needed. No error checking is done:
- * \p eid and \p vid are assumed to be valid.
+ * Thường được sử dụng với các cạnh vô hướng khi đã biết một đỉnh
+ * của cạnh, và cần đỉnh ở phía bên kia. Không kiểm tra lỗi, eid và
+ * vid được cho là hợp lệ.
  *
- * \param graph The graph object.
- * \param eid   The edge ID.
- * \param vid   The vertex ID of one endpoint of an edge.
- * \return The other endpoint of the edge.
- * \sa \ref IGRAPH_TO() and \ref IGRAPH_FROM() to get the source and target
- *     of directed edges.
+ * \param graph Đối tượng đồ thị.
+ * \param eid   Chỉ số cạnh.
+ * \param vid   Một đỉnh của cạnh.
+ * \return Trả về đỉnh phía bên kia của cạnh.
+ * \sa \ref CGRAPH_TO() và \ref CGRAPH_FROM() để lấy nguồn và đích
+ * của cạnh có hướng.
  */
 #define CGRAPH_OTHER(graph,eid,vid) \
     ((CGRAPH_INTEGER)(CGRAPH_TO(graph,(eid))==(vid) ? CGRAPH_FROM((graph),(eid)) : CGRAPH_TO((graph),(eid))))

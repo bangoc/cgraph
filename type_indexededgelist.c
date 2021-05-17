@@ -480,27 +480,26 @@ int cgraph_edge(const cgraph_t graph, CGRAPH_INTEGER eid,
 
 /**
  * \function cgraph_get_eid
- * \brief Get the edge id from the end points of an edge.
+ * \brief Lấy chỉ số cạnh từ hai đỉnh của nó
  *
- * For undirected graphs \c pfrom and \c pto are exchangeable.
+ * Đối với đồ thị vô hướng có thể hoán đổi vị trí \c pfrom và \c pto.
  *
- * \param graph The graph object.
- * \param eid Pointer to an integer, the edge id will be stored here.
- * \param pfrom The starting point of the edge.
- * \param pto The end point of the edge.
- * \param directed Logical constant, whether to search for directed
- *        edges in a directed graph. Ignored for undirected graphs.
- * \return Error code.
- * \sa \ref igraph_edge() for the opposite operation.
+ * \param graph Đối tượng đồ thị
+ * \param eid Con trỏ tới một số nguyên, chỉ số cạnh sẽ được lưu ở
+ * đây.
+ * \param pfrom Đỉnh nguồn của cạnh.
+ * \param pto Đỉnh đích của cạnh.
+ * \param directed Tùy chỉnh tính đến hướng của cạnh hoặc không trong
+ * đồ thị có hướng. Bị bỏ qua đối với đồ thị vô hướng.
+ * \return Mã lỗi.
+ * \sa \ref cgraph_edge() thao tác ngược lại.
  *
- * Time complexity: O(log (d)), where d is smaller of the out-degree
- * of \c pfrom and in-degree of \c pto if \p directed is true. If \p directed
- * is false, then it is O(log(d)+log(d2)), where d is the same as before and
- * d2 is the minimum of the out-degree of \c pto and the in-degree of \c pfrom.
+ * Độ phức tạp: O(log(d)), trong đó d là giá trị nhỏ hơn giữa bậc
+ * ra của \c pfrom và bậc vào của \c pto nếu \p directed bằng true.
+ * Nếu \p directed bằng false, thì độ phức tạp là
+ * O(log(d) + log(d2)), trong đó d vẫn như trường hợp trước và d2 là
+ * giá trị nhỏ hơn giữa bậc ra của \c pto và bậc vào của \c pfrom.
  *
- * \example examples/simple/igraph_get_eid.c
- *
- * Added in version 0.2.</para><para>
  */
 
 #define BINSEARCH(start,end,value,iindex,edgelist,N,pos) \
