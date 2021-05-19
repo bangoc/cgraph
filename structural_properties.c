@@ -10,6 +10,24 @@
 
 #include <stdlib.h>
 
+/**
+ * \function cgraph_is_dag
+ * \ref igraph_is_dag
+ * Kiểm tra liệu một đồ thị có hướng có là DAG hay không.
+ *
+ * </para><para>
+ * Một đồ thị có hướng không chứa chu trình được gọi là DAG
+ * (Directed Acyclic Graph).
+ *
+ * \param graph Đồ thị đầu vào.
+ * \return true nếu đồ thị là DAG, false nếu ngược lại.
+ *
+ * Độ phức tạp: O(|V|+|E|), trong đó |V| và |E| là số lượng đỉnh và
+ * số lượng cạnh trong đồ thị ban đầu.
+ *
+ * \sa \ref cgraph_topological_sorting() để lấy một trật tự topo nếu
+ * có của một đồ thị có hướng.
+ */
 bool cgraph_is_dag(const cgraph_t graph) {
   if (!cgraph_is_directed(graph)) {
     return false;
@@ -25,21 +43,22 @@ bool cgraph_is_dag(const cgraph_t graph) {
 
   vertices_left = no_of_nodes;
 
-  /* Do we have nodes with no incoming edges? */
+  /* Kiểm tra xem chúng ta có đỉnh không có cạnh đi ra hay không? */
   for (i = 0; i < no_of_nodes; i++) {
     if (degrees[i] == 0) {
       CGRAPH_CHECK(cgraph_iqueue_enqueue(sources, i));
     }
   }
 
-  /* Take all nodes with no incoming edges and remove them */
+  /* Xử lý và xóa các đỉnh không có cạnh đi ra */
   while (!cgraph_iqueue_empty(sources)) {
     cgraph_iqueue_poll(sources, &node);
-    /* Exclude the node from further source searches */
+
+    /* Đánh dấu để bỏ qua trong các lần tìm kiếm tiếp theo */
     degrees[node] = -1;
     vertices_left--;
 
-    /* Get the neighbors and decrease their degrees by one */
+    /* Lấy các láng giềng đi vào và giảm bậc ra một đơn vị */
     CGRAPH_CHECK(cgraph_neighbors(graph, &neis, node, CGRAPH_IN));
     j = cgraph_ivec_size(neis);
     for (i = 0; i < j; i++) {
@@ -67,35 +86,35 @@ bool cgraph_is_dag(const cgraph_t graph) {
 
 /**
  * \function cgraph_topological_sorting
- * \brief Calculate a possible topological sorting of the graph.
+ * \ref igraph_topological_sorting
+ * \brief Sắp xếp các đỉnh của một đồ thị theo thứ tự topo.
  *
  * </para><para>
- * A topological sorting of a directed acyclic graph is a linear ordering
- * of its nodes where each node comes before all nodes to which it has
- * edges. Every DAG has at least one topological sort, and may have many.
- * This function returns a possible topological sort among them. If the
- * graph is not acyclic (it has at least one cycle), a partial topological
- * sort is returned and a warning is issued.
+ * Trật tự topo của các đỉnh của một đồ thị có hướng không chứa chu
+ * trình (DAG) là một trật tự tuyến tính trong đó tất cả các đỉnh đều
+ * xuất hiện trước các đỉnh có cạnh nối với nó. Tất cả các DAG đều có
+ * ít nhất một trật tự topo, và có thể có nhiều trật tự topo khác
+ * nhau. Hàm này trả về một trật tự topo nếu có của đồ thị. Nếu đồ
+ * thị có chứa ít nhất một chu trình, một phần của trật tự topo được
+ * trả về và một cảnh báo được đưa ra.
  *
- * \param graph The input graph.
- * \param res Pointer to a vector, the result will be stored here.
- *   It will be resized if needed.
- * \param mode Specifies how to use the direction of the edges.
- *   For \c IGRAPH_OUT, the sorting order ensures that each node comes
- *   before all nodes to which it has edges, so nodes with no incoming
- *   edges go first. For \c IGRAPH_IN, it is quite the opposite: each
- *   node comes before all nodes from which it receives edges. Nodes
- *   with no outgoing edges go first.
- * \return Error code.
+ * \param graph Đồ thị đầu vào.
+ * \param res Con trỏ tới một vec-tơ, danh sách đỉnh được sắp xếp
+ * theo trật tự topo sẽ được lưu ở đây, vec-tơ sẽ được thay đổi kích
+ * thước nếu cần.
+ * \param mode Tùy chỉnh hướng cho các cạnh.
+ * Đối với \c CGRAPH_OUT, trật tự đảm bảo rằng tất cả các đỉnh đều
+ * xuất hiện trước các đỉnh mà nó có cạnh đi tới đó, như vậy các đỉnh
+ * không có cạnh đi tới sẽ xuất hiện đầu tiên. Đối với \c CGRAPH_IN,
+ * quan hệ gần như ngược lại: Mỗi đỉnh đều xuất hiện trước các nút có
+ * cạnh đi tới nó. Các đỉnh không có cạnh đi tới xuất hiện đầu tiên.
+ * \return Mã lỗi.
  *
- * Time complexity: O(|V|+|E|), where |V| and |E| are the number of
- * vertices and edges in the original input graph.
+ * Độ phức tạp: O(|V|+|E|), trong đó |V| và |E| là số lượng đỉnh và
+ * cạnh trong đồ thị đầu vào ban đầu.
  *
- * \sa \ref igraph_is_dag() if you are only interested in whether a given
- *     graph is a DAG or not, or \ref igraph_feedback_arc_set() to find a
- *     set of edges whose removal makes the graph a DAG.
+ * \sa \ref cgraph_is_dag() nếu bạn chỉ quan tâm đồ thị được cho có phải là DAG hay không, hoặc \ref igraph_feedback_arc_set() để tìm một tập hợp cạnh, sao cho khi loại bỏ thì đồ thị là DAG.
  *
- * \example examples/simple/igraph_topological_sorting.c
  */
 int cgraph_topological_sorting(const cgraph_t graph,
                                cgraph_ivec_t *res,
@@ -116,18 +135,18 @@ int cgraph_topological_sorting(const cgraph_t graph,
     CGRAPH_ERROR("invalid mode", CGRAPH_FAILURE);
   }
 
-  /* with loops, igraph doesn't count loop */
-  CGRAPH_CHECK(cgraph_degree_all(graph, &degrees, deg_mode, 1));
+  /* Không tính đỉnh lặp */
+  CGRAPH_CHECK(cgraph_degree_all(graph, &degrees, deg_mode, false));
 
   cgraph_ivec_setsize(*res, 0);
-  /* Do we have nodes with no incoming vertices? */
+  /* Chúng ta có đỉnh không có láng giềng đứng trước hay không? */
   for (CGRAPH_INTEGER i = 0; i < no_of_nodes; i++) {
     if (degrees[i] == 0) {
       CGRAPH_CHECK(cgraph_iqueue_enqueue(sources, i));
     }
   }
 
-  /* Take all nodes with no incoming vertices and remove them */
+  /* Lấy và xóa tất cả các đỉnh không có láng giềng đứng trước */
   while (!cgraph_iqueue_empty(sources)) {
     CGRAPH_INTEGER node;
     cgraph_iqueue_poll(sources, &node);
@@ -153,43 +172,41 @@ int cgraph_topological_sorting(const cgraph_t graph,
 }
 
 /**
- * \function  cgraph_get_shortest_path_dijkstra
- *            igraph_get_shortest_path_dijkstra
- * Weighted shortest path from one vertex to another one.
+ * \function cgraph_get_shortest_path_dijkstra
+ * \ref igraph_get_shortest_path_dijkstra
+ * Đường đi ngắn nhất có trọng số từ một đỉnh tới một đỉnh khác.
  *
- * Calculates a single (positively) weighted shortest path from
- * a single vertex to another one, using Dijkstra's algorithm.
+ * Tìm một đường đi ngắn nhất có trọng số (dương) từ một đỉnh tới một
+ * đỉnh khác, sử dụng giải thuật Dijkstra.
  *
- * </para><para>This function is a special case (and a wrapper) to
- * \ref igraph_get_shortest_paths_dijkstra().
+ * </para><para>Hàm này là một trường hợp đặc biệt (và là bao đóng)
+ * của
+ * \ref cgraph_get_shortest_paths_dijkstra().
  *
- * \param graph The input graph, it can be directed or undirected.
- * \param vertices Pointer to an initialized vector or a null
- *        pointer. If not a null pointer, then the vertex ids along
- *        the path are stored here, including the source and target
- *        vertices.
- * \param edges Pointer to an uninitialized vector or a null
- *        pointer. If not a null pointer, then the edge ids along the
- *        path are stored here.
- * \param from The id of the source vertex.
- * \param to The id of the target vertex.
- * \param weights Vector of edge weights, in the order of edge
- *        ids. They must be non-negative, otherwise the algorithm does
- *        not work.
- * \param mode A constant specifying how edge directions are
- *        considered in directed graphs. \c IGRAPH_OUT follows edge
- *        directions, \c IGRAPH_IN follows the opposite directions,
- *        and \c IGRAPH_ALL ignores edge directions. This argument is
- *        ignored for undirected graphs.
- * \return Error code.
+ * \param graph Đồ thị đầu vào, có thể có hướng hoặc vô hướng.
+ * \param vertices Con trỏ tới một vec-tơ đã được khởi tạo, hoặc con
+ * trỏ NULL. Nếu nó là một con trỏ NULL, thì các chỉ số đỉnh trên
+ * đường dẫn được lưu ở đây, bao gồm các đỉnh nguồn và đích.
+ * \param edges Con trỏ tới một vec-tơ chưa được khởi tạo hoặc NULL.
+ * Nếu không phải con trỏ NULL thì các chỉ số cạnh trên đường dẫn
+ * được lưu ở đây.
+ * \param from Chỉ số của đỉnh nguồn.
+ * \param to Chỉ số của đỉnh đích.
+ * \param weights Vec-tơ trọng số cạnh cùng thứ tự với các cạnh.
+ * Các trọng số phải không âm, nếu ngược lại giải thuật sẽ hoạt
+ * động sai.
+ * \param mode Một hằng số xác định cách sử dụng hướng của cạnh
+ * trong đồ thị có hướng. \c CGRAPH_OUT đi theo hướng của cạnh, \c
+ * CGRAPH_IN đi theo chiều ngược lại, và \c CGRAPH_ALL bỏ qua hướng
+ * của cạnh. Tham số này bị bỏ qua đối với đồ thị vô hướng.
+ * \return Mã lỗi.
  *
- * Time complexity: O(|E|log|E|+|V|), |V| is the number of vertices,
- * |E| is the number of edges in the graph.
+ * Độ phức tạp: O(|E|log|E|+|V|), |V| là số lượng đỉnh,
+ * |E| là số lượng cạnh trong đồ thị.
  *
- * \sa \ref igraph_get_shortest_paths_dijkstra() for the version with
- * more target vertices.
- */
-
+ * \sa \ref cgraph_get_shortest_paths_dijkstra() cho phiên bản với
+ * nhiều đỉnh đích hơn.
+ **/
 int cgraph_get_shortest_path_dijkstra(const cgraph_t graph,
         cgraph_ivec_t *vertices,
         cgraph_ivec_t *edges,
@@ -215,13 +232,15 @@ int cgraph_get_shortest_path_dijkstra(const cgraph_t graph,
   CGRAPH_INTEGER *parents =
     (CGRAPH_INTEGER *)malloc(sizeof(CGRAPH_INTEGER) * no_of_nodes);
   dists[from] = 0.0;
-  parents[from] = -1;  /* no dirty hack in back trace */
+  parents[from] = -1;
   cgraph_2wheap_push_with_index(&Q, from, 0);
   cgraph_ivec_t neis = cgraph_ivec_create();
   bool found = false;
   while (!cgraph_2wheap_empty(&Q) && !found) {
     CGRAPH_INTEGER nlen, minnei = cgraph_2wheap_max_index(&Q);
-    CGRAPH_REAL mindist = -cgraph_2wheap_delete_max(&Q); /* dirty hack to avoid using infinity */
+
+    /* Hack đảo dấu để tránh giá trị vô cùng lớn */
+    CGRAPH_REAL mindist = -cgraph_2wheap_delete_max(&Q);
     if (minnei == to) {
       found = true;
       break;
@@ -293,6 +312,9 @@ int cgraph_get_shortest_path_dijkstra(const cgraph_t graph,
   return 0;
 }
 
+/**
+ * \ref igraph_get_shortest_path
+ **/
 int cgraph_get_shortest_path(const cgraph_t graph,
         cgraph_ivec_t *vertices,
         cgraph_ivec_t *edges,
