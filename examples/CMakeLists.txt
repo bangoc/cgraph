@@ -10,3 +10,4 @@ endforeach()
 
 add_subdirectory(ctc)
 add_subdirectory(application)
+add_subdirectory(cgen)
