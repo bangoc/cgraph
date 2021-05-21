@@ -12,6 +12,7 @@ cgraph_t cgraph_create_empty(CGRAPH_INTEGER n, bool directed);
 cgraph_t cgraph_create(cgraph_ivec_t const edges,
                   CGRAPH_INTEGER n,
                   bool directed);
+void cgraph_print(cgraph_t const g);
 
 #ifdef __cplusplus
 }

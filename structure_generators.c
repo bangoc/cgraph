@@ -4,6 +4,7 @@
 #include "cgraph_ivec.h"
 
 #include <stdlib.h>
+#include <stdio.h>
 
 /**
  * \ingroup interface
@@ -84,4 +85,30 @@ cgraph_t cgraph_create(cgraph_ivec_t const edges,
   }
 
   return graph;
+}
+
+void cgraph_print(cgraph_t const g) {
+  printf("n = %lld\n", (long long)cgraph_vcount(g));
+  printf("directed = %s\n", cgraph_is_directed(g)? "true": "false");
+#define PRINT_IVEC(v) \
+  do { \
+    printf("\t{%d", v[0]); \
+    for (int i = 1; i < cgraph_ivec_size(v); ++i) { \
+      printf(", %d", v[i]); \
+    } \
+    printf("}\n"); \
+  } while (0)
+  printf("from = ");
+  PRINT_IVEC(g->from);
+  printf("to = ");
+  PRINT_IVEC(g->to);
+  printf("oi = ");
+  PRINT_IVEC(g->from);
+  printf("ii = ");
+  PRINT_IVEC(g->from);
+  printf("os = ");
+  PRINT_IVEC(g->from);
+  printf("is = ");
+  PRINT_IVEC(g->from);
+#undef PRINT_IVEC
 }
