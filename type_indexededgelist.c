@@ -260,7 +260,7 @@ void cgraph_destroy(cgraph_t *graph) {
   cgraph_ivec_free(&g->os);
   cgraph_ivec_free(&g->is);
   free(g);
-  g = NULL;
+  *graph = NULL;
 }
 
 int cgraph_neighbors(const cgraph_t graph,

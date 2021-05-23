@@ -17,6 +17,8 @@ if (${CMAKE_BUILD_TYPE} STREQUAL Release)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O2")
 endif()
 
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-unused-function")
+
 if (WARN_ERROR)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Werror")
 endif ()
@@ -84,12 +86,16 @@ if(${BUILD_TESTING})
   add_test(NAME CgraphIStack COMMAND cgraph_istack_ut)
   add_test(NAME CgraphDfs COMMAND cgraph_dfs_ut)
   add_test(NAME CgraphTopologicalSorting COMMAND cgraph_topological_sorting_ut)
-  add_test(NAME CgraphSingleShortestPathDijkstra COMMAND cgraph_single_shortest_path_dijkstra_ut)
+  add_test(NAME CgraphSingleShortestPathDijkstra COMMAND
+                cgraph_single_shortest_path_dijkstra_ut)
   add_test(NAME Cgraph2wHeap COMMAND cgraph_2wheap_ut)
   add_test(NAME CgraphEdge COMMAND cgraph_edge_ut)
   add_test(NAME CgraphGetEid COMMAND cgraph_get_eid_ut)
   add_test(NAME CgraphIvecAppend COMMAND cgraph_ivec_append_ut)
-  add_test(NAME CgraphIvecFromArray COMMAND cgraph_ivec_from_array_ut)
+  add_test(NAME CgraphIvecFromArray COMMAND
+                cgraph_ivec_from_array_ut)
+  add_test(NAME CgraphMultiShortestPathDijkstra COMMAND
+                cgraph_multi_shortest_paths_dijkstra_ut)
 endif()
 
 # e.g. copy libries headers and binary to bkc

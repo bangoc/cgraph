@@ -42,6 +42,10 @@ int cgraph_rvec_push_back(cgraph_rvec_t *v,
                           CGRAPH_REAL value);
 int cgraph_rvec_free(cgraph_rvec_t *v);
 
+int cgraph_rvec_fill(cgraph_rvec_t const v, CGRAPH_REAL value);
+
+CGRAPH_REAL cgraph_rvec_min(cgraph_rvec_t const v);
+
 #ifdef __cplusplus
 }
 #endif

@@ -76,3 +76,23 @@ int cgraph_rvec_free(cgraph_rvec_t *v) {
   }
   return 0;
 }
+
+int cgraph_rvec_fill(cgraph_rvec_t const v, CGRAPH_REAL data) {
+  for (CGRAPH_INTEGER i = 0; i < cgraph_rvec_size(v); ++i) {
+    v[i] = data;
+  }
+  return 0;
+}
+
+CGRAPH_REAL cgraph_rvec_min(cgraph_rvec_t const v) {
+  CGRAPH_REAL min;
+  if (cgraph_rvec_size(v) > 0) {
+    min = v[0];
+    for (CGRAPH_INTEGER i = 1; i < cgraph_rvec_size(v); ++i) {
+      if (v[i] < min) {
+        min = v[i];
+      }
+    }
+  }
+  return min;
+}

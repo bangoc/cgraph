@@ -54,7 +54,7 @@ int main() {
   cgraph_destroy(&g);
 
   // Test undirected graph with loop
-  test_create_g5(&g);
+  g = test_create_g5();
 
   cgraph_degree_one(g, &d, 2, CGRAPH_OUT, false);
   TEST_ONE(d, 3, "g5. Test one - out degree");

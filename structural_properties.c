@@ -172,6 +172,257 @@ int cgraph_topological_sorting(const cgraph_t graph,
 }
 
 /**
+ * \ingroup structural
+ * \function cgraph_get_shortest_paths_dijkstra
+ * \brief Tính các đường đi ngắn nhất có trọng số từ/tới một đỉnh
+ *
+ * </para><para>
+ * Nếu có nhiều hơn một đường đi ngắn nhất giữa hai đỉnh, hàm này chỉ trả về một đường đi.
+ * \param graph Đối tượng đồ thị.
+ * \param vertices Kết quả, chỉ số của các đỉnh trên các đường đi.
+ *        Đây là một vec-tơ của các vec-tơ, mỗi phần tử là một vec-tơ
+ * số nguyên. Các vec-tơ cần được khởi tạo trước khi truyền cho hàm.
+ * Các vec-tơ sẽ được xóa và/hoặc thay đổi kích thước và được lấp đầy
+ * bằng các chỉ số của các đỉnh trên các đường đi từ/tới các đỉnh.
+ * Cung cấp một con trỏ NULL ở vị trí này nếu bạn không cần các
+ * vec-tơ này. Thông thường tham số này, hoặc edges là khác NULL,
+ * tuy nhiên sẽ không có thông báo lỗi nếu cả hai đều là các con trỏ
+ * NULL.
+ * \param edges Kết quả, các chỉ số của các cạnh trên các đường đi.
+ *        Đây là một vec-tơ của các vec-tơ, mỗi phần tử là một vec-tơ. Các vec-tơ này cần được khởi tạo trước khi được truyền cho hàm. Trong các xử lý, các vec-tơ sẽ được xóa và/hoặc thay đổi kích thước hợp lý và được lấp đầy với các chỉ số của các cạnh trên các đường đi từ/tới các cạnh. Truyền một con trỏ NULL nếu bạn không cần các chỉ số này. Thông thường tham số này hoặc vertices khác NULL, tuy nhiên sẽ không có thông báo lỗi nào nếu cả hai đều là các con trỏ NULL.
+ * \param from Chỉ số của đỉnh mà các đường đi từ/tới đó sẽ được tính.
+ * \param to Danh sách các chỉ số đỉnh tới/từ đó các đường đi ngắn nhất sẽ được tính. Một đỉnh có thể được đưa vào nhiều lần.
+ * \param weights Một vec-tơ chứa các trọng số cạnh, tất cả các trọng số cạnh phải dương.
+ * \param mode Kiểu đường dẫn ngắn nhất được sử dụng cho các tính toán trong các đồ thị có hướng. Các giá trị có thể:
+ *        \clist
+ *        \cli CGRAPH_OUT
+ *          Các đường đi ra được tính.
+ *        \cli CGRAPH_IN
+ *          Các đường đi vào được tính.
+ *        \cli CGRAPH_ALL
+ *          đồ thị có hướng được coi như vô hướng trong tính toán.
+ *        \endclist
+ * \param predecessors Một con trỏ tới vec-tơ số nguyên hoặc NULL.
+ * Nếu khác NULL, vec-tơ này sẽ chứa các đỉnh trước của mỗi đỉnh trong
+ * cây đường đi ngắn nhất từ một nguồn được trả về. Đỉnh trước (
+ * predecessor) của một đỉnh i trong cây là đỉnh mà từ đó đỉnh i được
+ * tiếp cận. Đỉnh trước của đỉnh bắt đầu (tham số \c from) là chính nó
+ * theo định nghĩa. Đỉnh trước của một đỉnh bằng -1 nghĩa là đỉnh đó
+ * không được phát hiện trong quá trình tìm kiếm từ đỉnh nguồn. Lưu ý
+ * tiến trình tìm kiếm sẽ dừng lại khi nếu tất cả các đỉnh trong \c
+ * to đã được tìm thấy.
+ * \param inbound_edges Một vec-tơ số nguyên đã được khởi tạo hoặc NULL. Nếu khác NULL vec-tơ này sẽ chứa chỉ số các cạnh trong của mỗi đỉnhtrong cây đường đi ngắn nhất từ một đỉnh. Cạnh trong của một đỉnh i trong cây là cạnh mà thông qua đó đỉnh i được tiếp cận. Đỉnh bắt đầu và các đỉnh không được tìm thấy sẽ có giá trị -1 ở các vị trí tương ứng trong vec-tơ. Lưu ý tiến trình tìm kiếm sẽ dừng lại khi tất cả các đường đi ngắn nhất tới tất cả các đỉnh trong \c to đều đã được tìm thấy.
+ * \return Mã lỗi
+ *        \clist
+ *        \cli CGRAPH_FAILURE
+ *             Nếu sảy ra bất kỳ lỗi nào trong quá trình tìm kiếm
+ *        \endclist
+ *
+ * Độ phức tạp: O(|E|log|E|+|V|), trong đó |V| là số lượng đỉnh và
+ * |E| là số lượng cạnh.
+ *
+ * \sa \ref cgraph_get_shortest_paths() nếu trọng số của tất cả các
+ * cạnh đều bằng nhau.
+ *
+ * \example examples/simple/igraph_get_shortest_paths_dijkstra.c
+ */
+int cgraph_get_shortest_paths_dijkstra(const cgraph_t graph,
+                          vector_t vertices,
+                          vector_t edges,
+                          CGRAPH_INTEGER from,
+                          cgraph_ivec_t to,
+                          const cgraph_rvec_t weights,
+                          cgraph_neimode_t mode,
+                          cgraph_ivec_t *predecessors,
+                          cgraph_ivec_t *inbound_edges) {
+    /* Chi tiết triển khai. Đây là triển khai cơ bản cho giải thuật Dijkstra với một heap nhị phân. Heap được đánh chỉ mục, nghĩa là, nó không chỉ chứa các khoảng cách, mà còn chứa các đỉnh gắn với các giá trị khoảng cách đó.
+
+       Các thủ thuật:
+       - Các giá trị khoảng cách được đảo dấu trước khi được đưa vào heap, như vậy chúng ta sẽ sử dụng heap cực đại thay cho heap cực tiểu.
+       - Chúng ta không sử dụng CGRAPH_INFINITY trong quá trình tính toán trong vec-tơ khoảng cách, bởi vì CGRAPH_FINITE() có thể kéo theo gọi hàm và chúng ta không muốn điều đó. Vì vậy chúng ta lưu khoảng cách + 1.0 thay cho khoảng cách, và giá trị 0 tương đương với giá trị vô cùng.
+       - `parents' gán tất cả các chỉ số cạnh trong của tất cả các đỉnh trong cây đường đi ngắn nhất cho các đỉnh. Trong triển khai này chỉ số cạnh + 1 được lưu, 0 nghĩa là đỉnh không được phát hiện.
+    */
+
+    long int no_of_nodes = cgraph_vcount(graph);
+    long int no_of_edges = cgraph_ecount(graph);
+    cgraph_2wheap_t Q;
+    cgraph_rvec_t dists = cgraph_rvec_create();
+    cgraph_rvec_init(&dists, no_of_nodes);
+    long int *parents;
+    bool *is_target;
+    long int i, to_reach;
+
+    // if (!weights) {
+    //     return cgraph_get_shortest_paths(graph,
+    //       vertices, edges, from, to, mode, predecessors,
+    //       inbound_edges);
+    // }
+
+    if (cgraph_rvec_size(weights) != no_of_edges) {
+        CGRAPH_ERROR("Weight vector length does not match",
+                     CGRAPH_FAILURE);
+    }
+    if (cgraph_rvec_min(weights) < 0) {
+        CGRAPH_ERROR("Weight vector must be non-negative",
+                     CGRAPH_FAILURE);
+    }
+
+    if (vertices &&
+        cgraph_ivec_size(to) != gtv_size(vertices)) {
+        CGRAPH_ERROR("Size of `vertices' and `to' should match",
+                      CGRAPH_FAILURE);
+    }
+    if (edges &&
+        cgraph_ivec_size(to) != gtv_size(edges)) {
+          CGRAPH_ERROR("Size of `edges' and `to' should match",
+                        CGRAPH_FAILURE);
+    }
+
+    CGRAPH_CHECK(cgraph_2wheap_init(&Q, no_of_nodes));
+    cgraph_rvec_fill(dists, -1.0);
+
+    parents = calloc(no_of_nodes, sizeof(long int));
+    if (parents == 0) {
+      CGRAPH_ERROR("Can't calculate shortest paths",
+                    CGRAPH_FAILURE);
+    }
+
+    is_target = calloc(no_of_nodes, sizeof(bool));
+    if (is_target == 0) {
+        CGRAPH_ERROR("Can't calculate shortest paths",
+                     CGRAPH_FAILURE);
+    }
+
+    // Đánh dấu các đỉnh cần tới
+    to_reach = cgraph_ivec_size(to);
+    for (int i = 0; i < cgraph_ivec_size(to); ++i) {
+      if (!is_target[ to[i] ]) {
+        is_target[ to[i] ] = true;
+      } else {
+        to_reach--;  /* Đỉnh xuất hiện nhiều lần trong to */
+      }
+    }
+
+    dists[from] = 0.0;
+    parents[from] = 0;
+    cgraph_2wheap_push_with_index(&Q, from, 0.0);
+
+    cgraph_ivec_t neis = cgraph_ivec_create();
+    while (!cgraph_2wheap_empty(&Q) && to_reach > 0) {
+      long nlen, minnei = cgraph_2wheap_max_index(&Q);
+      CGRAPH_REAL mindist = -cgraph_2wheap_delete_max(&Q);
+
+      if (is_target[minnei]) {
+        is_target[minnei] = false;
+        to_reach--;
+      }
+
+      // Cập nhật đường đi ngắn nhất cho các láng giềng của 'minnei'
+      cgraph_incident(graph, &neis, minnei, mode);
+      nlen = cgraph_ivec_size(neis);
+      for (int i = 0; i < nlen; i++) {
+        long int edge = neis[i];
+        long int tto = CGRAPH_OTHER(graph, edge, minnei);
+        CGRAPH_REAL altdist = mindist + weights[edge];
+        CGRAPH_REAL curdist = dists[tto];
+        if (curdist < 0 || altdist < curdist) {
+          // Khoảng cách hữu hạn đầu tiên hoặc một đường đi ngắn hơn.
+          dists[tto] = altdist;
+          parents[tto] = edge + 1;
+          CGRAPH_CHECK(
+            cgraph_2wheap_push_with_index(&Q, tto, -altdist));
+        }
+      }
+    } /* !igraph_2wheap_empty(&Q) */
+
+    if (to_reach > 0) {
+      CGRAPH_WARNING("Couldn't reach some vertices");
+    }
+
+    // Tạo `predecessors' nếu cần
+    if (predecessors) {
+      CGRAPH_CHECK(cgraph_ivec_init(predecessors, no_of_nodes));
+      for (i = 0; i < no_of_nodes; i++) {
+        if (i == from) {
+          /* i là đỉnh bắt đầu */
+          (*predecessors)[i] = i;
+        } else if (parents[i] <= 0) {
+          // Chưa đi tới i
+          (*predecessors)[i] = -1;
+        } else {
+          // Đi tới i qua cạnh với chỉ số = parents[i] - 1
+          (*predecessors)[i] =
+                        CGRAPH_OTHER(graph, parents[i] - 1, i);
+        }
+      }
+    }
+
+    /* Tạo `inbound_edges' nếu cần */
+    if (inbound_edges) {
+      CGRAPH_CHECK(cgraph_ivec_init(inbound_edges, no_of_nodes));
+      for (i = 0; i < no_of_nodes; i++) {
+        if (parents[i] <= 0) {
+          // Chưa đi tới i
+          (*inbound_edges)[i] = -1;
+        } else {
+          // Đi tới i qua cạnh với chỉ số = parents[i] - 1
+          (*inbound_edges)[i] = parents[i] - 1;
+        }
+      }
+    }
+
+    // Các đường đi ngắn nhất dựa trên các chỉ số đỉnh và/hoặc cạnh
+    if (vertices || edges) {
+      for (int i = 0; i < cgraph_ivec_size(to); i++) {
+        long node = to[i];
+        long size, act, edge;
+        cgraph_ivec_t *vvec = NULL, *evec = NULL;
+        if (vertices) {
+          vvec = &vertices[i].v;
+        }
+        if (edges) {
+          evec = &edges[i].v;
+        }
+
+        size = 0;
+        act = node;
+        while (parents[act]) {
+          size++;
+          edge = parents[act] - 1;
+          act = CGRAPH_OTHER(graph, edge, act);
+        }
+        if (vvec) {
+          CGRAPH_CHECK(cgraph_ivec_init(vvec, size + 1));
+          (*vvec)[size] = node;
+        }
+        if (evec) {
+          CGRAPH_CHECK(cgraph_ivec_init(evec, size));
+        }
+        act = node;
+        while (parents[act]) {
+          edge = parents[act] - 1;
+          act = CGRAPH_OTHER(graph, edge, act);
+          size--;
+          if (vvec) {
+            (*vvec)[size] = act;
+          }
+          if (evec) {
+            (*evec)[size] = edge;
+          }
+        }
+      }
+    }
+
+    cgraph_2wheap_free(&Q);
+    cgraph_rvec_free(&dists);
+    cgraph_ivec_free(&neis);
+    free(is_target);
+    free(parents);
+
+    return 0;
+}
+
+/**
  * \function cgraph_get_shortest_path_dijkstra
  * \ref igraph_get_shortest_path_dijkstra
  * Đường đi ngắn nhất có trọng số từ một đỉnh tới một đỉnh khác.
@@ -204,7 +455,7 @@ int cgraph_topological_sorting(const cgraph_t graph,
  * Độ phức tạp: O(|E|log|E|+|V|), |V| là số lượng đỉnh,
  * |E| là số lượng cạnh trong đồ thị.
  *
- * \sa \ref cgraph_get_shortest_paths_dijkstra() cho phiên bản với
+ * \sa \ref igraph_get_shortest_paths_dijkstra() cho phiên bản với
  * nhiều đỉnh đích hơn.
  **/
 int cgraph_get_shortest_path_dijkstra(const cgraph_t graph,

@@ -22,7 +22,9 @@ cgraph_t test_create_g1() {
                             3, 5,
                             3, 1,
                             1, 4}, 18);
-  return cgraph_create(edges, 0, true);
+  cgraph_t g = cgraph_create(edges, 0, true);
+  cgraph_ivec_free(&edges);
+  return g;
 }
 
 /*
@@ -47,7 +49,9 @@ cgraph_t test_create_g2() {
                             3, 1,
                             1, 4,
                             2, 2}, 20);
-  return cgraph_create(edges, 0, true);
+  cgraph_t g = cgraph_create(edges, 0, true);
+  cgraph_ivec_free(&edges);
+  return g;
 }
 
 /*
@@ -70,7 +74,9 @@ cgraph_t test_create_g3() {
                             0, 2,
                             3, 5,
                             1, 4}, 16);
-  return cgraph_create(edges, 0, true);
+  cgraph_t g = cgraph_create(edges, 0, true);
+  cgraph_ivec_free(&edges);
+  return g;
 }
 
 /*
@@ -93,7 +99,9 @@ cgraph_t test_create_g4() {
                             2, 0,
                             3, 5,
                             1, 4}, 16);
-  return cgraph_create(edges, 0, false);
+  cgraph_t g = cgraph_create(edges, 0, false);
+  cgraph_ivec_free(&edges);
+  return g;
 }
 
 /*
@@ -118,5 +126,29 @@ cgraph_t test_create_g5() {
                             1, 4,
                             2, 2
                            }, 18);
-  return cgraph_create(edges, 0, false);
+  cgraph_t g = cgraph_create(edges, 0, false);
+  cgraph_ivec_free(&edges);
+  return g;
+}
+
+cgraph_t test_create_g6() {
+  cgraph_ivec_t edges = cgraph_ivec_from_array(
+    (CGRAPH_INTEGER[]) {0, 2,
+                        0, 6,
+                        0, 7,
+                        2, 3,
+                        3, 5,
+                        3, 8,
+                        4, 3,
+                        4, 8,
+                        5, 4,
+                        5, 8,
+                        6, 3,
+                        6, 5,
+                        6, 7,
+                        7, 8
+                    }, 28);
+  cgraph_t g = cgraph_create(edges, 0, true);
+  cgraph_ivec_free(&edges);
+  return g;
 }
