@@ -249,194 +249,184 @@ int cgraph_get_shortest_paths(const cgraph_t graph,
                               cgraph_neimode_t mode,
                               cgraph_ivec_t *predecessors,
                               cgraph_ivec_t *inbound_edges) {
+  CGRAPH_INTEGER no_of_nodes = cgraph_vcount(graph);
+  CGRAPH_INTEGER *father;
 
-    /* TODO: use inclist_t if to is long (longer than 1?) */
+  cgraph_iqueue_t q = cgraph_iqueue_create();
 
-    CGRAPH_INTEGER no_of_nodes = cgraph_vcount(graph);
-    CGRAPH_INTEGER *father;
+  CGRAPH_INTEGER i, j;
+  cgraph_ivec_t tmp = cgraph_ivec_create();
 
-    cgraph_iqueue_t q = cgraph_iqueue_create();
+  CGRAPH_INTEGER to_reach;
+  CGRAPH_INTEGER reached = 0;
 
-    CGRAPH_INTEGER i, j;
-    cgraph_ivec_t tmp = cgraph_ivec_create();
+  if (from < 0 || from >= no_of_nodes) {
+    CGRAPH_ERROR("Cannot get shortest paths", CGRAPH_FAILURE);
+  }
+  if (mode != CGRAPH_OUT && mode != CGRAPH_IN &&
+        mode != CGRAPH_ALL) {
+    CGRAPH_ERROR("Invalid mode argument", CGRAPH_FAILURE);
+  }
 
-    CGRAPH_INTEGER to_reach;
-    CGRAPH_INTEGER reached = 0;
+  if (vertices &&
+        cgraph_ivec_size(to) != gtv_size(vertices)) {
+    CGRAPH_ERROR("Size of the `vertices' and the `to' should "
+                 "match", CGRAPH_FAILURE);
+  }
+  if (edges &&
+        cgraph_ivec_size(to) != gtv_size(edges)) {
+    CGRAPH_ERROR("Size of the `edges' and the `to' should match",
+                 CGRAPH_FAILURE);
+  }
 
-    if (from < 0 || from >= no_of_nodes) {
-      CGRAPH_ERROR("Cannot get shortest paths", CGRAPH_FAILURE);
+  father = calloc(no_of_nodes, sizeof(CGRAPH_INTEGER));
+  if (father == 0) {
+    CGRAPH_ERROR("cannot get shortest paths", CGRAPH_FAILURE);
+  }
+
+  /* Đánh dấu các đỉnh cần đi tới */
+  to_reach = cgraph_ivec_size(to);
+  for (int i = 0; i < cgraph_ivec_size(to); ++i) {
+    if (father[ to[i] ] == 0) {
+      father[ to[i] ] = -1;
+    } else {
+      // Đỉnh này được đưa vào nhiều lần
+      to_reach--;
     }
-    if (mode != CGRAPH_OUT && mode != CGRAPH_IN &&
-          mode != CGRAPH_ALL) {
-      CGRAPH_ERROR("Invalid mode argument", CGRAPH_FAILURE);
-    }
+  }
 
-    // IGRAPH_CHECK(igraph_vit_create(graph, to, &vit));
-    // IGRAPH_FINALLY(igraph_vit_destroy, &vit);
+  /* Ý nghĩa của father[i]:
+   *
+   * - Nếu father[i] < 0, nghĩa là cần tìm đường đi tới đỉnh i
+   * nhưng vẫn chưa tìm thấy đường đi tới i.
+   *
+   * - Nếu father[i] = 0, nghĩa là không cần tìm đường đi tới i và
+   * vẫn chưa đi tới i.
+   *
+   * - Nếu father[i] = 1, nghĩa là i là đỉnh bắt đầu.
+   *
+   * - Trong các trường hợp khác father[i] là chỉ số của cạnh đi
+   * tới i cộng 2.
+   */
 
-    if (vertices &&
-          cgraph_ivec_size(to) != gtv_size(vertices)) {
-      CGRAPH_ERROR("Size of the `vertices' and the `to' should "
-                   "match", CGRAPH_FAILURE);
-    }
-    if (edges &&
-          cgraph_ivec_size(to) != gtv_size(edges)) {
-      CGRAPH_ERROR("Size of the `edges' and the `to' should match",
-                   CGRAPH_FAILURE);
-    }
+  CGRAPH_CHECK(cgraph_iqueue_enqueue(q, from + 1));
+  /*
+    Trường hợp from có trong to
+  */
+  if (father[from] < 0) {
+    reached++;
+  }
+  father[from] = 1;
 
-    father = calloc(no_of_nodes, sizeof(CGRAPH_INTEGER));
-    if (father == 0) {
-      CGRAPH_ERROR("cannot get shortest paths", CGRAPH_FAILURE);
-    }
-    // IGRAPH_FINALLY(igraph_free, father);
-    // IGRAPH_VECTOR_INIT_FINALLY(&tmp, 0);
-    // IGRAPH_DQUEUE_INIT_FINALLY(&q, 100);
+  while (!cgraph_iqueue_empty(q) && reached < to_reach) {
+    CGRAPH_INTEGER act;
+    cgraph_iqueue_poll(q, &act);
 
-    /* Đánh dấu các đỉnh cần đi tới */
-    to_reach = cgraph_ivec_size(to);
-    for (int i = 0; i < cgraph_ivec_size(to); ++i) {
-      if (father[ to[i] ] == 0) {
-        father[ to[i] ] = -1;
+    // Các giá trị trong hàng đợi là mã đỉnh + 1
+    --act;
+
+    CGRAPH_CHECK(cgraph_incident(graph, &tmp, act, mode));
+    for (int j = 0; j < cgraph_ivec_size(tmp); j++) {
+      CGRAPH_INTEGER edge = tmp[j];
+      CGRAPH_INTEGER neighbor = CGRAPH_OTHER(graph, edge, act);
+      if (father[neighbor] > 0) {
+        continue;
+      } else if (father[neighbor] < 0) {
+        reached++;
+      }
+      father[neighbor] = edge + 2;
+      CGRAPH_CHECK(cgraph_iqueue_enqueue(q, neighbor + 1));
+    }
+  }
+
+  if (reached < to_reach) {
+    CGRAPH_WARNING("Couldn't reach some vertices");
+  }
+
+  /* Xuất thông tin `predecessors' nếu cần */
+  if (predecessors) {
+    CGRAPH_CHECK(cgraph_ivec_init(predecessors, no_of_nodes));
+
+    for (i = 0; i < no_of_nodes; i++) {
+      if (father[i] <= 0) {
+        /* Chưa đi tới i */
+        (*predecessors)[i] = -1;
+      } else if (father[i] == 1) {
+        /* là đỉnh bắt đầu */
+        (*predecessors)[i] = i;
       } else {
-        // Đỉnh này được đưa vào nhiều lần
-        to_reach--;
+        /* Đã đi tới i qua canh có ID = father[i] - 2 */
+        (*predecessors)[i] = CGRAPH_OTHER(graph, father[i] - 2, i);
       }
     }
+  }
 
-    /* Ý nghĩa của father[i]:
-     *
-     * - Nếu father[i] < 0, nghĩa là cần tìm đường đi tới đỉnh i
-     * nhưng vẫn chưa tìm thấy đường đi tới i.
-     *
-     * - Nếu father[i] = 0, nghĩa là không cần tìm đường đi tới i và
-     * vẫn chưa đi tới i.
-     *
-     * - Nếu father[i] = 1, nghĩa là i là đỉnh bắt đầu.
-     *
-     * - Trong các trường hợp khác father[i] là chỉ số của cạnh đi
-     * tới i cộng 2.
-     */
+  /* Xuất thông tin `inbound_edges' nếu cần */
+  if (inbound_edges) {
+    CGRAPH_CHECK(cgraph_ivec_init(inbound_edges, no_of_nodes));
 
-    CGRAPH_CHECK(cgraph_iqueue_enqueue(q, from + 1));
-    /*
-      Trường hợp from có trong to
-    */
-    if (father[from] < 0) {
-      reached++;
-    }
-    father[from] = 1;
-
-    while (!cgraph_iqueue_empty(q) && reached < to_reach) {
-      CGRAPH_INTEGER act;
-      cgraph_iqueue_poll(q, &act);
-
-      // Các giá trị trong hàng đợi là mã đỉnh + 1
-      --act;
-
-      CGRAPH_CHECK(cgraph_incident(graph, &tmp, act, mode));
-      for (int j = 0; j < cgraph_ivec_size(tmp); j++) {
-        CGRAPH_INTEGER edge = tmp[j];
-        CGRAPH_INTEGER neighbor = CGRAPH_OTHER(graph, edge, act);
-        if (father[neighbor] > 0) {
-          continue;
-        } else if (father[neighbor] < 0) {
-          reached++;
-        }
-        father[neighbor] = edge + 2;
-        CGRAPH_CHECK(cgraph_iqueue_enqueue(q, neighbor + 1));
+    for (int i = 0; i < no_of_nodes; i++) {
+      if (father[i] <= 1) {
+        /* Chưa đi tới i hoặc i là đỉnh bắt đầu */
+        (*inbound_edges)[i] = -1;
+      } else {
+        /* Đã đi tới i qua canh có ID = father[i] - 2 */
+        (*inbound_edges)[i] = father[i] - 2;
       }
     }
+  }
 
-    if (reached < to_reach) {
-      CGRAPH_WARNING("Couldn't reach some vertices");
-    }
-
-    /* Xuất thông tin `predecessors' nếu cần */
-    if (predecessors) {
-      CGRAPH_CHECK(cgraph_ivec_init(predecessors, no_of_nodes));
-
-      for (i = 0; i < no_of_nodes; i++) {
-        if (father[i] <= 0) {
-          /* Chưa đi tới i */
-          (*predecessors)[i] = -1;
-        } else if (father[i] == 1) {
-          /* là đỉnh bắt đầu */
-          (*predecessors)[i] = i;
-        } else {
-          /* Đã đi tới i qua canh có ID = father[i] - 2 */
-          (*predecessors)[i] = CGRAPH_OTHER(graph, father[i] - 2, i);
-        }
+  /* Xuất thông tin `vertices' và `edges' nếu cần */
+  if (vertices || edges) {
+    for (int i = 0; i < cgraph_ivec_size(to); ++i) {
+      CGRAPH_INTEGER node = to[i];
+      cgraph_ivec_t *vvec = 0, *evec = 0;
+      if (vertices) {
+        vvec = &vertices[i].v;
       }
-    }
-
-    /* Xuất thông tin `inbound_edges' nếu cần */
-    if (inbound_edges) {
-      CGRAPH_CHECK(cgraph_ivec_init(inbound_edges, no_of_nodes));
-
-      for (int i = 0; i < no_of_nodes; i++) {
-        if (father[i] <= 1) {
-          /* Chưa đi tới i hoặc i là đỉnh bắt đầu */
-          (*inbound_edges)[i] = -1;
-        } else {
-          /* Đã đi tới i qua canh có ID = father[i] - 2 */
-          (*inbound_edges)[i] = father[i] - 2;
-        }
+      if (edges) {
+        evec = &edges[i].v;
       }
-    }
 
-    /* Xuất thông tin `vertices' và `edges' nếu cần */
-    if (vertices || edges) {
-      for (int i = 0; i < cgraph_ivec_size(to); ++i) {
-        CGRAPH_INTEGER node = to[i];
-        cgraph_ivec_t *vvec = 0, *evec = 0;
-        if (vertices) {
-          vvec = &vertices[i].v;
+      // IGRAPH_ALLOW_INTERRUPTION();
+
+      if (father[node] > 0) {
+        CGRAPH_INTEGER act = node;
+        CGRAPH_INTEGER size = 0;
+        CGRAPH_INTEGER edge;
+        while (father[act] > 1) {
+          size++;
+          edge = father[act] - 2;
+          act = CGRAPH_OTHER(graph, edge, act);
         }
-        if (edges) {
-          evec = &edges[i].v;
+        if (vvec) {
+          CGRAPH_CHECK(cgraph_ivec_init(vvec, size + 1));
+          (*vvec)[size] = node;
         }
-
-        // IGRAPH_ALLOW_INTERRUPTION();
-
-        if (father[node] > 0) {
-          CGRAPH_INTEGER act = node;
-          CGRAPH_INTEGER size = 0;
-          CGRAPH_INTEGER edge;
-          while (father[act] > 1) {
-            size++;
-            edge = father[act] - 2;
-            act = CGRAPH_OTHER(graph, edge, act);
-          }
+        if (evec) {
+          CGRAPH_CHECK(cgraph_ivec_init(evec, size));
+        }
+        act = node;
+        while (father[act] > 1) {
+          size--;
+          edge = father[act] - 2;
+          act = CGRAPH_OTHER(graph, edge, act);
           if (vvec) {
-            CGRAPH_CHECK(cgraph_ivec_init(vvec, size + 1));
-            (*vvec)[size] = node;
+            (*vvec)[size] = act;
           }
           if (evec) {
-            CGRAPH_CHECK(cgraph_ivec_init(evec, size));
-          }
-          act = node;
-          while (father[act] > 1) {
-            size--;
-            edge = father[act] - 2;
-            act = CGRAPH_OTHER(graph, edge, act);
-            if (vvec) {
-              (*vvec)[size] = act;
-            }
-            if (evec) {
-              (*evec)[size] = edge;
-            }
+            (*evec)[size] = edge;
           }
         }
       }
     }
+  }
 
-    free(father);
-    cgraph_iqueue_free(&q);
-    cgraph_ivec_free(&tmp);
-    // IGRAPH_FINALLY_CLEAN(4);
+  free(father);
+  cgraph_iqueue_free(&q);
+  cgraph_ivec_free(&tmp);
 
-    return 0;
+  return 0;
 }
 
 /**
@@ -510,184 +500,183 @@ int cgraph_get_shortest_paths_dijkstra(const cgraph_t graph,
        - Chúng ta không sử dụng CGRAPH_INFINITY trong quá trình tính toán trong vec-tơ khoảng cách, bởi vì CGRAPH_FINITE() có thể kéo theo gọi hàm và chúng ta không muốn điều đó. Vì vậy chúng ta lưu khoảng cách + 1.0 thay cho khoảng cách, và giá trị 0 tương đương với giá trị vô cùng.
        - `parents' gán tất cả các chỉ số cạnh trong của tất cả các đỉnh trong cây đường đi ngắn nhất cho các đỉnh. Trong triển khai này chỉ số cạnh + 1 được lưu, 0 nghĩa là đỉnh không được phát hiện.
     */
+  if (!weights) {
+    return cgraph_get_shortest_paths(graph,
+      vertices, edges, from, to, mode, predecessors,
+      inbound_edges);
+  }
 
-    long int no_of_nodes = cgraph_vcount(graph);
-    long int no_of_edges = cgraph_ecount(graph);
-    cgraph_2wheap_t Q;
-    cgraph_rvec_t dists = cgraph_rvec_create();
-    cgraph_rvec_init(&dists, no_of_nodes);
-    long int *parents;
-    bool *is_target;
-    long int i, to_reach;
+  CGRAPH_INTEGER no_of_nodes = cgraph_vcount(graph);
+  CGRAPH_INTEGER no_of_edges = cgraph_ecount(graph);
+  cgraph_2wheap_t Q;
+  cgraph_rvec_t dists = cgraph_rvec_create();
+  cgraph_rvec_init(&dists, no_of_nodes);
+  CGRAPH_INTEGER *parents;
+  bool *is_target;
+  CGRAPH_INTEGER i, to_reach;
 
-    if (!weights) {
-      return cgraph_get_shortest_paths(graph,
-        vertices, edges, from, to, mode, predecessors,
-        inbound_edges);
-    }
+  if (cgraph_rvec_size(weights) != no_of_edges) {
+    CGRAPH_ERROR("Weight vector length does not match",
+                 CGRAPH_FAILURE);
+  }
+  if (cgraph_rvec_min(weights) < 0) {
+    CGRAPH_ERROR("Weight vector must be non-negative",
+                 CGRAPH_FAILURE);
+  }
 
-    if (cgraph_rvec_size(weights) != no_of_edges) {
-      CGRAPH_ERROR("Weight vector length does not match",
-                   CGRAPH_FAILURE);
-    }
-    if (cgraph_rvec_min(weights) < 0) {
-      CGRAPH_ERROR("Weight vector must be non-negative",
-                   CGRAPH_FAILURE);
-    }
-
-    if (vertices &&
-      cgraph_ivec_size(to) != gtv_size(vertices)) {
-      CGRAPH_ERROR("Size of `vertices' and `to' should match",
+  if (vertices &&
+    cgraph_ivec_size(to) != gtv_size(vertices)) {
+    CGRAPH_ERROR("Size of `vertices' and `to' should match",
+                  CGRAPH_FAILURE);
+  }
+  if (edges &&
+    cgraph_ivec_size(to) != gtv_size(edges)) {
+      CGRAPH_ERROR("Size of `edges' and `to' should match",
                     CGRAPH_FAILURE);
+  }
+
+  CGRAPH_CHECK(cgraph_2wheap_init(&Q, no_of_nodes));
+  cgraph_rvec_fill(dists, -1.0);
+
+  parents = calloc(no_of_nodes, sizeof(CGRAPH_INTEGER));
+  if (parents == 0) {
+    CGRAPH_ERROR("Can't calculate shortest paths",
+                  CGRAPH_FAILURE);
+  }
+
+  is_target = calloc(no_of_nodes, sizeof(bool));
+  if (is_target == 0) {
+    CGRAPH_ERROR("Can't calculate shortest paths",
+                 CGRAPH_FAILURE);
+  }
+
+  // Đánh dấu các đỉnh cần tới
+  to_reach = cgraph_ivec_size(to);
+  for (CGRAPH_INTEGER i = 0; i < cgraph_ivec_size(to); ++i) {
+    if (!is_target[ to[i] ]) {
+      is_target[ to[i] ] = true;
+    } else {
+      to_reach--;  /* Đỉnh xuất hiện nhiều lần trong to */
     }
-    if (edges &&
-      cgraph_ivec_size(to) != gtv_size(edges)) {
-        CGRAPH_ERROR("Size of `edges' and `to' should match",
-                      CGRAPH_FAILURE);
+  }
+
+  dists[from] = 0.0;
+  parents[from] = 0;
+  cgraph_2wheap_push_with_index(&Q, from, 0.0);
+
+  cgraph_ivec_t neis = cgraph_ivec_create();
+  while (!cgraph_2wheap_empty(&Q) && to_reach > 0) {
+    CGRAPH_INTEGER nlen, minnei = cgraph_2wheap_max_index(&Q);
+    CGRAPH_REAL mindist = -cgraph_2wheap_delete_max(&Q);
+
+    if (is_target[minnei]) {
+      is_target[minnei] = false;
+      to_reach--;
     }
 
-    CGRAPH_CHECK(cgraph_2wheap_init(&Q, no_of_nodes));
-    cgraph_rvec_fill(dists, -1.0);
-
-    parents = calloc(no_of_nodes, sizeof(long int));
-    if (parents == 0) {
-      CGRAPH_ERROR("Can't calculate shortest paths",
-                    CGRAPH_FAILURE);
+    // Cập nhật đường đi ngắn nhất cho các láng giềng của 'minnei'
+    cgraph_incident(graph, &neis, minnei, mode);
+    nlen = cgraph_ivec_size(neis);
+    for (CGRAPH_INTEGER i = 0; i < nlen; i++) {
+      CGRAPH_INTEGER edge = neis[i];
+      CGRAPH_INTEGER tto = CGRAPH_OTHER(graph, edge, minnei);
+      CGRAPH_REAL altdist = mindist + weights[edge];
+      CGRAPH_REAL curdist = dists[tto];
+      if (curdist < 0 || altdist < curdist) {
+        // Khoảng cách hữu hạn đầu tiên hoặc một đường đi ngắn hơn.
+        dists[tto] = altdist;
+        parents[tto] = edge + 1;
+        CGRAPH_CHECK(
+          cgraph_2wheap_push_with_index(&Q, tto, -altdist));
+      }
     }
+  } /* !igraph_2wheap_empty(&Q) */
 
-    is_target = calloc(no_of_nodes, sizeof(bool));
-    if (is_target == 0) {
-      CGRAPH_ERROR("Can't calculate shortest paths",
-                   CGRAPH_FAILURE);
-    }
+  if (to_reach > 0) {
+    CGRAPH_WARNING("Couldn't reach some vertices");
+  }
 
-    // Đánh dấu các đỉnh cần tới
-    to_reach = cgraph_ivec_size(to);
-    for (int i = 0; i < cgraph_ivec_size(to); ++i) {
-      if (!is_target[ to[i] ]) {
-        is_target[ to[i] ] = true;
+  // Tạo `predecessors' nếu cần
+  if (predecessors) {
+    CGRAPH_CHECK(cgraph_ivec_init(predecessors, no_of_nodes));
+    for (i = 0; i < no_of_nodes; i++) {
+      if (i == from) {
+        /* i là đỉnh bắt đầu */
+        (*predecessors)[i] = i;
+      } else if (parents[i] <= 0) {
+        // Chưa đi tới i
+        (*predecessors)[i] = -1;
       } else {
-        to_reach--;  /* Đỉnh xuất hiện nhiều lần trong to */
+        // Đi tới i qua cạnh với chỉ số = parents[i] - 1
+        (*predecessors)[i] =
+                      CGRAPH_OTHER(graph, parents[i] - 1, i);
       }
     }
+  }
 
-    dists[from] = 0.0;
-    parents[from] = 0;
-    cgraph_2wheap_push_with_index(&Q, from, 0.0);
-
-    cgraph_ivec_t neis = cgraph_ivec_create();
-    while (!cgraph_2wheap_empty(&Q) && to_reach > 0) {
-      long nlen, minnei = cgraph_2wheap_max_index(&Q);
-      CGRAPH_REAL mindist = -cgraph_2wheap_delete_max(&Q);
-
-      if (is_target[minnei]) {
-        is_target[minnei] = false;
-        to_reach--;
-      }
-
-      // Cập nhật đường đi ngắn nhất cho các láng giềng của 'minnei'
-      cgraph_incident(graph, &neis, minnei, mode);
-      nlen = cgraph_ivec_size(neis);
-      for (int i = 0; i < nlen; i++) {
-        long int edge = neis[i];
-        long int tto = CGRAPH_OTHER(graph, edge, minnei);
-        CGRAPH_REAL altdist = mindist + weights[edge];
-        CGRAPH_REAL curdist = dists[tto];
-        if (curdist < 0 || altdist < curdist) {
-          // Khoảng cách hữu hạn đầu tiên hoặc một đường đi ngắn hơn.
-          dists[tto] = altdist;
-          parents[tto] = edge + 1;
-          CGRAPH_CHECK(
-            cgraph_2wheap_push_with_index(&Q, tto, -altdist));
-        }
-      }
-    } /* !igraph_2wheap_empty(&Q) */
-
-    if (to_reach > 0) {
-      CGRAPH_WARNING("Couldn't reach some vertices");
-    }
-
-    // Tạo `predecessors' nếu cần
-    if (predecessors) {
-      CGRAPH_CHECK(cgraph_ivec_init(predecessors, no_of_nodes));
-      for (i = 0; i < no_of_nodes; i++) {
-        if (i == from) {
-          /* i là đỉnh bắt đầu */
-          (*predecessors)[i] = i;
-        } else if (parents[i] <= 0) {
-          // Chưa đi tới i
-          (*predecessors)[i] = -1;
-        } else {
-          // Đi tới i qua cạnh với chỉ số = parents[i] - 1
-          (*predecessors)[i] =
-                        CGRAPH_OTHER(graph, parents[i] - 1, i);
-        }
+  /* Tạo `inbound_edges' nếu cần */
+  if (inbound_edges) {
+    CGRAPH_CHECK(cgraph_ivec_init(inbound_edges, no_of_nodes));
+    for (i = 0; i < no_of_nodes; i++) {
+      if (parents[i] <= 0) {
+        // Chưa đi tới i
+        (*inbound_edges)[i] = -1;
+      } else {
+        // Đi tới i qua cạnh với chỉ số = parents[i] - 1
+        (*inbound_edges)[i] = parents[i] - 1;
       }
     }
+  }
 
-    /* Tạo `inbound_edges' nếu cần */
-    if (inbound_edges) {
-      CGRAPH_CHECK(cgraph_ivec_init(inbound_edges, no_of_nodes));
-      for (i = 0; i < no_of_nodes; i++) {
-        if (parents[i] <= 0) {
-          // Chưa đi tới i
-          (*inbound_edges)[i] = -1;
-        } else {
-          // Đi tới i qua cạnh với chỉ số = parents[i] - 1
-          (*inbound_edges)[i] = parents[i] - 1;
-        }
+  // Các đường đi ngắn nhất dựa trên các chỉ số đỉnh và/hoặc cạnh
+  if (vertices || edges) {
+    for (CGRAPH_INTEGER i = 0; i < cgraph_ivec_size(to); i++) {
+      CGRAPH_INTEGER node = to[i];
+      CGRAPH_INTEGER size, act, edge;
+      cgraph_ivec_t *vvec = NULL, *evec = NULL;
+      if (vertices) {
+        vvec = &vertices[i].v;
       }
-    }
+      if (edges) {
+        evec = &edges[i].v;
+      }
 
-    // Các đường đi ngắn nhất dựa trên các chỉ số đỉnh và/hoặc cạnh
-    if (vertices || edges) {
-      for (int i = 0; i < cgraph_ivec_size(to); i++) {
-        long node = to[i];
-        long size, act, edge;
-        cgraph_ivec_t *vvec = NULL, *evec = NULL;
-        if (vertices) {
-          vvec = &vertices[i].v;
-        }
-        if (edges) {
-          evec = &edges[i].v;
-        }
-
-        size = 0;
-        act = node;
-        while (parents[act]) {
-          size++;
-          edge = parents[act] - 1;
-          act = CGRAPH_OTHER(graph, edge, act);
-        }
+      size = 0;
+      act = node;
+      while (parents[act]) {
+        size++;
+        edge = parents[act] - 1;
+        act = CGRAPH_OTHER(graph, edge, act);
+      }
+      if (vvec) {
+        CGRAPH_CHECK(cgraph_ivec_init(vvec, size + 1));
+        (*vvec)[size] = node;
+      }
+      if (evec) {
+        CGRAPH_CHECK(cgraph_ivec_init(evec, size));
+      }
+      act = node;
+      while (parents[act]) {
+        edge = parents[act] - 1;
+        act = CGRAPH_OTHER(graph, edge, act);
+        size--;
         if (vvec) {
-          CGRAPH_CHECK(cgraph_ivec_init(vvec, size + 1));
-          (*vvec)[size] = node;
+          (*vvec)[size] = act;
         }
         if (evec) {
-          CGRAPH_CHECK(cgraph_ivec_init(evec, size));
-        }
-        act = node;
-        while (parents[act]) {
-          edge = parents[act] - 1;
-          act = CGRAPH_OTHER(graph, edge, act);
-          size--;
-          if (vvec) {
-            (*vvec)[size] = act;
-          }
-          if (evec) {
-            (*evec)[size] = edge;
-          }
+          (*evec)[size] = edge;
         }
       }
     }
+  }
 
-    cgraph_2wheap_free(&Q);
-    cgraph_rvec_free(&dists);
-    cgraph_ivec_free(&neis);
-    free(is_target);
-    free(parents);
+  cgraph_2wheap_free(&Q);
+  cgraph_rvec_free(&dists);
+  cgraph_ivec_free(&neis);
+  free(is_target);
+  free(parents);
 
-    return 0;
+  return 0;
 }
 
 /**
@@ -723,7 +712,7 @@ int cgraph_get_shortest_paths_dijkstra(const cgraph_t graph,
  * Độ phức tạp: O(|E|log|E|+|V|), |V| là số lượng đỉnh,
  * |E| là số lượng cạnh trong đồ thị.
  *
- * \sa \ref igraph_get_shortest_paths_dijkstra() cho phiên bản với
+ * \sa \ref cgraph_get_shortest_paths_dijkstra() cho phiên bản với
  * nhiều đỉnh đích hơn.
  **/
 int cgraph_get_shortest_path_dijkstra(const cgraph_t graph,
@@ -733,101 +722,44 @@ int cgraph_get_shortest_path_dijkstra(const cgraph_t graph,
         CGRAPH_INTEGER to,
         cgraph_rvec_t weights,
         cgraph_neimode_t mode) {
-  if (!weights) {
-    return cgraph_get_shortest_path(graph, vertices, edges, from, to, mode);
+  vector_t pvertices = NULL,
+           pedges = NULL;
+  if (vertices) {
+    pvertices = gtv_create();
+    gtv_push_back(&pvertices, (gtype){.v = *vertices});
   }
-  CGRAPH_INTEGER no_of_nodes = cgraph_vcount(graph);
-  CGRAPH_INTEGER no_of_edges = cgraph_ecount(graph);
-  cgraph_2wheap_t Q;
-  cgraph_rvec_t dists = cgraph_rvec_create();
-  if (cgraph_rvec_size(weights) != no_of_edges) {
-    CGRAPH_ERROR("Weight vector length does not match", CGRAPH_FAILURE);
+  if (edges) {
+    pedges = gtv_create();
+    gtv_push_back(&pedges, (gtype){.v = *edges});
   }
-  CGRAPH_CHECK(cgraph_2wheap_init(&Q, no_of_nodes));
-  cgraph_rvec_init(&dists, no_of_edges);
-  for (CGRAPH_INTEGER i = 0; i < no_of_nodes; ++i) {
-    dists[i] = -1.0;
+  cgraph_ivec_t pto = cgraph_ivec_create();
+  cgraph_ivec_push_back(&pto, to);
+  cgraph_ivec_t predecessors = cgraph_ivec_create();
+  cgraph_get_shortest_paths_dijkstra(graph,
+                          pvertices,
+                          pedges,
+                          from,
+                          pto,
+                          weights,
+                          mode,
+                          &predecessors,
+                          NULL);
+  if (vertices) {
+    *vertices = pvertices[0].v;
+    gtv_free(&pvertices);
   }
-  CGRAPH_INTEGER *parents =
-    (CGRAPH_INTEGER *)malloc(sizeof(CGRAPH_INTEGER) * no_of_nodes);
-  dists[from] = 0.0;
-  parents[from] = -1;
-  cgraph_2wheap_push_with_index(&Q, from, 0);
-  cgraph_ivec_t neis = cgraph_ivec_create();
-  bool found = false;
-  while (!cgraph_2wheap_empty(&Q) && !found) {
-    CGRAPH_INTEGER nlen, minnei = cgraph_2wheap_max_index(&Q);
+  if (edges) {
+    *edges = pedges[0].v;
+    gtv_free(&pedges);
+  }
+  CGRAPH_INTEGER pred = predecessors[to];
+  cgraph_ivec_free(&pto);
+  cgraph_ivec_free(&predecessors);
 
-    /* Hack đảo dấu để tránh giá trị vô cùng lớn */
-    CGRAPH_REAL mindist = -cgraph_2wheap_delete_max(&Q);
-    if (minnei == to) {
-      found = true;
-      break;
-    }
-    cgraph_incident(graph, &neis, minnei, mode);
-    nlen = cgraph_ivec_size(neis);
-    for (CGRAPH_INTEGER i = 0; i < nlen; ++i) {
-      CGRAPH_INTEGER edge = neis[i];
-      CGRAPH_INTEGER tto = CGRAPH_OTHER(graph, edge, minnei);
-      CGRAPH_REAL altdist = mindist + weights[edge];
-      CGRAPH_REAL curdist = dists[tto];
-      if (curdist < 0) {
-        dists[tto] = altdist;
-        parents[tto] = edge;
-        CGRAPH_CHECK(cgraph_2wheap_push_with_index(&Q, tto, -altdist));
-      } else if (altdist < curdist) {
-        dists[tto] = altdist;
-        parents[tto] = edge;
-        CGRAPH_CHECK(cgraph_2wheap_modify(&Q, tto, -altdist));
-      }
-    }
+  if (pred < 0) {
+    // Không đi tới được đỉnh to
+    return -1;
   }
-  if (!found) {
-    CGRAPH_ERROR("Path not found", CGRAPH_FAILURE);
-    if (vertices) {
-      cgraph_ivec_setsize(*vertices, 0);
-    }
-    if (edges) {
-      cgraph_ivec_setsize(*edges, 0);
-    }
-    return 0;
-  }
-
-  if (vertices || edges) {
-    cgraph_ivec_t vvec, evec;
-    CGRAPH_INTEGER act = to;
-    CGRAPH_INTEGER size = 0;
-    CGRAPH_INTEGER edge;
-    while (parents[act] != -1) {
-      ++size;
-      edge = parents[act];
-      act = CGRAPH_OTHER(graph, edge, act);
-    }
-    if (vertices) {
-      CGRAPH_CHECK(cgraph_ivec_init(vertices, size + 1));
-      vvec = *vertices;
-      vvec[size] = to;
-    }
-    if (edges) {
-      CGRAPH_CHECK(cgraph_ivec_init(edges, size));
-      evec = *edges;
-    }
-    act = to;
-    while (parents[act] != -1) {
-      edge = parents[act];
-      act = CGRAPH_OTHER(graph, edge, act);
-      --size;
-      if (vertices) {
-        vvec[size] = act;
-      }
-      if (edges) {
-        evec[size] = edge;
-      }
-    }
-  }
-  cgraph_2wheap_free(&Q);
-  cgraph_rvec_free(&dists);
-  free(parents);
   return 0;
 }
 
