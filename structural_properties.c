@@ -431,11 +431,9 @@ int cgraph_get_shortest_paths(const cgraph_t graph,
       }
     }
 
-    // /* Clean */
     free(father);
     cgraph_iqueue_free(&q);
     cgraph_ivec_free(&tmp);
-    // igraph_vit_destroy(&vit);
     // IGRAPH_FINALLY_CLEAN(4);
 
     return 0;
