@@ -96,6 +96,8 @@ if(${BUILD_TESTING})
                 cgraph_ivec_from_array_ut)
   add_test(NAME CgraphMultiShortestPathDijkstra COMMAND
                 cgraph_multi_shortest_paths_dijkstra_ut)
+  add_test(NAME CgraphGetShortestPaths COMMAND
+                cgraph_get_shortest_paths_ut)
 endif()
 
 # e.g. copy libries headers and binary to bkc

@@ -551,7 +551,7 @@ int cgraph_get_eid(const cgraph_t graph, CGRAPH_INTEGER *eid,
     CGRAPH_INTEGER nov = cgraph_vcount(graph);
 
     if (from < 0 || to < 0 || from > nov - 1 || to > nov - 1) {
-      CGRAPH_ERROR("cannot get edge id, invalid input", CGRAPH_FAILURE);
+      CGRAPH_WARNING("cannot get edge id, invalid input");
     }
 
     *eid = -1;
@@ -568,7 +568,7 @@ int cgraph_get_eid(const cgraph_t graph, CGRAPH_INTEGER *eid,
     }
 
     if (*eid < 0) {
-      CGRAPH_ERROR("Cannot get edge id, no such edge", CGRAPH_FAILURE);
+      CGRAPH_WARNING("Cannot get edge id, no such edge");
     }
 
     return 0;

@@ -1,7 +1,7 @@
 #ifndef TESTS_BASE_UT_H_
 #define TESTS_BASE_UT_H_
 
-#include "cgraph_ivec.h"
+#include "cgraph.h"
 
 cgraph_ivec_t cgraph_ivec_fromarray(CGRAPH_INTEGER *a, CGRAPH_INTEGER n);
 
@@ -18,5 +18,8 @@ void print_ivec(cgraph_ivec_t const v);
     do { \
       printf("%s: Ok\n", msg); \
     } while (0)
+
+bool ut_is_connected(cgraph_t g, CGRAPH_INTEGER v1, CGRAPH_INTEGER v2,
+        bool directed);
 
 #endif  // TESTS_BASE_UT_H_

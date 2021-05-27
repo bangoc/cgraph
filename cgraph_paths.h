@@ -28,6 +28,15 @@ int cgraph_get_shortest_paths_dijkstra(const cgraph_t graph,
         cgraph_ivec_t *predecessors,
         cgraph_ivec_t *inbound_edges);
 
+int cgraph_get_shortest_paths(const cgraph_t graph,
+        vector_t vertices,
+        vector_t edges,
+        CGRAPH_INTEGER from,
+        cgraph_ivec_t to,
+        cgraph_neimode_t mode,
+        cgraph_ivec_t *predecessors,
+        cgraph_ivec_t *inbound_edges);
+
 int cgraph_get_shortest_path_dijkstra(const cgraph_t graph,
         cgraph_ivec_t *vertices,
         cgraph_ivec_t *edges,

@@ -22,3 +22,10 @@ void print_ivec(cgraph_ivec_t const v) {
   }
   printf("\n");
 }
+
+bool ut_is_connected(cgraph_t g, CGRAPH_INTEGER pfrom, CGRAPH_INTEGER pto,
+        bool directed) {
+  CGRAPH_INTEGER eid = -1;
+  cgraph_get_eid(g, &eid, pfrom, pto, directed);
+  return eid >= 0;
+}
