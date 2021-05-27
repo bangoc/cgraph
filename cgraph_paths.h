@@ -14,9 +14,9 @@ extern "C"{
 int cgraph_get_shortest_path(const cgraph_t graph,
         cgraph_ivec_t *vertices,
         cgraph_ivec_t *edges,
-        CGRAPH_INTEGER from,
-        CGRAPH_INTEGER to,
-        cgraph_neimode_t mode);
+        const CGRAPH_INTEGER from,
+        const CGRAPH_INTEGER to,
+        const cgraph_neimode_t mode);
 
 int cgraph_get_shortest_paths_dijkstra(const cgraph_t graph,
         vector_t vertices,

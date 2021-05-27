@@ -769,16 +769,45 @@ int cgraph_get_shortest_path_dijkstra(const cgraph_t graph,
 int cgraph_get_shortest_path(const cgraph_t graph,
         cgraph_ivec_t *vertices,
         cgraph_ivec_t *edges,
-        CGRAPH_INTEGER from,
-        CGRAPH_INTEGER to,
-        cgraph_neimode_t mode) {
-  CGRAPH_INTEGER no_of_edges = cgraph_ecount(graph);
-  cgraph_rvec_t weights = cgraph_rvec_create();
-  cgraph_rvec_init(&weights, no_of_edges);
-  for (CGRAPH_INTEGER i = 0; i < no_of_edges; ++i) {
-    weights[i] = 1.0;
+        const CGRAPH_INTEGER from,
+        const CGRAPH_INTEGER to,
+        const cgraph_neimode_t mode) {
+  vector_t pvertices = NULL,
+           pedges = NULL;
+  if (vertices) {
+    pvertices = gtv_create();
+    gtv_push_back(&pvertices, (gtype){.v = *vertices});
   }
-  CGRAPH_INTEGER ret = cgraph_get_shortest_path_dijkstra(graph, vertices, edges, from, to, weights, mode);
-  cgraph_rvec_free(&weights);
-  return ret;
+  if (edges) {
+    pedges = gtv_create();
+    gtv_push_back(&pedges, (gtype){.v = *edges});
+  }
+  cgraph_ivec_t pto = cgraph_ivec_create();
+  cgraph_ivec_push_back(&pto, to);
+  cgraph_ivec_t predecessors = cgraph_ivec_create();
+  cgraph_get_shortest_paths(graph,
+                              pvertices,
+                              pedges,
+                              from,
+                              pto,
+                              mode,
+                              &predecessors,
+                              NULL);
+  if (vertices) {
+    *vertices = pvertices[0].v;
+    gtv_free(&pvertices);
+  }
+  if (edges) {
+    *edges = pedges[0].v;
+    gtv_free(&pedges);
+  }
+  cgraph_ivec_free(&pto);
+
+  CGRAPH_INTEGER pred = predecessors[to];
+  cgraph_ivec_free(&predecessors);
+  if (pred < 0) {
+    // không có đường đi tới đỉnh to
+    return -1;
+  }
+  return 0;
 }
