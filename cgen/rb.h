@@ -10,6 +10,18 @@
 #include "bn.h"
 #include "bns.h"
 
+#include <stdbool.h>
+
+/*
+ * Các tính chất của cây đỏ đen:
+ * 1) Mỗi nút chỉ có thể là đỏ hoặc đen
+ * 2) Nút gốc là nút đen
+ * 3) Tất cả các nút lá (NULL) là các nút đen
+ * 4) Cả hai con của nút đỏ là các nút đen
+ * 5) Tất cả các đường đi đơn giản từ nút gốc tới các nút lá đều có
+ *    cùng số lượng nút đen.
+ */
+
 typedef enum {
   RB_BLACK,
   RB_RED
@@ -21,9 +33,8 @@ typedef struct rb_node {
 } *rb_node_t;
 
 /*
-  Trong triển khai này mình sử dụng NULL thay vì lính canh (một
-  rbi_node đặc biệt) để tương thích tốt hơn với các api của cây nhị
-  phân tìm kiếm cơ bản.
+  Trong triển khai này NULL được sử dụng thay vì lính canh để tương
+  thích tốt hơn với các api của cây nhị và cây nhị phân tìm kiếm.*
 
   Nút NULL được quy ước là nút đen
 */
@@ -32,7 +43,8 @@ typedef struct rb_node {
 
 static rb_node_t rb_create_node();
 static bn_tree_t rb_create_tree();
-static bn_tree_t rb_insert(bn_tree_t t, bn_node_t z, bn_compare_t cmp);
+static bn_tree_t rb_insert(bn_tree_t t, bn_node_t z,
+                           bn_compare_t cmp);
 static int rb_delete(bn_tree_t t, bn_node_t z);
 
 
@@ -44,6 +56,9 @@ static int rb_delete(bn_tree_t t, bn_node_t z);
 #define rb_node_init(n, left_value, right_value, top_value, color_value) \
   bn_node_init(rb_bn_node(n), left_value, right_value, top_value); \
   n->color = color_value
+#define rb_is_red(node) (rb_color(node) == RB_RED)
+#define rb_is_black(node) (rb_color(node) == RB_BLACK)
+#define rb_set_black(node) rb_set_color(node, RB_BLACK)
 
 // ========== Định nghĩa hàm =============
 
@@ -137,73 +152,307 @@ static bn_tree_t rb_insert(bn_tree_t t, bn_node_t z, bn_compare_t cmp) {
   return t;
 }
 
-static bn_tree_t rb_delete_fixup(bn_tree_t t, bn_node_t x) {
-  while (x != t->root && rb_color(x) == RB_BLACK) {
-    if (x == x->top->left) {
-#define IMPL_DELETE_FIXUP(left, right) \
-      bn_node_t w = x->top->right; \
-      if (rb_color(w) == RB_RED) { \
-        rb_set_color(w, RB_BLACK); \
-        rb_set_color(x->top, RB_RED); \
-        bn_ ##left ##_rotate(t, x->top); \
-        w = x->top->right; \
-      } \
-      if (rb_color(w->left) == RB_BLACK && \
-          rb_color(w->right) == RB_BLACK) { \
-        rb_set_color(w, RB_RED); \
-        x = x->top; \
-      } else if (rb_color(w->right) == RB_BLACK) { \
-        rb_set_color(w->left, RB_BLACK); \
-        rb_set_color(w, RB_RED); \
-        bn_ ##right ##_rotate(t, w); \
-        w = x->top->right; \
-      } \
-      rb_set_color(w, rb_color(x->top)); \
-      rb_set_color(x->top, RB_BLACK); \
-      rb_set_color(w->right, RB_BLACK); \
-      bn_left_rotate(t, x->top); \
-      x = t->root
-      IMPL_DELETE_FIXUP(left, right);
+static void rb_set_parent_color(bn_node_t n, bn_node_t parent,
+                                rb_node_color_t color) {
+  n->top = parent;
+  rb_set_color(n, color);
+}
+
+static void rb_change_child(bn_node_t old_node, bn_node_t new_node,
+                            bn_node_t parent, bn_tree_t t) {
+  if (parent) {
+    if (parent->left == old_node) {
+      parent->left = new_node;
     } else {
-      IMPL_DELETE_FIXUP(right, left);
+      parent->right = new_node;
+    }
+  } else {
+    t->root = new_node;
+  }
+}
+
+static void rb_set_parent(bn_node_t node, bn_node_t parent) {
+  node->top = parent;
+}
+
+static bn_node_t rb_parent(bn_node_t node) {
+  return node->top;
+}
+
+static void rb_rotate_set_parents(bn_node_t old_node,
+            bn_node_t new_node, bn_tree_t t, rb_node_color_t color) {
+  bn_node_t parent = rb_parent(old_node);
+  rb_set_parent_color(new_node,
+                      rb_parent(old_node), rb_color(old_node));
+  rb_set_parent_color(old_node, new_node, color);
+  rb_change_child(old_node, new_node, parent, t);
+}
+
+static bn_tree_t rb_erase_color(bn_tree_t t, bn_node_t parent) {
+  bn_node_t node = NULL, sibling, tmp1, tmp2;
+  while (true) {
+    /*
+    * Các tính chất bất biến trong vòng lặp:
+    * - node là nút đen (hoặc NULL trong lần lặp đầu tiên)
+    * - node không phải là nút gốc (top khác NULL_PTR)
+    * - Tất cả các đường dẫn tới nút lá đi qua parent va node có số
+    *   lượng nút đen ít hơn 1 so với các đường dẫn khác.
+    */
+    sibling = parent->right;
+    if (node != sibling) {  // node == parent->left
+      if (rb_is_red(sibling)) {
+        /*
+         * Trường hợp 1 - Xoay trái ở parent
+         *
+         *     P               S
+         *    / \             / \
+         *   N   s    -->    p   Sr
+         *      / \         / \
+         *     Sl  Sr      N   Sl
+         */
+        tmp1 = sibling->left;
+        parent->right = tmp1;
+        sibling->left = parent;
+        rb_set_parent_color(tmp1, parent, RB_BLACK);
+        rb_rotate_set_parents(parent, sibling, t, RB_RED);
+        sibling = tmp1;
+      }
+      tmp1 = sibling->right;
+      if (!tmp1 || rb_is_black(tmp1)) {
+        tmp2 = sibling->left;
+        if (!tmp2 || rb_is_black(tmp2)) {
+          /*
+           * Trường hợp 2 - Lật mầu sibling, p có thể có mầu bất kỳ
+           *
+           *    (p)           (p)
+           *    / \           / \
+           *   N   S    -->  N   s
+           *      / \           / \
+           *     Sl  Sr        Sl  Sr
+           *
+           * Điều này dẫn tới vi phạm ràng buộc 5), vi phạm này có
+           * thể được khắc phục bằng cách lật mầu p thành đen nếu nó
+           * là nút đỏ, hoặc đệ quy tại p. Nút p có mầu đỏ sau khi
+           * xử lý trường hợp 1.
+           */
+          rb_set_parent_color(sibling, parent, RB_RED);
+          if (rb_is_red(parent)) {
+            rb_set_black(parent);
+          } else {
+            node = parent;
+            parent = rb_parent(node);
+            if (parent) {
+              continue;
+            }
+          }
+          break;
+        }
+        /*
+         * Trường hợp 3 - Xoay phải tại sibling (p có thể có mầu bất
+         * kỳ)
+         *
+         *   (p)           (p)
+         *   / \           / \
+         *  N   S    -->  N   sl
+         *     / \             \
+         *    sl  Sr            S
+         *                       \
+         *                        Sr
+         * Lưu ý: p có thể là nút đỏ, và như vậy cả p và sl đều là
+         * các nút đỏ sau khi xoay (vi phạm ràng buộc 4). Vấn đề này
+         * được xử lý trong trường hợp 4 (trong
+         * rb_rotate_set_parents() mầu của sl được thiết lập bằng
+         * mầu của p và mầu của p được thiết lập bằng RB_BLACK)
+         *
+         *   (p)            (sl)
+         *   / \            /  \
+         *  N   sl   -->   P    S
+         *       \        /      \
+         *        S      N        Sr
+         *         \
+         *          Sr
+         */
+        tmp1 = tmp2->right;
+        sibling->left = tmp1;
+        tmp2->right = sibling;
+        parent->right = tmp2;
+        if (tmp1) {
+          rb_set_parent_color(tmp1, sibling, RB_BLACK);
+        }
+        tmp1 = sibling;
+        sibling = tmp2;
+      }
+      /* Trường hợp 4 - Xoay trái ở parent + lật mầu
+       * (p và sl có thể có mầu bất kỳ ở đây. Sau khi xoay p có mầu
+       * đen, s có mầu của p, và sl giữ mầu của nó)
+       *
+       *      (p)             (s)
+       *      / \             / \
+       *     N   S     -->   P   Sr
+       *        / \         / \
+       *      (sl) sr      N  (sl)
+       */
+      tmp2 = sibling->left;
+      parent->right = tmp2;
+      sibling->left = parent;
+      rb_set_parent_color(tmp1, sibling, RB_BLACK);
+      if (tmp2) {
+        rb_set_parent(tmp2, parent);
+      }
+      rb_rotate_set_parents(parent, sibling, t, RB_BLACK);
+      break;
+    } else {
+      sibling = parent->left;
+      if (rb_is_red(sibling)) {
+        // Trường hợp 1 - Xoay trái tại parent
+        tmp1 = sibling->right;
+        parent->left = tmp1;
+        sibling->right = parent;
+        rb_set_parent_color(tmp1, parent, RB_BLACK);
+        rb_rotate_set_parents(parent, sibling, t, RB_RED);
+        sibling = tmp1;
+      }
+      tmp1 = sibling->left;
+      if (!tmp1 || rb_is_black(tmp1)) {
+        tmp2 = sibling->right;
+        if (!tmp2 || rb_is_black(tmp2)) {
+          // Trường hợp 2 - Lật mầu sibling
+          rb_set_parent_color(sibling, parent, RB_RED);
+          if (rb_is_red(parent)) {
+            rb_set_black(parent);
+          } else {
+            node = parent;
+            parent = rb_parent(node);
+            if (parent) {
+              continue;
+            }
+          }
+          break;
+        }
+        // Trường hợp 3 - Xoay trái ở sibling
+        tmp1 = tmp2->left;
+        sibling->right = tmp1;
+        tmp2->left = sibling;
+        parent->left = tmp2;
+        if (tmp1) {
+          rb_set_parent_color(tmp1, sibling, RB_BLACK);
+        }
+        tmp1 = sibling;
+        sibling = tmp2;
+      }
+      // Trường hợp 4 - Xoay phải ở parent và lật mầu
+      tmp2 = sibling->right;
+      parent->left = tmp2;
+      sibling->right = parent;
+      rb_set_parent_color(tmp1, sibling, RB_BLACK);
+      if (tmp2) {
+        rb_set_parent(tmp2, parent);
+      }
+      rb_rotate_set_parents(parent, sibling, t, RB_BLACK);
+      break;
     }
   }
-  rb_set_color(x, RB_BLACK);
   return t;
 }
 
-#undef IMPL_DELETE_FIXUP
-
-static int rb_delete(bn_tree_t t, bn_node_t z) {
-  bn_node_t y = z;
-  rb_node_color_t y_original_color = rb_color(y);
-  bn_node_t x;
-  if (z->left == NULL_PTR) {
-    x = z->right;
-    bn_transplant(t, z, z->right);
-  } else if (z->right == NULL_PTR) {
-    x = z->left;
-    bn_transplant(t, z, z->left);
-  } else {
-    y = bns_minimum(z->right);
-    y_original_color = rb_color(y);
-    x = y->right;
-    if (y->top == z) {
-      x->top = y;
+static int rb_erase(bn_tree_t t, bn_node_t node) {
+  bn_node_t child = node->right,
+            tmp = node->left,
+            parent, rebalance;
+  bn_node_t p;
+  rb_node_color_t c;
+  if (!tmp) {
+    /* Trường hợp 1: Nếu nút đang xóa có không quá 1 nút con (dễ)
+     *
+     * Nếu có một con thì nó phải là nút đỏ do tính chất 5,
+     * và node phải là nút đen theo tính chất 4. Chúng ta điều chỉnh
+     * mầu trong lân cận để tránh gọi hàm sửa mầu sau này.
+     */
+    p = rb_parent(node);
+    c = rb_color(node);
+    parent = p;
+    rb_change_child(node, child, parent, t);
+    if (child) {
+      rb_set_parent_color(child, p, c);
+      rebalance = NULL_PTR;
     } else {
-      bn_transplant(t, y, z->right);
-      y->right = z->right;
-      y->right->top = y;
+      rebalance = c == RB_BLACK? parent: NULL_PTR;
     }
-    bn_transplant(t, z, y);
-    y->left = z->left;
-    y->left->top = y;
-    rb_set_color(y, rb_color(z));
+    tmp = parent;
+  } else if (!child) {
+    // Vẫn trường hợp 1 nhưng nút con là node->left
+    p = rb_parent(node);
+    c = rb_color(node);
+    rb_set_parent_color(tmp, p, c);
+    parent = p;
+    rb_change_child(node, tmp, parent, t);
+    rebalance = NULL_PTR;
+    tmp = parent;
+  } else {
+    bn_node_t successor = child, child2;
+    tmp = child->left;
+    if (!tmp) {
+      /* Trường hợp 2: Nút liền sau node là con phải của node.
+       *
+       *    (n)          (s)
+       *    / \          / \
+       *  (x) (s)  ->  (x) (c)
+       *        \
+       *        (c)
+       */
+      parent = successor;
+      child2 = successor->right;
+    } else {
+      /* Trường hợp 3: Nút liền sau node là nút trái nhất trong của
+       * cây con phải của node
+       *
+       *    (n)          (s)
+       *    / \          / \
+       *  (x) (y)  ->  (x) (y)
+       *      /            /
+       *    (p)          (p)
+       *    /            /
+       *  (s)          (c)
+       *    \
+       *    (c)
+       */
+      do {
+        parent = successor;
+        successor = tmp;
+        tmp = tmp->left;
+      } while (tmp);
+      child2 = successor->right;
+      parent->left = child2;
+      successor->right = child;
+      rb_set_parent(child, successor);
+    }
+    tmp = node->left;
+    successor->left = tmp;
+    rb_set_parent(tmp, successor);
+    p = rb_parent(node);
+    c = rb_color(node);
+    tmp = p;
+    rb_change_child(node, successor, tmp, t);
+    if (child2) {
+      rb_set_parent_color(successor, p, c);
+      rb_set_parent_color(child2, parent, RB_BLACK);
+      rebalance = NULL_PTR;
+    } else {
+      bn_node_t p2 = rb_parent(successor);
+      rb_node_color_t c2 = rb_color(successor);
+      rb_set_parent_color(successor, p, c);
+      rebalance = c2 == RB_BLACK? parent: NULL_PTR;
+    }
+    tmp = successor;
   }
-  if (y_original_color == RB_BLACK) {
-    rb_delete_fixup(t, x);
+  if (rebalance) {
+    rb_erase_color(t, rebalance);
   }
   return 1;
+}
+
+static int rb_delete(bn_tree_t t, bn_node_t z) {
+  return rb_erase(t, z);
 }
 
 #endif  // RBI_H_
