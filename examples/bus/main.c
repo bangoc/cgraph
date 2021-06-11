@@ -38,6 +38,24 @@ void init_global() {
   weights = cgraph_rvec_create();
 }
 
+void free_global() {
+  s2i_free(&stop_id);
+  svec_free(&id_stop);
+  s2i_free(&bus_id);
+  svec_free(&id_bus);
+  cgraph_ivec_free(&edges);
+  cgraph_rvec_free(&weights);
+  for (int i = 0; i < gtv_size(nodes); ++i) {
+    free(nodes[i].v);
+  }
+  gtv_free(&nodes);
+  for (int i = 0; i < gtv_size(stop_buses); ++i) {
+    cgraph_ivec_t v = stop_buses[i].v;
+    cgraph_ivec_free(&v);
+  }
+  gtv_free(&stop_buses);
+}
+
 long get_save_id(bn_tree_t si, vector_t *is, char *s) {
   long id = s2i_value(si, s);
   if (id != k_s2i_invalid) {
@@ -52,8 +70,8 @@ long get_save_id(bn_tree_t si, vector_t *is, char *s) {
 void parse_input(char *fname) {
   FILE *inp = fopen(fname, "r");
   long n = 0;
-  char *line = calloc(n + 1, sizeof(char));
-  while (my_getline(&line, &n, inp) > -1) {
+  char *line = NULL_PTR;
+  while (my_getline(&line, &n, inp) > 0) {
     char *cur = strchr(line, ':');
     if (!cur) {
       continue;
@@ -122,8 +140,8 @@ int main(int argc, char *argv[]) {
   bus_change();
   // cgraph_ivec_print(edges);
   cgraph_t g = cgraph_create(edges, 0, true);
-  char *beg = malloc(1), *end = malloc(1);
-  long beg_len = 1, end_len = 1;
+  char *beg = NULL_PTR, *end = NULL_PTR;
+  long beg_len = 0, end_len = 0;
   printf("Nhập điểm bắt đầu: ");
   my_getline(&beg, &beg_len, stdin);
   printf("Nhập điểm kết thúc: ");
@@ -133,23 +151,26 @@ int main(int argc, char *argv[]) {
        end_id = s2i_value(stop_id, end);
   if (beg_id == k_s2i_invalid || end_id == k_s2i_invalid) {
     printf("Invalid stop\n");
-    return 1;
-  }
-  long from = gtv_size(nodes) + 2 * beg_id,
-       to = gtv_size(nodes) + 2 * end_id + 1;
-  cgraph_ivec_t vpath = cgraph_ivec_create(),
-                epath = cgraph_ivec_create();
-  int ret = cgraph_get_shortest_path_dijkstra(g, &vpath, &epath, from, to, weights, CGRAPH_OUT);
-  if (ret == 0) {
-    printf("Found path: \n");
-    for (int i = 1; i < cgraph_ivec_size(vpath) - 1; ++i) {
-      long bus = ((bus_stop_t)nodes[vpath[i]].v)->bus,
-           stop = ((bus_stop_t)nodes[vpath[i]].v)->stop;
-      printf("%s(%s)\n", id_stop[stop].s, id_bus[bus].s);
-    }
   } else {
-    printf("Path not found.\n");
+    long from = gtv_size(nodes) + 2 * beg_id,
+         to = gtv_size(nodes) + 2 * end_id + 1;
+    cgraph_ivec_t vpath = cgraph_ivec_create(),
+                  epath = cgraph_ivec_create();
+    int ret = cgraph_get_shortest_path_dijkstra(g, &vpath, &epath, from, to, weights, CGRAPH_OUT);
+    if (ret == 0) {
+      printf("Found path: \n");
+      for (int i = 1; i < cgraph_ivec_size(vpath) - 1; ++i) {
+        long bus = ((bus_stop_t)nodes[vpath[i]].v)->bus,
+             stop = ((bus_stop_t)nodes[vpath[i]].v)->stop;
+        printf("%s(%s)\n", id_stop[stop].s, id_bus[bus].s);
+      }
+    } else {
+      printf("Path not found.\n");
+    }
   }
+  free_global();
+  free(beg);
+  free(end);
   cgraph_destroy(&g);
   return 0;
 }

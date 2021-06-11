@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-int my_getline(char **lineptr, long *n, FILE *stream) {
+long my_getline(char **lineptr, long *n, FILE *stream) {
 #define BUFF_SIZE 1024
   static char buff[BUFF_SIZE];
 
@@ -19,7 +19,9 @@ int my_getline(char **lineptr, long *n, FILE *stream) {
   }
 
   long len = 0;
-  (*lineptr)[0] = '\0';
+  if (*n > 0) {
+    *lineptr[0] = '\0';
+  }
 
   while (!feof(stream)) {
     fgets(buff, BUFF_SIZE, stream);

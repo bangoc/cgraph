@@ -7,6 +7,6 @@
  * Nhập dòng bỏ qua ký tự xuống dòng
  */
 
-int my_getline(char **lineptr, long *n, FILE *stream);
+long my_getline(char **lineptr, long *n, FILE *stream);
 
 #endif   // GETLINE_H_
