@@ -103,12 +103,12 @@ void cgraph_print(cgraph_t const g) {
   printf("to = ");
   PRINT_IVEC(g->to);
   printf("oi = ");
-  PRINT_IVEC(g->from);
+  PRINT_IVEC(g->oi);
   printf("ii = ");
-  PRINT_IVEC(g->from);
+  PRINT_IVEC(g->ii);
   printf("os = ");
-  PRINT_IVEC(g->from);
+  PRINT_IVEC(g->os);
   printf("is = ");
-  PRINT_IVEC(g->from);
+  PRINT_IVEC(g->is);
 #undef PRINT_IVEC
 }
