@@ -19,6 +19,13 @@ void cgraph_warning_print(const char * reason,
   printf("%s:%d:-%s\n", file, line, reason);
 }
 
+void cgraph_error_print(const char * reason,
+                  const char * file,
+                  int line,
+                 cgraph_error_t errno) {
+  printf("%s:%d:-%s\n", file, line, reason);
+}
+
 void cgraph_reset_last_errno() {
   cgraph_last_errno = CGRAPH_SUCCESS;
 }
