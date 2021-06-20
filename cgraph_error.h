@@ -61,6 +61,11 @@ int cgraph_warning(const char *reason,
 void cgraph_warning_print(const char * reason,
                   const char * file,
                   int line);
+  
+  void cgraph_error_print(const char * reason,
+                  const char * file,
+                  int line,
+                 cgraph_error_t errno);
 
 cgraph_error_handler_t* cgraph_set_error_handler(
     cgraph_error_handler_t* new_handler);
