@@ -37,6 +37,15 @@ const char* cgraph_strerror(const cgraph_error_t cgraph_errno) {
   return cgraph_error_strings[cgraph_errno];
 }
 
+void cgraph_error_print(const char * reason,
+                  const char * file,
+                  int line,
+                  cgraph_error_t errno) {
+  printf("%s:%d:-%s\n", file, line, reason);
+  printf("%s\n", cgraph_strerror(errno));
+}
+
+
 void cgraph_error_handler_ignore(
       const char *reason,
       const char *file,
