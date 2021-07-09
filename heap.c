@@ -3,17 +3,19 @@
 #include "cgraph_error.h"
 
 /* -------------------------------------------------- */
-/* Two-way indexed heap                 */
+/* Cấu trúc heap được đánh chỉ mục 2 chiều             */
 /* -------------------------------------------------- */
 
 #define PARENT(x)   (((x)+1)/2-1)
 #define LEFTCHILD(x)  (((x)+1)*2-1)
 #define RIGHTCHILD(x) (((x)+1)*2)
 
-/* This is a smart indexed heap. In addition to the "normal" indexed heap
-   it allows to access every element through its index in O(1) time.
-   In other words, for this heap the indexing operation is O(1), the
-   normal heap does this in O(n) time.... */
+/* Đây là một cấu trúc heap được đánh chỉ mục 2 chiều. Ngoài các đặc
+   tính của heap được đánh chỉ mục thông thường. Nó cho phép truy cập
+   tới tất cả các phần tử của nó trong thời gian O(1). Nói cách khác,
+   thao tác cập nhật giá trị cho cấu trúc heap này có độ phức tạp là
+   O(1), còn đối với heap thường thao tác cập nhật được thực hiện
+   với độ phức tạp O(n).... */
 
 void cgraph_i_2wheap_switch(cgraph_2wheap_t *h,
               CGRAPH_INTEGER e1, CGRAPH_INTEGER e2) {
@@ -37,7 +39,7 @@ void cgraph_i_2wheap_switch(cgraph_2wheap_t *h,
 void cgraph_i_2wheap_shift_up(cgraph_2wheap_t *h,
                 CGRAPH_INTEGER elem) {
   if (elem == 0 || h->data[elem] < h->data[PARENT(elem)]) {
-    /* at the top */
+    /* Đỉnh của heap */
   } else {
     cgraph_i_2wheap_switch(h, elem, PARENT(elem));
     cgraph_i_2wheap_shift_up(h, PARENT(elem));
@@ -48,16 +50,16 @@ void cgraph_i_2wheap_sink(cgraph_2wheap_t *h,
               CGRAPH_INTEGER head) {
   CGRAPH_INTEGER size = cgraph_2wheap_size(h);
   if (LEFTCHILD(head) >= size) {
-    /* no subtrees */
+    /* Không có cây con */
   } else if (RIGHTCHILD(head) == size ||
          h->data[LEFTCHILD(head)] >= h->data[RIGHTCHILD(head)]) {
-    /* sink to the left if needed */
+    /* Nhúng vào nhánh trái nếu cần */
     if (h->data[head] < h->data[LEFTCHILD(head)]) {
       cgraph_i_2wheap_switch(h, head, LEFTCHILD(head));
       cgraph_i_2wheap_sink(h, LEFTCHILD(head));
     }
   } else {
-    /* sink to the right */
+    /* Nhúng vào nhánh phải */
     if (h->data[head] < h->data[RIGHTCHILD(head)]) {
       cgraph_i_2wheap_switch(h, head, RIGHTCHILD(head));
       cgraph_i_2wheap_sink(h, RIGHTCHILD(head));
@@ -66,7 +68,7 @@ void cgraph_i_2wheap_sink(cgraph_2wheap_t *h,
 }
 
 /* ------------------ */
-/* These are public   */
+/* Các hàm công khai   */
 /* ------------------ */
 
 int cgraph_2wheap_init(cgraph_2wheap_t *h, CGRAPH_INTEGER size) {
@@ -75,7 +77,7 @@ int cgraph_2wheap_init(cgraph_2wheap_t *h, CGRAPH_INTEGER size) {
   h->index = cgraph_ivec_create();
   h->index2 = cgraph_ivec_create();
 
-  /* We start with the biggest */
+  /* Chúng ta bắt đầu với giá trị lớn nhất */
   CGRAPH_CHECK(cgraph_ivec_init(&h->index2, size));
   return 0;
 }
@@ -106,7 +108,7 @@ int cgraph_2wheap_push_with_index(cgraph_2wheap_t *h,
   CGRAPH_CHECK(cgraph_ivec_push_back(&h->index, idx));
   h->index2[idx] = size + 2;
 
-  /* maintain heap */
+  /* Duy trì heap */
   cgraph_i_2wheap_shift_up(h, size);
   return 0;
 }
@@ -195,14 +197,14 @@ int cgraph_2wheap_modify(cgraph_2wheap_t *h, CGRAPH_INTEGER idx, CGRAPH_REAL ele
   return 0;
 }
 
-/* Check that the heap is in a consistent state */
+/* Kiểm tra liệu heap có ở trong trạng thái hợp lệ không */
 
 int cgraph_2wheap_check(cgraph_2wheap_t *h) {
   CGRAPH_INTEGER size = cgraph_2wheap_size(h);
   CGRAPH_INTEGER i;
   bool error = 0;
 
-  /* Check the heap property */
+  /* Kiểm tra tính chất heap */
   for (i = 0; i < size; i++) {
     if (LEFTCHILD(i) >= size) {
       break;
@@ -220,7 +222,7 @@ int cgraph_2wheap_check(cgraph_2wheap_t *h) {
   }
 
   if (error) {
-    CGRAPH_ERROR("Inconsistent heap", CGRAPH_FAILURE);
+    CGRAPH_ERROR("Heap không nhất quán", CGRAPH_FAILURE);
     return 1;
   }
 

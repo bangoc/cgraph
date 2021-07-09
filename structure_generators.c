@@ -7,7 +7,7 @@
 #include <stdio.h>
 
 /**
- * \ingroup interface
+ * \ingroup Giao diện
  * \function cgraph_create_empty
  * \brief Tạo một đồ thị rỗng với số lượng đỉnh được cho nhưng không
  * có cạnh.
@@ -35,7 +35,8 @@
 cgraph_t cgraph_create_empty(CGRAPH_INTEGER n, bool directed) {
 
   if (n < 0) {
-    CGRAPH_ERROR("cannot create empty graph with negative number of vertices", CGRAPH_FAILURE);
+    CGRAPH_ERROR("Không thể tạo đồ thị rỗng với số "
+                 "lượng đỉnh âm", CGRAPH_FAILURE);
     return NULL;
   }
 
@@ -53,7 +54,7 @@ cgraph_t cgraph_create_empty(CGRAPH_INTEGER n, bool directed) {
   cgraph_ivec_push_back(&graph->os, 0);
   cgraph_ivec_push_back(&graph->is, 0);
 
-  /* add the vertices */
+  /* thêm các đỉnh */
   CGRAPH_CHECK(cgraph_add_vertices(graph, n));
 
   return graph;
@@ -66,11 +67,11 @@ cgraph_t cgraph_create(cgraph_ivec_t const edges,
   CGRAPH_INTEGER max = has_edges ? cgraph_ivec_max(edges) + 1 : 0;
 
   if (cgraph_ivec_size(edges) % 2 != 0) {
-    CGRAPH_ERROR("Invalid (odd) edges vector", CGRAPH_FAILURE);
+    CGRAPH_ERROR("Vec-tơ cạnh không hợp lệ (độ dài lẻ)", CGRAPH_FAILURE);
     return NULL;
   }
   if (has_edges && !cgraph_ivec_isininterval(edges, 0, max - 1)) {
-    CGRAPH_ERROR("Invalid (negative) vertex id", CGRAPH_FAILURE);
+    CGRAPH_ERROR("Chỉ số đỉnh không hợp lệ (giá trị âm)", CGRAPH_FAILURE);
     return NULL;
   }
 
@@ -89,7 +90,7 @@ cgraph_t cgraph_create(cgraph_ivec_t const edges,
 
 void cgraph_print(cgraph_t const g) {
   printf("n = %lld\n", (long long)cgraph_vcount(g));
-  printf("directed = %s\n", cgraph_is_directed(g)? "true": "false");
+  printf("có hướng? = %s\n", cgraph_is_directed(g)? "true": "false");
 #define PRINT_IVEC(v) \
   do { \
     printf("\t{%d", v[0]); \

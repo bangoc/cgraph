@@ -2,7 +2,8 @@
 #define CGRAPH_IQUEUE_H_
 
 /*
-  Collections-C queue wrapper for integer type
+  Hàng đợi cho các giá trị kiểu số nguyên,
+    - được triển khai bằng cách đóng gói CGraphQueue
 */
 
 #include "cgraph_datatype.h"
@@ -13,7 +14,7 @@ typedef const CGraphQueue *cgraph_iqueue_const_t;
 
 #ifdef __cplusplus
 extern "C"{
-#endif 
+#endif
 
 cgraph_iqueue_t cgraph_iqueue_create();
 
@@ -28,6 +29,6 @@ void cgraph_iqueue_free(cgraph_iqueue_t *q);
 
 #ifdef __cplusplus
 }
-#endif 
+#endif
 
 #endif  // CGRAPH_IQUEUE_H_

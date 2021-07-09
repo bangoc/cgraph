@@ -6,13 +6,15 @@
 #include "cgraph_rvec.h"
 
 /* -------------------------------------------------- */
-/* Two-way indexed heap                               */
+/* Cấu trúc heap được đánh chỉ mục 2 chiều             */
 /* -------------------------------------------------- */
 
-/* This is a smart indexed heap. In addition to the "normal" indexed heap
-   it allows to access every element through its index in O(1) time.
-   In other words, for this heap the _modify operation is O(1), the
-   normal heap does this in O(n) time.... */
+/* Đây là một cấu trúc heap được đánh chỉ mục 2 chiều. Ngoài các đặc
+   tính của heap được đánh chỉ mục thông thường. Nó cho phép truy cập
+   tới tất cả các phần tử của nó trong thời gian O(1). Nói cách khác,
+   thao tác cập nhật giá trị cho cấu trúc heap này có độ phức tạp là
+   O(1), còn đối với heap thường thao tác cập nhật được thực hiện
+   với độ phức tạp O(n).... */
 
 typedef struct cgraph_2wheap_t {
     CGRAPH_INTEGER size;

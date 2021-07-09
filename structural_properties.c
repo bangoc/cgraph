@@ -74,7 +74,8 @@ bool cgraph_is_dag(const cgraph_t graph) {
   }
 
   if (vertices_left < 0) {
-    CGRAPH_ERROR("vertices_left < 0 in cgraph_is_dag, possible bug", CGRAPH_FAILURE);
+    CGRAPH_ERROR("Số đỉnh còn lại < 0 trong một đồ thị DAG, "
+                 "có thể là lỗi", CGRAPH_FAILURE);
   }
 
   cgraph_ivec_free(&degrees);
@@ -126,13 +127,14 @@ int cgraph_topological_sorting(const cgraph_t graph,
   cgraph_neimode_t deg_mode;
 
   if (mode == CGRAPH_ALL || !cgraph_is_directed(graph)) {
-    CGRAPH_ERROR("topological sorting does not make sense for undirected graphs", CGRAPH_FAILURE);
+    CGRAPH_ERROR("Sắp xếp topo vô nghĩa đối với đồ thị"
+                 " vô hướng", CGRAPH_FAILURE);
   } else if (mode == CGRAPH_OUT) {
     deg_mode = CGRAPH_IN;
   } else if (mode == CGRAPH_IN) {
     deg_mode = CGRAPH_OUT;
   } else {
-    CGRAPH_ERROR("invalid mode", CGRAPH_FAILURE);
+    CGRAPH_ERROR("Thuộc tính không hợp lệ", CGRAPH_FAILURE);
   }
 
   /* Không tính đỉnh lặp */
@@ -162,7 +164,8 @@ int cgraph_topological_sorting(const cgraph_t graph,
   }
 
   if (cgraph_ivec_size(*res) < no_of_nodes) {
-    CGRAPH_ERROR("graph contains a cycle, partial result is returned", CGRAPH_FAILURE);
+    CGRAPH_ERROR("đồ thị chứa một chu trình, một phần"
+                 " kết quả được trả về", CGRAPH_FAILURE);
   }
 
   cgraph_ivec_free(&degrees);
@@ -172,7 +175,7 @@ int cgraph_topological_sorting(const cgraph_t graph,
 }
 
 /**
- * \ingroup structural
+ * \ingroup cấu trúc
  * \function cgraph_get_shortest_paths
  * \brief Tìm các đường đi ngắn nhất từ/tới một đỉnh.
  *
@@ -261,27 +264,28 @@ int cgraph_get_shortest_paths(const cgraph_t graph,
   CGRAPH_INTEGER reached = 0;
 
   if (from < 0 || from >= no_of_nodes) {
-    CGRAPH_ERROR("Cannot get shortest paths", CGRAPH_FAILURE);
+    CGRAPH_ERROR("Không thể tìm đường đi ngắn nhất", CGRAPH_FAILURE);
   }
   if (mode != CGRAPH_OUT && mode != CGRAPH_IN &&
         mode != CGRAPH_ALL) {
-    CGRAPH_ERROR("Invalid mode argument", CGRAPH_FAILURE);
+    CGRAPH_ERROR("Tham số chế độ không hợp lệ", CGRAPH_FAILURE);
   }
 
   if (vertices &&
         cgraph_ivec_size(to) != gtv_size(vertices)) {
-    CGRAPH_ERROR("Size of the `vertices' and the `to' should "
-                 "match", CGRAPH_FAILURE);
+    CGRAPH_ERROR("Kích thước của `vertices' và `to' phải "
+                 "tương đương", CGRAPH_FAILURE);
   }
   if (edges &&
         cgraph_ivec_size(to) != gtv_size(edges)) {
-    CGRAPH_ERROR("Size of the `edges' and the `to' should match",
+    CGRAPH_ERROR("Kích thước của `edges' và `to' phảu tương đương",
                  CGRAPH_FAILURE);
   }
 
   father = calloc(no_of_nodes, sizeof(CGRAPH_INTEGER));
   if (father == 0) {
-    CGRAPH_ERROR("cannot get shortest paths", CGRAPH_FAILURE);
+    CGRAPH_ERROR("không thể tìm các đường đi ngắn nhất",
+                 CGRAPH_FAILURE);
   }
 
   /* Đánh dấu các đỉnh cần đi tới */
@@ -340,7 +344,7 @@ int cgraph_get_shortest_paths(const cgraph_t graph,
   }
 
   if (reached < to_reach) {
-    CGRAPH_WARNING("Couldn't reach some vertices");
+    CGRAPH_WARNING("Không thể đi tới một số đỉnh");
   }
 
   /* Xuất thông tin `predecessors' nếu cần */
@@ -430,7 +434,7 @@ int cgraph_get_shortest_paths(const cgraph_t graph,
 }
 
 /**
- * \ingroup structural
+ * \ingroup Cấu trúc
  * \function cgraph_get_shortest_paths_dijkstra
  * \brief Tính các đường đi ngắn nhất có trọng số từ/tới một đỉnh
  *
@@ -469,7 +473,14 @@ int cgraph_get_shortest_paths(const cgraph_t graph,
  * không được phát hiện trong quá trình tìm kiếm từ đỉnh nguồn. Lưu ý
  * tiến trình tìm kiếm sẽ dừng lại khi nếu tất cả các đỉnh trong \c
  * to đã được tìm thấy.
- * \param inbound_edges Một vec-tơ số nguyên đã được khởi tạo hoặc NULL. Nếu khác NULL vec-tơ này sẽ chứa chỉ số các cạnh trong của mỗi đỉnhtrong cây đường đi ngắn nhất từ một đỉnh. Cạnh trong của một đỉnh i trong cây là cạnh mà thông qua đó đỉnh i được tiếp cận. Đỉnh bắt đầu và các đỉnh không được tìm thấy sẽ có giá trị -1 ở các vị trí tương ứng trong vec-tơ. Lưu ý tiến trình tìm kiếm sẽ dừng lại khi tất cả các đường đi ngắn nhất tới tất cả các đỉnh trong \c to đều đã được tìm thấy.
+ * \param inbound_edges Một vec-tơ số nguyên đã được khởi tạo hoặc
+ * NULL. Nếu khác NULL vec-tơ này sẽ chứa chỉ số các cạnh trong của
+ * mỗi đỉnhtrong cây đường đi ngắn nhất từ một đỉnh. Cạnh trong của
+ * một đỉnh i trong cây là cạnh mà thông qua đó đỉnh i được tiếp cận.
+ * Đỉnh bắt đầu và các đỉnh không được tìm thấy sẽ có giá trị -1 ở các
+ * vị trí tương ứng trong vec-tơ. Lưu ý tiến trình tìm kiếm sẽ dừng
+ * lại khi tất cả các đường đi ngắn nhất tới tất cả các đỉnh trong \c
+ * to đều đã được tìm thấy.
  * \return Mã lỗi
  *        \clist
  *        \cli CGRAPH_FAILURE
@@ -493,12 +504,24 @@ int cgraph_get_shortest_paths_dijkstra(const cgraph_t graph,
                           cgraph_neimode_t mode,
                           cgraph_ivec_t *predecessors,
                           cgraph_ivec_t *inbound_edges) {
-    /* Chi tiết triển khai. Đây là triển khai cơ bản cho giải thuật Dijkstra với một heap nhị phân. Heap được đánh chỉ mục, nghĩa là, nó không chỉ chứa các khoảng cách, mà còn chứa các đỉnh gắn với các giá trị khoảng cách đó.
+    /* Chi tiết triển khai. Đây là triển khai cơ bản cho giải thuật
+    Dijkstra với một heap nhị phân. Heap được đánh chỉ mục, nghĩa là,
+    nó không chỉ chứa các khoảng cách, mà còn chứa các đỉnh gắn với
+    các giá trị khoảng cách đó.
 
        Các thủ thuật:
-       - Các giá trị khoảng cách được đảo dấu trước khi được đưa vào heap, như vậy chúng ta sẽ sử dụng heap cực đại thay cho heap cực tiểu.
-       - Chúng ta không sử dụng CGRAPH_INFINITY trong quá trình tính toán trong vec-tơ khoảng cách, bởi vì CGRAPH_FINITE() có thể kéo theo gọi hàm và chúng ta không muốn điều đó. Vì vậy chúng ta lưu khoảng cách + 1.0 thay cho khoảng cách, và giá trị 0 tương đương với giá trị vô cùng.
-       - `parents' gán tất cả các chỉ số cạnh trong của tất cả các đỉnh trong cây đường đi ngắn nhất cho các đỉnh. Trong triển khai này chỉ số cạnh + 1 được lưu, 0 nghĩa là đỉnh không được phát hiện.
+       - Các giá trị khoảng cách được đảo dấu trước khi được đưa vào
+       heap, như vậy chúng ta sẽ sử dụng heap cực đại thay cho heap
+       cực tiểu.
+       - Chúng ta không sử dụng CGRAPH_INFINITY trong quá trình tính
+       toán trong vec-tơ khoảng cách, bởi vì CGRAPH_FINITE() có thể
+       kéo theo gọi hàm và chúng ta không muốn điều đó. Vì vậy chúng
+       ta lưu khoảng cách + 1.0 thay cho khoảng cách, và giá trị 0
+       tương đương với giá trị vô cùng.
+       - `parents' gán tất cả các chỉ số cạnh trong của tất cả các
+       đỉnh trong cây đường đi ngắn nhất cho các đỉnh. Trong triển
+       khai này chỉ số cạnh + 1 được lưu, 0 nghĩa là đỉnh không được
+       phát hiện.
     */
   if (!weights) {
     return cgraph_get_shortest_paths(graph,
@@ -516,22 +539,22 @@ int cgraph_get_shortest_paths_dijkstra(const cgraph_t graph,
   CGRAPH_INTEGER i, to_reach;
 
   if (cgraph_rvec_size(weights) != no_of_edges) {
-    CGRAPH_ERROR("Weight vector length does not match",
+    CGRAPH_ERROR("Độ dài vec-tơ trọng số không khớp",
                  CGRAPH_FAILURE);
   }
   if (cgraph_rvec_min(weights) < 0) {
-    CGRAPH_ERROR("Weight vector must be non-negative",
+    CGRAPH_ERROR("Các trọng số không được âm",
                  CGRAPH_FAILURE);
   }
 
   if (vertices &&
     cgraph_ivec_size(to) != gtv_size(vertices)) {
-    CGRAPH_ERROR("Size of `vertices' and `to' should match",
+    CGRAPH_ERROR("Kích thước của `vertices' và `to' phải tương đương",
                   CGRAPH_FAILURE);
   }
   if (edges &&
     cgraph_ivec_size(to) != gtv_size(edges)) {
-      CGRAPH_ERROR("Size of `edges' and `to' should match",
+      CGRAPH_ERROR("Kích thước của `edges' và `to' phải tương đương",
                     CGRAPH_FAILURE);
   }
 
@@ -540,13 +563,13 @@ int cgraph_get_shortest_paths_dijkstra(const cgraph_t graph,
 
   parents = calloc(no_of_nodes, sizeof(CGRAPH_INTEGER));
   if (parents == 0) {
-    CGRAPH_ERROR("Can't calculate shortest paths",
+    CGRAPH_ERROR("Không thể tính các độ dài ngắn nhất",
                   CGRAPH_FAILURE);
   }
 
   is_target = calloc(no_of_nodes, sizeof(bool));
   if (is_target == 0) {
-    CGRAPH_ERROR("Can't calculate shortest paths",
+    CGRAPH_ERROR("Không thể tính các độ dài ngắn nhất",
                  CGRAPH_FAILURE);
   }
 
@@ -593,7 +616,7 @@ int cgraph_get_shortest_paths_dijkstra(const cgraph_t graph,
   } /* !igraph_2wheap_empty(&Q) */
 
   if (to_reach > 0) {
-    CGRAPH_WARNING("Couldn't reach some vertices");
+    CGRAPH_WARNING("Không thể đi tới một số đỉnh");
   }
 
   // Tạo `predecessors' nếu cần

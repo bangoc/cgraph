@@ -27,7 +27,8 @@ cgraph_ivec_t cgraph_ivec_create();
 cgraph_ivec_t cgraph_ivec_from_array(CGRAPH_INTEGER *a,
                                     CGRAPH_INTEGER n);
 
-/* Pass vector pointer by value */
+/* Các hàm có tham số kiểu cgraph_ivec_t (không thay đổi bộ nhớ đã
+   được cấp phát)  */
 CGRAPH_INTEGER cgraph_ivec_max(cgraph_ivec_t const v);
 int cgraph_ivec_minmax(cgraph_ivec_t const v, CGRAPH_INTEGER *min, CGRAPH_INTEGER *max);
 bool cgraph_ivec_isininterval(cgraph_ivec_t const v,
@@ -44,7 +45,8 @@ CGRAPH_INTEGER cgraph_ivec_size(cgraph_ivec_t const v);
 int cgraph_ivec_fill(cgraph_ivec_t const v, CGRAPH_INTEGER data);
 int cgraph_ivec_print(cgraph_ivec_t const v);
 
-/* Pass vector pointer by reference */
+/* Các hàm có tham số kiểu  cgraph_ivec_t * (có thể thay đổi bộ nhớ
+   đã được cấp phát */
 int cgraph_ivec_grow(cgraph_ivec_t *v,
                      CGRAPH_INTEGER newcapacity);
 int cgraph_ivec_init(cgraph_ivec_t *v,

@@ -77,7 +77,7 @@ int cgraph_queue_poll(CGraphQueue *q, void **out) {
   q->size -= 1;
   free(tmp);
   /*
-  client take the responsibility to free value
+    Người dùng lãnh trách nhiệm giải phóng bộ nhớ nếu cần
   */
 
   return 0;

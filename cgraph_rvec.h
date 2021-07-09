@@ -25,14 +25,16 @@ extern "C"{
 
 cgraph_rvec_t cgraph_rvec_create();
 
-/* Pass vector pointer by value */
+/* Các hàm có tham số kiểu cgraph_ivec_t (không thay đổi bộ nhớ đã
+   được cấp phát)  */
 int cgraph_rvec_setsize(cgraph_rvec_t const v,
                         CGRAPH_INTEGER newsize);
 CGRAPH_INTEGER cgraph_rvec_capacity(cgraph_rvec_t const v);
 CGRAPH_INTEGER cgraph_rvec_size(cgraph_rvec_t const v);
 int cgraph_rvec_print(cgraph_rvec_t const v);
 
-/* Pass vector pointer by reference */
+/* Các hàm có tham số kiểu  cgraph_ivec_t * (có thể thay đổi bộ nhớ
+   đã được cấp phát */
 int cgraph_rvec_grow(cgraph_rvec_t *v,
                      CGRAPH_INTEGER newcapacity);
 int cgraph_rvec_init(cgraph_rvec_t *v,

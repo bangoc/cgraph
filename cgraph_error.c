@@ -9,8 +9,8 @@ static cgraph_error_handler_t *cgraph_i_error_handler = 0;
 static cgraph_warning_handler_t *cgraph_warning_handler = 0;
 
 static const char *cgraph_error_strings[] = {
-    [CGRAPH_SUCCESS] = "No error",
-    [CGRAPH_FAILURE] = "Failed"
+    [CGRAPH_SUCCESS] = "Không có lỗi",
+    [CGRAPH_FAILURE] = "Đã xảy ra lỗi"
 };
 
 void cgraph_warning_print(const char * reason,
@@ -29,10 +29,10 @@ bool cgraph_last_op_success() {
 
 const char* cgraph_strerror(const cgraph_error_t cgraph_errno) {
   static_assert(sizeof(cgraph_error_strings) / sizeof(char *) == CGRAPH_ERROR_NO_COUNT,
-    "Inconsistent error messages");
+    "Số lượng thông báo lỗi khác số lượng mã lỗi");
   int sz = sizeof(cgraph_error_strings) / sizeof(char *);
   if (cgraph_errno < 0 || cgraph_errno >= sz) {
-    return "Invalid error code; no error string available.";
+    return "Mã lỗi không hợp lệ; không có thông báo lỗi tương ứng.";
   }
   return cgraph_error_strings[cgraph_errno];
 }
