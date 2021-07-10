@@ -1,1 +1,0 @@
-add_executable(list1_ut list1_ut.c)

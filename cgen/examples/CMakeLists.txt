@@ -1,1 +1,0 @@
-add_executable(str_id str_id.c)
