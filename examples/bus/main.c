@@ -97,7 +97,7 @@ void parse_input(char *fname) {
       if (id2 >= gtv_size(stop_buses)) {
         gtv_push_back(&stop_buses, (gtype){.v = cgraph_ivec_create()});
       }
-      cgraph_ivec_push_back(&(stop_buses[id2].v), gtv_size(nodes) - 1);
+      cgraph_ivec_push_back(gtv_ref_at(stop_buses, id2, cgraph_ivec_t *), gtv_size(nodes) - 1);
       stop = strtok(NULL, delims);
     }
   }

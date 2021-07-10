@@ -99,10 +99,10 @@ int main() {
   }
 
   for (int i = 0; i < gtv_size(vertices); ++i) {
-    cgraph_ivec_free(&vertices[i].v);
+    cgraph_ivec_free(gtv_ref_at(vertices, i, cgraph_ivec_t *));
   }
   for (int i = 0; i < gtv_size(edges); ++i) {
-    cgraph_ivec_free(&edges[i].v);
+    cgraph_ivec_free(gtv_ref_at(edges, i, cgraph_ivec_t *));
   }
   gtv_free(&vertices);
   gtv_free(&edges);

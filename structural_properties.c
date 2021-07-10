@@ -256,8 +256,6 @@ int cgraph_get_shortest_paths(const cgraph_t graph,
   CGRAPH_INTEGER *father;
 
   cgraph_iqueue_t q = cgraph_iqueue_create();
-
-  CGRAPH_INTEGER i, j;
   cgraph_ivec_t tmp = cgraph_ivec_create();
 
   CGRAPH_INTEGER to_reach;
@@ -351,7 +349,7 @@ int cgraph_get_shortest_paths(const cgraph_t graph,
   if (predecessors) {
     CGRAPH_CHECK(cgraph_ivec_init(predecessors, no_of_nodes));
 
-    for (i = 0; i < no_of_nodes; i++) {
+    for (CGRAPH_INTEGER i = 0; i < no_of_nodes; i++) {
       if (father[i] <= 0) {
         /* Chưa đi tới i */
         (*predecessors)[i] = -1;
@@ -386,10 +384,10 @@ int cgraph_get_shortest_paths(const cgraph_t graph,
       CGRAPH_INTEGER node = to[i];
       cgraph_ivec_t *vvec = 0, *evec = 0;
       if (vertices) {
-        vvec = &vertices[i].v;
+        vvec = gtv_ref_at(vertices, i, cgraph_ivec_t *);
       }
       if (edges) {
-        evec = &edges[i].v;
+        evec = gtv_ref_at(edges, i, cgraph_ivec_t *);
       }
 
       // IGRAPH_ALLOW_INTERRUPTION();
@@ -658,10 +656,10 @@ int cgraph_get_shortest_paths_dijkstra(const cgraph_t graph,
       CGRAPH_INTEGER size, act, edge;
       cgraph_ivec_t *vvec = NULL, *evec = NULL;
       if (vertices) {
-        vvec = &vertices[i].v;
+        vvec = gtv_ref_at(vertices, i, cgraph_ivec_t *);
       }
       if (edges) {
-        evec = &edges[i].v;
+        evec = gtv_ref_at(edges, i, cgraph_ivec_t *);
       }
 
       size = 0;
