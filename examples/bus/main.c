@@ -28,10 +28,10 @@ long k_cost_change_bus = 1,
      k_cost_nex_stop = 1000;
 
 void init_global() {
-  stop_id = s2i_create();
+  stop_id = bn_create_tree(NULL_PTR);
   id_stop = gtv_create();
   stop_buses = gtv_create();
-  bus_id = s2i_create();
+  bus_id = bn_create_tree(NULL_PTR);
   id_bus = gtv_create();
   nodes = gtv_create();
   edges = cgraph_ivec_create();
