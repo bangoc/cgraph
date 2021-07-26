@@ -172,7 +172,7 @@ int main(int argc, char *argv[]) {
       printf("Path not found.\n");
     }
   }
-//  free_global();
+  free_global();
   free(beg);
   free(end);
   cgraph_destroy(&g);
