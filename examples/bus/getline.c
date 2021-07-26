@@ -6,15 +6,7 @@ long my_getline(char **lineptr, long *n, FILE *stream) {
 #define BUFF_SIZE 1024
   static char buff[BUFF_SIZE];
 
-  if (lineptr == NULL) {
-    return -1;
-  }
-
-  if (ferror (stream)) {
-    return -1;
-  }
-
-  if (feof(stream)) {
+  if (lineptr == NULL || ferror (stream) || feof(stream)) {
     return -1;
   }
 
@@ -38,6 +30,10 @@ long my_getline(char **lineptr, long *n, FILE *stream) {
       ptr = realloc(*lineptr, len + 1);
       if (!ptr) {
         return(-1);
+      }
+      if (*n == 0) {
+        // first allocation for NULL argument
+        ptr[0] = '\0';
       }
       *lineptr = ptr;
       *n = len + 1;

@@ -1,3 +1,4 @@
+#include <ctype.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -57,6 +58,9 @@ void free_global() {
 }
 
 long get_save_id(bn_tree_t si, vector_t *is, char *s) {
+  // Xóa khoảng trắng ở đầu và cuối
+  while (isspace(*s)) ++s;
+  while (strlen(s) > 0 && isspace(s[strlen(s) - 1])) s[strlen(s) - 1] = '\0';
   long id = s2i_value(si, s);
   if (id != k_s2i_invalid) {
     return id;
@@ -168,7 +172,7 @@ int main(int argc, char *argv[]) {
       printf("Path not found.\n");
     }
   }
-  free_global();
+//  free_global();
   free(beg);
   free(end);
   cgraph_destroy(&g);
