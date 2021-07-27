@@ -43,6 +43,7 @@ set(cgraph_src
   cgraph_istack.c
   cgraph_rvec.c
   heap.c
+  foreign.c
 )
 
 set(cgraph_inc
@@ -62,6 +63,7 @@ set(cgraph_inc
   cgraph_paths.h
   cgraph_rvec.h
   cgraph_types_internal.h
+  cgraph_foreigh.h
 )
 
 add_library(cgraph STATIC ${cgraph_src})
