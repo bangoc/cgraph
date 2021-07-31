@@ -31,6 +31,7 @@ const char* cgraph_strerror(const cgraph_error_t cgraph_errno);
 #define CGRAPH_ERROR(error_message, cgraph_errno) \
     do { \
         cgraph_error(error_message, __FILE__, __LINE__, cgraph_errno) ; \
+        return cgraph_errno; \
     } while (0)
 
 #define CGRAPH_CHECK(a) do { \

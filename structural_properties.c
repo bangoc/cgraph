@@ -116,9 +116,6 @@ int cgraph_topological_sorting(const cgraph_t graph,
                                cgraph_ivec_t *res,
                                cgraph_neimode_t mode) {
   CGRAPH_INTEGER no_of_nodes = cgraph_vcount(graph);
-  cgraph_ivec_t degrees = cgraph_ivec_create(),
-                neis = cgraph_ivec_create();
-  cgraph_iqueue_t sources = cgraph_iqueue_create();
   cgraph_neimode_t deg_mode;
 
   if (mode == CGRAPH_ALL || !cgraph_is_directed(graph)) {
@@ -131,6 +128,10 @@ int cgraph_topological_sorting(const cgraph_t graph,
   } else {
     CGRAPH_ERROR("Thuộc tính không hợp lệ", CGRAPH_FAILURE);
   }
+
+  cgraph_ivec_t degrees = cgraph_ivec_create(),
+              neis = cgraph_ivec_create();
+  cgraph_iqueue_t sources = cgraph_iqueue_create();
 
   /* Không tính đỉnh lặp */
   CGRAPH_CHECK(cgraph_degree_all(graph, &degrees, deg_mode, false));
@@ -158,14 +159,15 @@ int cgraph_topological_sorting(const cgraph_t graph,
     }
   }
 
+  cgraph_ivec_free(&degrees);
+  cgraph_ivec_free(&neis);
+  cgraph_iqueue_free(&sources);
+
   if (cgraph_ivec_size(*res) < no_of_nodes) {
     CGRAPH_ERROR("đồ thị chứa một chu trình, một phần"
                  " kết quả được trả về", CGRAPH_FAILURE);
   }
 
-  cgraph_ivec_free(&degrees);
-  cgraph_ivec_free(&neis);
-  cgraph_iqueue_free(&sources);
   return CGRAPH_SUCCESS;
 }
 
@@ -250,9 +252,6 @@ int cgraph_get_shortest_paths(const cgraph_t graph,
   CGRAPH_INTEGER no_of_nodes = cgraph_vcount(graph);
   CGRAPH_INTEGER *father;
 
-  cgraph_iqueue_t q = cgraph_iqueue_create();
-  cgraph_ivec_t tmp = cgraph_ivec_create();
-
   CGRAPH_INTEGER to_reach;
   CGRAPH_INTEGER reached = 0;
 
@@ -271,7 +270,7 @@ int cgraph_get_shortest_paths(const cgraph_t graph,
   }
   if (edges &&
         cgraph_ivec_size(to) != gtv_size(edges)) {
-    CGRAPH_ERROR("Kích thước của `edges' và `to' phảu tương đương",
+    CGRAPH_ERROR("Kích thước của `edges' phải bằng kích thước của `to'",
                  CGRAPH_FAILURE);
   }
 
@@ -280,6 +279,8 @@ int cgraph_get_shortest_paths(const cgraph_t graph,
     CGRAPH_ERROR("không thể tìm các đường đi ngắn nhất",
                  CGRAPH_FAILURE);
   }
+  cgraph_iqueue_t q = cgraph_iqueue_create();
+  cgraph_ivec_t tmp = cgraph_ivec_create();
 
   /* Đánh dấu các đỉnh cần đi tới */
   to_reach = cgraph_ivec_size(to);

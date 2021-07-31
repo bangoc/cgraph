@@ -255,7 +255,7 @@ int cgraph_add_vertices(cgraph_t graph, CGRAPH_INTEGER nv) {
 
   graph->n += nv;
 
-  return 0;
+  return CGRAPH_SUCCESS;
 }
 
 /**

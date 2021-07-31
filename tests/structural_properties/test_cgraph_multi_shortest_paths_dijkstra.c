@@ -8,6 +8,7 @@
 #include "ut.h"
 
 int main() {
+  cgraph_set_error_handler(cgraph_error_print);
   cgraph_t g = test_create_g1();
   double w[] = {3, 30, 5, 5, 10, 12, 11, 1, 6};
   int n = sizeof(w) / sizeof(double);
@@ -80,6 +81,14 @@ int main() {
     UT_MSG_FAILED("Case 1. Test edges sequence 0->5 (out)");
     any = true;
   }
+  for (int i = 0; i < gtv_size(vertices); ++i) {
+    cgraph_ivec_free(gtv_ref_at(vertices, i, cgraph_ivec_t *));
+  }
+  for (int i = 0; i < gtv_size(edges); ++i) {
+    cgraph_ivec_free(gtv_ref_at(edges, i, cgraph_ivec_t *));
+  }
+  gtv_free(&vertices);
+  gtv_free(&edges);
 
   // Case 2: Not reach
   cgraph_set_warning_handler(cgraph_warning_print);
@@ -87,6 +96,12 @@ int main() {
   cgraph_ivec_push_back(&to, 0);
   cgraph_ivec_push_back(&to, 1);
   cgraph_ivec_push_back(&to, 2);
+  vertices = gtv_create();
+  edges = gtv_create();
+  for (int i = 0; i < cgraph_ivec_size(to); ++i) {
+    gtv_push_back(&vertices, (gtype){.v = cgraph_ivec_create()});
+    gtv_push_back(&edges, (gtype){.v = cgraph_ivec_create()});
+  }
   cgraph_get_shortest_paths_dijkstra(g, vertices,
         edges, 1, to, weights, CGRAPH_OUT, &predecessors, &inbound_edges);
   if (predecessors[0] != -1) {

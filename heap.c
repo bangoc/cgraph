@@ -78,7 +78,7 @@ int cgraph_2wheap_init(cgraph_2wheap_t *h, CGRAPH_INTEGER size) {
   h->index2 = cgraph_ivec_create();
 
   /* Chúng ta bắt đầu với giá trị lớn nhất */
-  CGRAPH_CHECK(cgraph_ivec_init(&h->index2, size));
+  cgraph_ivec_init(&h->index2, size);
   return 0;
 }
 
@@ -104,8 +104,8 @@ int cgraph_2wheap_push_with_index(cgraph_2wheap_t *h,
 
   /*   printf("-> %.2g [%li]\n", elem, idx); */
   CGRAPH_INTEGER size = cgraph_rvec_size(h->data);
-  CGRAPH_CHECK(cgraph_rvec_push_back(&h->data, elem));
-  CGRAPH_CHECK(cgraph_ivec_push_back(&h->index, idx));
+  cgraph_rvec_push_back(&h->data, elem);
+  cgraph_ivec_push_back(&h->index, idx);
   h->index2[idx] = size + 2;
 
   /* Duy trì heap */
@@ -222,7 +222,7 @@ int cgraph_2wheap_check(cgraph_2wheap_t *h) {
   }
 
   if (error) {
-    CGRAPH_ERROR("Heap không nhất quán", CGRAPH_FAILURE);
+    // "Heap không nhất quán"
     return 1;
   }
 

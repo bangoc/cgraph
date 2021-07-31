@@ -16,10 +16,11 @@ cgraph_ivec_t cgraph_ivec_from_array(CGRAPH_INTEGER *a,
     ret += cgraph_ivec_push_back(&v, a[i]);
   }
   if (ret) {
-    CGRAPH_ERROR("Can not create a vector from an array", CGRAPH_FAILURE);
+    // Không thể tạo vec-tơ từ mảng
     cgraph_ivec_free(&v);
+    v = NULL;
   }
-  return ret == 0? v: NULL;
+  return v;
 }
 
 CGRAPH_INTEGER cgraph_ivec_max(cgraph_ivec_t const v) {

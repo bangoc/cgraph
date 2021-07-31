@@ -7,7 +7,6 @@
 #include "cgraph_ivec.h"
 #include "cgraph_visitor.h"
 
-// igraph_bfs
 int cgraph_bfs(const cgraph_t graph,
                CGRAPH_INTEGER root,
                cgraph_neimode_t mode,
@@ -19,7 +18,6 @@ int cgraph_bfs(const cgraph_t graph,
                cgraph_ivec_t *pred,
                cgraph_ivec_t *succ,
                cgraph_ivec_t *dist) {
-  cgraph_iqueue_t q = cgraph_iqueue_create();
   CGRAPH_INTEGER no_of_nodes = cgraph_vcount(graph);
   CGRAPH_INTEGER actroot = root;
 
@@ -27,20 +25,22 @@ int cgraph_bfs(const cgraph_t graph,
   CGRAPH_INTEGER pred_vec = -1;
 
   if (root < 0 || root >= no_of_nodes) {
-    CGRAPH_ERROR("Invalid root vertex in BFS", CGRAPH_FAILURE);
+    CGRAPH_ERROR("Đỉnh nguồn không hợp lệ đối với BFS", CGRAPH_FAILURE);
   }
 
   if (restricted) {
     CGRAPH_INTEGER min, max;
     cgraph_ivec_minmax(restricted, &min, &max);
     if (min < 0 || max >= no_of_nodes) {
-      CGRAPH_ERROR("Invalid vertex id in restricted set", CGRAPH_FAILURE);
+      CGRAPH_ERROR("Mã đỉnh không hợp lệ trong tập restricted", CGRAPH_FAILURE);
     }
   }
 
   if (mode != CGRAPH_OUT && mode != CGRAPH_IN && mode != CGRAPH_ALL) {
-    CGRAPH_ERROR("Invalid mode argument", CGRAPH_FAILURE);
+    CGRAPH_ERROR("Lỗi tham số chế độ", CGRAPH_FAILURE);
   }
+
+  cgraph_iqueue_t q = cgraph_iqueue_create();
 
   if (!cgraph_is_directed(graph)) {
      mode = CGRAPH_ALL;
@@ -237,11 +237,11 @@ int cgraph_dfs(const cgraph_t graph,
   CGRAPH_INTEGER actroot, act_rank = 0, rank_out = 0, act_dist = 0;
 
   if (root < 0 || root >= no_of_nodes) {
-    CGRAPH_ERROR("Invalid root vertex for DFS", CGRAPH_FAILURE);
+    CGRAPH_ERROR("Lỗi đỉnh nguồn cho DFS", CGRAPH_FAILURE);
   }
 
   if (mode != CGRAPH_OUT && mode != CGRAPH_IN && mode != CGRAPH_ALL) {
-    CGRAPH_ERROR("Invalid mode argument", CGRAPH_FAILURE);
+    CGRAPH_ERROR("Lỗi tham số chế độ", CGRAPH_FAILURE);
   }
 
   if (!cgraph_is_directed(graph)) {
