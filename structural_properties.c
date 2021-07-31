@@ -73,11 +73,6 @@ bool cgraph_is_dag(const cgraph_t graph) {
     }
   }
 
-  if (vertices_left < 0) {
-    CGRAPH_ERROR("Số đỉnh còn lại < 0 trong một đồ thị DAG, "
-                 "có thể là lỗi", CGRAPH_FAILURE);
-  }
-
   cgraph_ivec_free(&degrees);
   cgraph_ivec_free(&neis);
   cgraph_iqueue_free(&sources);
@@ -171,7 +166,7 @@ int cgraph_topological_sorting(const cgraph_t graph,
   cgraph_ivec_free(&degrees);
   cgraph_ivec_free(&neis);
   cgraph_iqueue_free(&sources);
-  return 0;
+  return CGRAPH_SUCCESS;
 }
 
 /**

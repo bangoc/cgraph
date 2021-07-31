@@ -114,6 +114,10 @@ static int cgraph_i_create_start(
  * cgraph_add_vertices trước.
  * \param graph Đồ thị mà các cạnh sẽ được thêm vào.
  * \param edges Các cạnh.
+ * \return Mã lỗi:
+ *    \c CGRAPH_FAILURE: Không thể thêm cạnh do độ dài vec-tơ
+ *       edges không hợp lệ, hoặc có đỉnh ngoài phạm vi, v.v..
+ *    \c CGRAPH_SUCCESS: Nếu thành công
  *
  *
  * </para><para>
@@ -130,20 +134,26 @@ int cgraph_add_edges(cgraph_t graph, cgraph_ivec_t const edges) {
     long int i = 0;
     cgraph_error_handler_t *oldhandler;
     bool ret1, ret2;
-    cgraph_ivec_t newoi = cgraph_ivec_create(),
-                  newii = cgraph_ivec_create();
     bool directed = cgraph_is_directed(graph);
 
     if (cgraph_ivec_size(edges) % 2 != 0) {
-        CGRAPH_ERROR("Lỗi độ dài vec-tơ cạnh (lẻ)", CGRAPH_FAILURE);
+        CGRAPH_ERROR(
+          "Lỗi độ dài vec-tơ cạnh (lẻ)", CGRAPH_FAILURE);
     }
-    if (!cgraph_ivec_isininterval(edges, 0, cgraph_vcount(graph) - 1)) {
-        CGRAPH_ERROR("Không thể thêm cạnh", CGRAPH_FAILURE);
+    if (!cgraph_ivec_isininterval(edges,
+              0, cgraph_vcount(graph) - 1)) {
+        CGRAPH_ERROR(
+          "Không thể thêm cạnh", CGRAPH_FAILURE);
     }
 
+    cgraph_ivec_t newoi = cgraph_ivec_create(),
+                  newii = cgraph_ivec_create();
+
     /* from & to */
-    CGRAPH_CHECK(cgraph_ivec_grow(&graph->from, no_of_edges + edges_to_add));
-    CGRAPH_CHECK(cgraph_ivec_grow(&graph->to, no_of_edges + edges_to_add));
+    CGRAPH_CHECK(cgraph_ivec_grow(&graph->from,
+                      no_of_edges + edges_to_add));
+    CGRAPH_CHECK(cgraph_ivec_grow(&graph->to,
+                      no_of_edges + edges_to_add));
 
     /*
      * Nếu là đồ thị có hướng thì from - to được xác định theo đúng
@@ -176,6 +186,9 @@ int cgraph_add_edges(cgraph_t graph, cgraph_ivec_t const edges) {
 
       /* Khôi phục xử lý lỗi */
       cgraph_set_error_handler(oldhandler);
+
+      cgraph_ivec_free(&newoi);
+      cgraph_ivec_free(&newii);
       CGRAPH_ERROR("Không thể thêm cạnh", CGRAPH_FAILURE);
     }
     ret1 = cgraph_ivec_order(graph->from, graph->to, newoi);
@@ -200,7 +213,7 @@ int cgraph_add_edges(cgraph_t graph, cgraph_ivec_t const edges) {
     graph->ii = newii;
     cgraph_set_error_handler(oldhandler);
 
-    return 0;
+    return CGRAPH_SUCCESS;
 }
 
 /**

@@ -18,7 +18,8 @@
  * - <b>to</b> Cột thứ hai của danh sách cạnh.
  * - <b>oi</b> Chỉ số của cạnh được sắp xếp tăng dần theo cột thứ
  * nhất rồi đến cột thứ hai. Cạnh đầu tiên theo thứ tự này là
- * from[oi[0]], to[oi[0]], trong đó from[oi[0]] là nhỏ nhất trong tất * cả các giá trị from (sắp xếp chỉ số). Độ dài vec-tơ này bằng số
+ * from[oi[0]], to[oi[0]], trong đó from[oi[0]] là nhỏ nhất trong tất
+ * cả các giá trị from (sắp xếp chỉ số). Độ dài vec-tơ này bằng số
  * lượng cạnh có trong đồ thị.
  * - <b>ii</b> Chỉ số của cạnh được sắp xếp tăng dần theo cột thứ hai
  * rồi đến cột thứ nhất. Cạnh đầu tiên theo thứ tự này là

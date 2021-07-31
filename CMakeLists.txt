@@ -100,6 +100,7 @@ if(${BUILD_TESTING})
                 cgraph_multi_shortest_paths_dijkstra_ut)
   add_test(NAME CgraphGetShortestPaths COMMAND
                 cgraph_get_shortest_paths_ut)
+  add_test(NAME CgraphAddEdges COMMAND cgraph_add_edges_ut)
 endif()
 
 # e.g. copy libries headers and binary to bkc
