@@ -6,13 +6,13 @@
 
 /**
  * \ingroup interface
- * \function igraph_vcount
- * \brief The number of vertices in a graph.
+ * \function cgraph_vcount
+ * \brief Số lượng đỉnh trong một đồ thị.
  *
- * \param graph The graph.
- * \return Number of vertices.
+ * \param graph Biểu diễn đồ thị.
+ * \return Số lượng đỉnh.
  *
- * Time complexity: O(1)
+ * Độ phức tạp: O(1)
  */
 ;
 CGRAPH_INTEGER cgraph_vcount(const cgraph_t graph) {
@@ -21,13 +21,13 @@ CGRAPH_INTEGER cgraph_vcount(const cgraph_t graph) {
 
 /**
  * \ingroup interface
- * \function igraph_ecount
- * \brief The number of edges in a graph.
+ * \function cgraph_ecount
+ * \brief Số lượng cạnh của đồ thị.
  *
- * \param graph The graph.
- * \return Number of edges.
+ * \param graph Biểu diễn đồ thị.
+ * \return Số lượng cạnh.
  *
- * Time complexity: O(1)
+ * Độ phức tạp: O(1)
  */
 CGRAPH_INTEGER cgraph_ecount(const cgraph_t graph) {
   return (CGRAPH_INTEGER) cgraph_ivec_size(graph->from);
@@ -35,21 +35,24 @@ CGRAPH_INTEGER cgraph_ecount(const cgraph_t graph) {
 
 /**
  * \ingroup interface
- * \function igraph_is_directed
- * \brief Is this a directed graph?
+ * \function cgraph_is_directed
+ * \brief Đồ thị có phải là đồ thị có hướng hay không?
  *
- * \param graph The graph.
- * \return Logical value, <code>TRUE</code> if the graph is directed,
- * <code>FALSE</code> otherwise.
+ * \param graph Biểu diễn đồ thị.
+ * \return Giá trị lô-gic, <code>TRUE</code> nếu là đồ thị có hướng,
+ * <code>FALSE</code> nếu ngược lại.
  *
- * Time complexity: O(1)
+ * Độ phức tạp: O(1)
  *
- * \example examples/simple/igraph_is_directed.c
  */
 
 bool cgraph_is_directed(const cgraph_t graph) {
     return graph->directed;
 }
+
+/*
+ * Hàm sử dụng bên trong thư viện
+ */
 
 static int cgraph_i_create_start(
         cgraph_ivec_t res, cgraph_ivec_t el,
@@ -64,14 +67,14 @@ static int cgraph_i_create_start(
     no_of_nodes = nodes;
     no_of_edges = cgraph_ivec_size(el);
 
-    /* result */
+    /* kết quả */
 
     cgraph_ivec_setsize(res, nodes + 1);
 
-    /* create the index */
+    /* tạo chỉ mục */
 
     if (cgraph_ivec_size(el) == 0) {
-        /* empty graph */
+        /* đồ thị rỗng */
         cgraph_ivec_null(res);
     } else {
         idx = -1;
@@ -91,7 +94,7 @@ static int cgraph_i_create_start(
         }
     }
 
-    /* clean */
+    /* dọn dẹp */
 
 # undef EDGE
     return 0;
@@ -99,29 +102,27 @@ static int cgraph_i_create_start(
 
 /**
  * \ingroup interface
- * \function igraph_add_edges
- * \brief Adds edges to a graph object.
+ * \function cgraph_add_edges
+ * \brief Thêm các cạnh vào một đồ thị.
  *
  * </para><para>
- * The edges are given in a vector, the
- * first two elements define the first edge (the order is
- * <code>from</code>, <code>to</code> for directed
- * graphs). The vector
- * should contain even number of integer numbers between zero and the
- * number of vertices in the graph minus one (inclusive). If you also
- * want to add new vertices, call igraph_add_vertices() first.
- * \param graph The graph to which the edges will be added.
- * \param edges The edges themselves.
+ * Các cạnh được cho trong một vec-tơ, hai phần tử đầu tiên xác định
+ * cạnh đầu tiên theo thứ tự <code>from</code>, <code>to</code> đối
+ * với đồ thị có hướng. Vec-tơ phải chứa một số lượng chẵn các số
+ * nguyên trong khoảng giữa 0 và số lượng đỉnh trong đồ thị trừ một
+ * (bao gồm). Nếu bạn muốn thêm các đỉnh mới, hãy gọi hàm
+ * cgraph_add_vertices trước.
+ * \param graph Đồ thị mà các cạnh sẽ được thêm vào.
+ * \param edges Các cạnh.
  *
- * This function invalidates all iterators.
  *
  * </para><para>
- * Time complexity: O(|V|+|E|) where
- * |V| is the number of vertices and
- * |E| is the number of
- * edges in the \em new, extended graph.
+ * Độ phức tạp: O(|V|+|E|) Trong đó
+ * |V| là số lượng đỉnh và
+ * |E| là số lượng cạnh trong đồ thị được mở rộng.
  *
  * \example examples/simple/igraph_add_edges.c
+ * TODO: Bổ xung ví dụ cho cgraph
  */
 int cgraph_add_edges(cgraph_t graph, cgraph_ivec_t const edges) {
     long int no_of_edges = cgraph_ecount(graph);
@@ -134,37 +135,48 @@ int cgraph_add_edges(cgraph_t graph, cgraph_ivec_t const edges) {
     bool directed = cgraph_is_directed(graph);
 
     if (cgraph_ivec_size(edges) % 2 != 0) {
-        CGRAPH_ERROR("invalid (odd) length of edges vector", CGRAPH_FAILURE);
+        CGRAPH_ERROR("Lỗi độ dài vec-tơ cạnh (lẻ)", CGRAPH_FAILURE);
     }
     if (!cgraph_ivec_isininterval(edges, 0, cgraph_vcount(graph) - 1)) {
-        CGRAPH_ERROR("cannot add edges", CGRAPH_FAILURE);
+        CGRAPH_ERROR("Không thể thêm cạnh", CGRAPH_FAILURE);
     }
 
     /* from & to */
     CGRAPH_CHECK(cgraph_ivec_grow(&graph->from, no_of_edges + edges_to_add));
     CGRAPH_CHECK(cgraph_ivec_grow(&graph->to, no_of_edges + edges_to_add));
 
+    /*
+     * Nếu là đồ thị có hướng thì from - to được xác định theo đúng
+     * thứ tự trong vec-tơ edges;
+     * Nếu ngược lại (trong trường hợp đồ thị vô hướng)
+     *   thì from là giá trị cực đại trong hai đỉnh,
+     *   còn to là giá trị còn lại
+     */
     while (i < edges_to_add * 2) {
         if (directed || edges[i] > edges[i + 1]) {
-            cgraph_ivec_push_back(&graph->from, edges[i++]); /* reserved */
-            cgraph_ivec_push_back(&graph->to,   edges[i++]); /* reserved */
+            cgraph_ivec_push_back(&graph->from, edges[i++]);
+            cgraph_ivec_push_back(&graph->to,   edges[i++]);
         } else {
-            cgraph_ivec_push_back(&graph->to,   edges[i++]); /* reserved */
-            cgraph_ivec_push_back(&graph->from, edges[i++]); /* reserved */
+            cgraph_ivec_push_back(&graph->to,   edges[i++]);
+            cgraph_ivec_push_back(&graph->from, edges[i++]);
         }
     }
 
-    /* disable the error handler temporarily */
-    oldhandler = cgraph_set_error_handler(cgraph_error_handler_ignore);
+    /* Tạm thời vô hiệu xử lý lỗi */
+    oldhandler =
+        cgraph_set_error_handler(cgraph_error_handler_ignore);
 
     /* oi & ii */
     ret1 = cgraph_ivec_init(&newoi, no_of_edges + edges_to_add);
     ret2 = cgraph_ivec_init(&newii, no_of_edges + edges_to_add);
     if (ret1 != 0 || ret2 != 0) {
-        cgraph_ivec_setsize(graph->from, no_of_edges); /* gets smaller */
-        cgraph_ivec_setsize(graph->to, no_of_edges);   /* gets smaller */
-        cgraph_set_error_handler(oldhandler);
-        CGRAPH_ERROR("cannot add edges", CGRAPH_FAILURE);
+      /* Thu gọn vec-tơ */
+      cgraph_ivec_setsize(graph->from, no_of_edges);
+      cgraph_ivec_setsize(graph->to, no_of_edges);
+
+      /* Khôi phục xử lý lỗi */
+      cgraph_set_error_handler(oldhandler);
+      CGRAPH_ERROR("Không thể thêm cạnh", CGRAPH_FAILURE);
     }
     ret1 = cgraph_ivec_order(graph->from, graph->to, newoi);
     ret2 = cgraph_ivec_order(graph->to, graph->from, newii);
@@ -174,14 +186,14 @@ int cgraph_add_edges(cgraph_t graph, cgraph_ivec_t const edges) {
         cgraph_ivec_free(&newoi);
         cgraph_ivec_free(&newii);
         cgraph_set_error_handler(oldhandler);
-        CGRAPH_ERROR("cannot add edges", CGRAPH_FAILURE);
+        CGRAPH_ERROR("Không thể thêm cạnh", CGRAPH_FAILURE);
     }
 
-    /* os & is, its length does not change, error safe */
+    /* os & is, độ dài của nó không thay đổi, thao tác an toàn */
     cgraph_i_create_start(graph->os, graph->from, newoi, graph->n);
     cgraph_i_create_start(graph->is, graph->to, newii, graph->n);
 
-    /* everything went fine  */
+    /* Tất cả đều đã ổn  */
     cgraph_ivec_free(&graph->oi);
     cgraph_ivec_free(&graph->ii);
     graph->oi = newoi;
@@ -193,31 +205,29 @@ int cgraph_add_edges(cgraph_t graph, cgraph_ivec_t const edges) {
 
 /**
  * \ingroup interface
- * \function igraph_add_vertices
- * \brief Adds vertices to a graph.
+ * \function cgraph_add_vertices
+ * \brief Thêm các đỉnh vào đồ thị.
  *
  * </para><para>
- * This function invalidates all iterators.
  *
- * \param graph The graph object to extend.
- * \param nv Non-negative integer giving the number of
- *       vertices to add.
- * \return Error code:
- *     \c IGRAPH_EINVAL: invalid number of new
- *     vertices.
+ * \param graph Đối tượng đồ thị cần được mở rộng.
+ * \param nv Số nguyên không âm - là số lượng đỉnh cần được thêm vào
+ * \return Mã lỗi:
+ *     \c CGRAPH_FAILURE: Số lượng đỉnh mới không hợp lệ.
  *
- * Time complexity: O(|V|) where
- * |V| is
- * the number of vertices in the \em new, extended graph.
+ * Độ phức tạp: O(|V|) trong đó
+ * |V| là
+ * số lượng đỉnh trong đồ thì sau khi mở rộng.
  *
  * \example examples/simple/igraph_add_vertices.c
+ * TODO: Bổ xung ví dụ cho cgraph
  */
 int cgraph_add_vertices(cgraph_t graph, CGRAPH_INTEGER nv) {
   long int ec = cgraph_ecount(graph);
   long int i;
 
   if (nv < 0) {
-    CGRAPH_ERROR("cannot add negative number of vertices", CGRAPH_FAILURE);
+    CGRAPH_ERROR("Không thể thêm số lượng đỉnh âm", CGRAPH_FAILURE);
   }
 
   CGRAPH_CHECK(cgraph_ivec_grow(&graph->os, graph->n + nv + 1));
@@ -237,19 +247,19 @@ int cgraph_add_vertices(cgraph_t graph, CGRAPH_INTEGER nv) {
 
 /**
  * \ingroup interface
- * \function igraph_destroy
- * \brief Frees the memory allocated for a graph object.
+ * \function cgraph_destroy
+ * \brief Giải phóng bộ nhớ đã được cấp phát cho một đồ thị.
  *
  * </para><para>
- * This function should be called for every graph object exactly once.
+ * Hàm này chỉ được gọi đúng một lần cho một đồ thị.
  *
  * </para><para>
- * This function invalidates all iterators (of course), but the
- * iterators of a graph should be destroyed before the graph itself
- * anyway.
- * \param graph Pointer to the graph to free.
+ * Bộ nhớ được cấp phát cho biểu diễn đồ thị phải được hủy trước khi
+ * hủy bộ nhớ cho chính cấu trúc đồ thị.
  *
- * Time complexity: operating system specific.
+ * \param graph Con trỏ tới đồ thị cần giải phóng.
+ *
+ * Độ phức tạp: phụ thuộc vào hệ điều hành.
  */
 void cgraph_destroy(cgraph_t *graph) {
   cgraph_t g = *graph;
@@ -270,11 +280,11 @@ int cgraph_neighbors(const cgraph_t graph,
   const CGRAPH_INTEGER node = vid;
 
   if (node < 0 || node > cgraph_vcount(graph) - 1) {
-    CGRAPH_ERROR("cannot get neighbors", CGRAPH_FAILURE);
+    CGRAPH_ERROR("Không thể truy cập các láng giềng", CGRAPH_FAILURE);
   }
   if (mode != CGRAPH_OUT && mode != CGRAPH_IN &&
       mode != CGRAPH_ALL) {
-    CGRAPH_ERROR("cannot get neighbors", CGRAPH_FAILURE);
+    CGRAPH_ERROR("Không thể truy cập các láng giềng", CGRAPH_FAILURE);
   }
 
   if (! graph->directed) {
@@ -297,8 +307,9 @@ int cgraph_neighbors(const cgraph_t graph,
       }
     }
   } else {
-    /* both in- and out- neighbors in a directed graph,
-       we need to merge the two 'vectors' */
+    /* Gom các láng giềng theo chiều vào- và ra- trong một
+     * đồ thị có hướng.
+     */
     CGRAPH_INTEGER j1 = (graph->os)[node + 1];
     CGRAPH_INTEGER j2 = (graph->is)[node + 1];
     CGRAPH_INTEGER i1 = (graph->os)[node];
@@ -340,11 +351,11 @@ int cgraph_incident(const cgraph_t graph,
                     cgraph_neimode_t mode) {
   const CGRAPH_INTEGER node = vid;
   if (node < 0 || node > cgraph_vcount(graph) - 1) {
-    CGRAPH_ERROR("cannot get neighbors", CGRAPH_FAILURE);
+    CGRAPH_ERROR("Không thể truy cập các láng giềng", CGRAPH_FAILURE);
   }
   if (mode != CGRAPH_OUT && mode != CGRAPH_IN &&
       mode != CGRAPH_ALL) {
-    CGRAPH_ERROR("cannot get neighbors", CGRAPH_FAILURE);
+    CGRAPH_ERROR("Không thể truy cập các láng giềng", CGRAPH_FAILURE);
   }
 
   if (! graph->directed) {
@@ -374,7 +385,7 @@ int cgraph_degree_all(const cgraph_t graph,
                       bool loops) {
   if (mode != CGRAPH_OUT && mode != CGRAPH_IN &&
       mode != CGRAPH_ALL) {
-    CGRAPH_ERROR("cannot get degree", CGRAPH_FAILURE);
+    CGRAPH_ERROR("Không thể lấy bậc", CGRAPH_FAILURE);
   }
   if (!cgraph_is_directed(graph)) {
     mode = CGRAPH_ALL;
@@ -404,11 +415,11 @@ int cgraph_degree_one(const cgraph_t graph,
                       cgraph_neimode_t mode,
                       bool loops) {
   if (node < 0 || node > cgraph_vcount(graph) - 1) {
-    CGRAPH_ERROR("cannot get degree", CGRAPH_FAILURE);
+    CGRAPH_ERROR("Không thể lấy bậc", CGRAPH_FAILURE);
   }
   if (mode != CGRAPH_OUT && mode != CGRAPH_IN &&
       mode != CGRAPH_ALL) {
-    CGRAPH_ERROR("cannot get degree", CGRAPH_FAILURE);
+    CGRAPH_ERROR("Không thể lấy bậc", CGRAPH_FAILURE);
   }
   if (!cgraph_is_directed(graph)) {
     mode = CGRAPH_ALL;
@@ -551,24 +562,24 @@ int cgraph_get_eid(const cgraph_t graph, CGRAPH_INTEGER *eid,
     CGRAPH_INTEGER nov = cgraph_vcount(graph);
 
     if (from < 0 || to < 0 || from > nov - 1 || to > nov - 1) {
-      CGRAPH_WARNING("cannot get edge id, invalid input");
+      CGRAPH_WARNING("Không thể lấy mã cạnh, lỗi dữ liệu vào");
     }
 
     *eid = -1;
     if (cgraph_is_directed(graph)) {
 
-      /* Directed graph */
+      /* Đồ thị có hướng */
       FIND_DIRECTED_EDGE(graph, from, to, eid);
       if (!directed && *eid < 0) {
         FIND_DIRECTED_EDGE(graph, to, from, eid);
       }
     } else {
-      /* Undirected graph, they only have one mode */
+      /* Đồ thị vô hướng chỉ có một chế độ */
       FIND_UNDIRECTED_EDGE(graph, from, to, eid);
     }
 
     if (*eid < 0) {
-      CGRAPH_WARNING("Cannot get edge id, no such edge");
+      CGRAPH_WARNING("Không thể lấy mã cạnh, không tìm thấy cạnh");
     }
 
     return 0;
