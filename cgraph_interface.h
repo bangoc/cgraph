@@ -9,6 +9,7 @@ extern "C"{
 #endif
 
 int cgraph_add_vertices(cgraph_t graph, CGRAPH_INTEGER nv);
+int cgraph_delete_edges(cgraph_t graph, cgraph_ivec_t const edges);
 void cgraph_destroy(cgraph_t *graph);
 int cgraph_add_edges(cgraph_t graph, cgraph_ivec_t const edges);
 CGRAPH_INTEGER cgraph_vcount(const cgraph_t graph);

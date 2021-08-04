@@ -102,6 +102,7 @@ if(${BUILD_TESTING})
                 cgraph_get_shortest_paths_ut)
   add_test(NAME CgraphAddEdges COMMAND cgraph_add_edges_ut)
   add_test(NAME CgraphAddVertices COMMAND cgraph_add_vertices_ut)
+  add_test(NAME CgraphDeleteEdges COMMAND cgraph_delete_edges_ut)
 endif()
 
 # e.g. copy libries headers and binary to bkc

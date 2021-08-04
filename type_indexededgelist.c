@@ -597,3 +597,94 @@ int cgraph_get_eid(const cgraph_t graph, CGRAPH_INTEGER *eid,
 
     return 0;
 }
+
+
+/**
+ * \ingroup interface
+ * \function cgraph_delete_edges
+ * \brief Xóa các cạnh khỏi đồ thị.
+ *
+ * </para><para>
+ * Các cạnh cần xóa được để trong vec-tơ.
+ *
+ * </para><para>
+ * Hàm này không xóa đỉnh, kể cả tất cả các cạnh gắn với nó đã bị xóa
+ *
+ * </para><para>
+ * Hàm này giải phóng bộ nhớ được cấp phát cho đồ thị.
+ * \param graph Đồ thị được xử lý.
+ * \param edges Các cạnh cần xóa.
+ * \return Mã lỗi.
+ *
+ * Độ phức tạp thời gian: O(|V|+|E|) trong đó
+ * |V| và |E| tương ứng là số lượng đỉnh và số lượng cạnh trong đồ
+ * thị ban đầu.
+ *
+ * \example examples/simple/igraph_delete_edges.c
+ * TODO: Bổ xung ví dụ
+ */
+int cgraph_delete_edges(cgraph_t graph, cgraph_ivec_t edges) {
+    CGRAPH_INTEGER no_of_edges = cgraph_ecount(graph);
+    CGRAPH_INTEGER no_of_nodes = cgraph_vcount(graph);
+    CGRAPH_INTEGER edges_to_remove = 0;
+    CGRAPH_INTEGER remaining_edges;
+
+    cgraph_ivec_t newfrom = cgraph_ivec_create(),
+                    newto = cgraph_ivec_create();
+
+    CGRAPH_INTEGER *mark;
+    CGRAPH_INTEGER i, j;
+
+    mark = calloc(no_of_edges, sizeof(int));
+    if (mark == 0) {
+      CGRAPH_ERROR("Không thể cấp phát bộ nhớ", CGRAPH_FAILURE);
+    }
+    for (i = 0; i < cgraph_ivec_size(edges); ++i) {
+      CGRAPH_INTEGER eid = edges[i];
+      if (mark[eid] == 0) {
+        edges_to_remove++;
+        mark[eid]++;
+      }
+    }
+    remaining_edges = no_of_edges - edges_to_remove;
+
+    cgraph_ivec_init(&newfrom, remaining_edges);
+    cgraph_ivec_init(&newto, remaining_edges);
+
+    /* Lưu các cạnh không bị xóa vào newfrom và newto */
+    for (i = 0, j = 0; j < remaining_edges; i++) {
+      if (mark[i] == 0) {
+        newfrom[j] = graph->from[i];
+        newto[j] = graph->to[i];
+        j++;
+      }
+    }
+
+    /* Tạo các chỉ mục, thao tác này có thể cấp phát thêm bộ nhớ */
+    cgraph_ivec_t newoi = cgraph_ivec_create(),
+                  newii = cgraph_ivec_create();
+    cgraph_ivec_init(&newoi, remaining_edges);
+    cgraph_ivec_init(&newii, remaining_edges);
+
+    CGRAPH_CHECK(cgraph_ivec_order(newfrom, newto, newoi));
+    CGRAPH_CHECK(cgraph_ivec_order(newto, newfrom, newii));
+
+    /* Ok, chúng ta giải phóng bộ nhớ cho các cấu trúc cũ  */
+    cgraph_ivec_free(&graph->from);
+    cgraph_ivec_free(&graph->to);
+    cgraph_ivec_free(&graph->oi);
+    cgraph_ivec_free(&graph->ii);
+    graph->from = newfrom;
+    graph->to = newto;
+    graph->oi = newoi;
+    graph->ii = newii;
+
+    free(mark);
+
+    /* Tạo vec-tơ bắt đầu, không cần thêm bộ nhớ cho thao tác này */
+    cgraph_i_create_start(graph->os, graph->from, graph->oi,
+                          no_of_nodes);
+    cgraph_i_create_start(graph->is, graph->to,   graph->ii,
+                          no_of_nodes);
+    return CGRAPH_SUCCESS;
+}
