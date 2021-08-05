@@ -355,7 +355,7 @@ int cgraph_neighbors(const cgraph_t graph,
     }
   }
 
-  return 0;
+  return CGRAPH_SUCCESS;
 }
 
 int cgraph_incident(const cgraph_t graph,
@@ -687,4 +687,69 @@ int cgraph_delete_edges(cgraph_t graph, cgraph_ivec_t edges) {
     cgraph_i_create_start(graph->is, graph->to,   graph->ii,
                           no_of_nodes);
     return CGRAPH_SUCCESS;
+}
+
+/**
+ * \ingroup interface
+ * \function cgraph_disconnect_vertices
+ * \brief Xóa các liên kết gắn với đỉnh trong danh sách.
+ *        Hàm này không thay đổi chỉ số đỉnh. Nếu nhất định
+ *        phải thay đổi chỉ số đỉnh thì bạn có thể tạo lại đồ thị.
+ *        Hàm này có thay đổi chỉ số cạnh, tuy nhiên trật tự tương đối
+ *        giữa các cạnh là không thay đổi.
+ *
+ * </para><para>
+ * Hàm này có thay đổi bộ nhớ động.
+ *
+ * \param graph Đồ thị cần xử lý.
+ * \param vertices Vec-tơ chứa id của các đỉnh cần ngắt kết nối.
+ * \return Mã lỗi:
+ *         \c CGRAPH_FAILURE: Nếu có đỉnh không hợp lệ.
+ *
+ * Độ phức tạp thời gian: O(|V|+|E|),
+ * |V| và |E| là số lượng đỉnh và số lượng cạnh trong đồ thị ban đầu.
+ *
+ */
+int cgraph_disconnect_vertices(cgraph_t graph,
+      cgraph_ivec_t const vertices, cgraph_neimode_t mode) {
+  CGRAPH_INTEGER no_of_vertices = cgraph_vcount(graph);
+  CGRAPH_INTEGER no_of_edges = cgraph_ecount(graph);
+  char *vmark = calloc(no_of_vertices, sizeof(char)),
+       *emark = calloc(no_of_edges, sizeof(char));
+  CGRAPH_INTEGER i, j;
+  cgraph_ivec_t tmp = cgraph_ivec_create();
+  cgraph_ivec_t eid = cgraph_ivec_create();
+
+#define FREE_MEMORY() \
+  free(vmark); \
+  free(emark); \
+  cgraph_ivec_free(&tmp); \
+  cgraph_ivec_free(&eid)
+  for (i = 0; i < cgraph_ivec_size(vertices); ++i) {
+    if (i < 0 || i >= no_of_vertices) {
+      FREE_MEMORY();
+      CGRAPH_ERROR("Đỉnh không hợp lệ.", CGRAPH_FAILURE);
+    }
+    if (!vmark[vertices[i]]) {
+      vmark[vertices[i]] = 1;
+      if (cgraph_incident(graph, &tmp, vertices[i], mode) != CGRAPH_SUCCESS) {
+        FREE_MEMORY();
+        CGRAPH_ERROR("Lỗi lấy danh sách cạnh", CGRAPH_FAILURE);
+      }
+      // Đã lấy danh sách cạnh
+      for (j = 0; j < cgraph_ivec_size(tmp); ++j) {
+        if (!emark[tmp[j]]) {
+          emark[tmp[j]] = 1;
+          cgraph_ivec_push_back(&eid, tmp[j]);
+        }
+      }
+    }
+  }
+
+  int ret = CGRAPH_SUCCESS;
+  if (cgraph_ivec_size(eid) > 0) {
+    ret = cgraph_delete_edges(graph, eid);
+  }
+  FREE_MEMORY();
+  return ret;
 }

@@ -103,6 +103,8 @@ if(${BUILD_TESTING})
   add_test(NAME CgraphAddEdges COMMAND cgraph_add_edges_ut)
   add_test(NAME CgraphAddVertices COMMAND cgraph_add_vertices_ut)
   add_test(NAME CgraphDeleteEdges COMMAND cgraph_delete_edges_ut)
+  add_test(NAME CgraphDisconnectVertices COMMAND
+                cgraph_disconnect_vertices_ut)
 endif()
 
 # e.g. copy libries headers and binary to bkc
