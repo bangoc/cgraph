@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "ctc/my/hsi.h"
+#include "hsi.h"
 #include "cgraph.h"
 
 int main() {
@@ -10,7 +10,7 @@ int main() {
   int n, m;
   fscanf(inp, "%d%d", &n, &m);
   char buff[256];
-  HSI name_to_id = hsi_create();
+  hsi_t name_to_id = hsi_create();
   int id = 0;
   char **id_to_name = calloc(n, sizeof(char*));
   for (int i = 0; i < n; ++i) {
@@ -22,12 +22,12 @@ int main() {
   char job1[256], job2[256];
   cgraph_ivec_t edges = cgraph_ivec_create();
   for (int i = 0; i < m; ++i) {
-    fscanf(inp, "%s %s", job1, job2);
-    int *j1, *j2;
+    fscanf(inp, "%s%s", job1, job2);
+    int j1, j2;
     hsi_get(name_to_id, job1, &j1);
     hsi_get(name_to_id, job2, &j2);
-    cgraph_ivec_push_back(&edges, *j1);
-    cgraph_ivec_push_back(&edges, *j2);
+    cgraph_ivec_push_back(&edges, j1);
+    cgraph_ivec_push_back(&edges, j2);
   }
 
   cgraph_t g = cgraph_create(edges, 0, true);
@@ -47,6 +47,7 @@ int main() {
     free(id_to_name[i]);
   }
   free(id_to_name);
+  hsi_free(name_to_id);
   cgraph_ivec_free(&edges);
   cgraph_ivec_free(&order);
   fclose(inp);

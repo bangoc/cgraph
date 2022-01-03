@@ -16,7 +16,7 @@ set(source_files
   treeset.c
   treetable.c
   tsttable.c
-  my/hsi.c)
+ )
 set(header_files
   array.h
   common.h

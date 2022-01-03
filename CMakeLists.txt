@@ -46,6 +46,7 @@ set(cgraph_src
   cgraph_rvec.c
   heap.c
   foreign.c
+  hsi.c
 )
 
 set(cgraph_inc
