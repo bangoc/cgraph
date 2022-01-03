@@ -1,4 +1,5 @@
 #ifndef CGRAPH_H_
+#define CGRAPH_H_
 
 #include "cgraph_constants.h"
 #include "cgraph_constructors.h"
@@ -14,5 +15,6 @@
 #include "cgraph_paths.h"
 #include "cgraph_rvec.h"
 #include "cgraph_types_internal.h"
+#include "cgen_ext.h"
 
 #endif  // CGRAPH_H_

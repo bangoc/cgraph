@@ -24,8 +24,10 @@ if (WARN_ERROR)
 endif ()
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/cgen)
 add_subdirectory(examples)
 add_subdirectory(ctc)
+add_subdirectory(cgen)
 
 if (${CMAKE_PROJECT_NAME} STREQUAL cgraph)
   include(CTest)
@@ -67,6 +69,7 @@ set(cgraph_inc
 )
 
 add_library(cgraph STATIC ${cgraph_src})
+target_link_libraries(cgraph bkc)
 
 if(${BUILD_TESTING})
   add_subdirectory(tests)

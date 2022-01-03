@@ -24,6 +24,7 @@ extern "C"{
 #endif
 
 cgraph_ivec_t cgraph_ivec_create();
+cgraph_ivec_t *cgraph_ivec_create_ref();
 cgraph_ivec_t cgraph_ivec_from_array(CGRAPH_INTEGER *a,
                                     CGRAPH_INTEGER n);
 

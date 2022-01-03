@@ -1,23 +1,20 @@
-#include "cgen/gtvector.h"
-#include "cgraph_ivec.h"
+#include "cgen.h"
+#include "cgen_ext.h"
 
 int main() {
-  vector_t vv = gtv_create();
-  gtv_push_back(&vv, (gtype){.v = cgraph_ivec_create()});
-  gtv_push_back(&vv, (gtype){.v = cgraph_ivec_create()});
-  gtv_push_back(&vv, (gtype){.v = cgraph_ivec_create()});
+  gvec_t vv = gvec_create(10, gtype_free_ivec_ref);
+  gvec_append(vv, gtype_v(cgraph_ivec_create_ref()));
+  gvec_append(vv, gtype_v(cgraph_ivec_create_ref()));
+  gvec_append(vv, gtype_v(cgraph_ivec_create_ref()));
   for (int i = 0; i < 3; ++i) {
     for (int j = 0; j < 5; ++j) {
       cgraph_ivec_push_back(
-          gtv_ref_at(vv, i, cgraph_ivec_t *), (i + 1) * j);
+          gtype_ivec_ref(gvec_elem(vv, i)), (i + 1) * j);
     }
   }
-  for (int i = 0; i < gtv_size(vv); ++i) {
-    cgraph_ivec_print(gtv_val_at(vv, i, cgraph_ivec_t));
+  for (int i = 0; i < gvec_size(vv); ++i) {
+    cgraph_ivec_print(*(gtype_ivec_ref(gvec_elem(vv, i))));
   }
-  for (int i = 0; i < gtv_size(vv); ++i) {
-    cgraph_ivec_free(gtv_ref_at(vv, i, cgraph_ivec_t *));
-  }
-  gtv_free(&vv);
+  gvec_free(vv);
   return 0;
 }

@@ -8,6 +8,12 @@ cgraph_ivec_t cgraph_ivec_create() {
   return (cgraph_ivec_t)&((size_t*)calloc(2, sizeof(size_t)))[2];
 }
 
+cgraph_ivec_t *cgraph_ivec_create_ref() {
+  cgraph_ivec_t *tmp = malloc(sizeof(cgraph_ivec_t));
+  *tmp = cgraph_ivec_create();
+  return tmp;
+}
+
 cgraph_ivec_t cgraph_ivec_from_array(CGRAPH_INTEGER *a,
                                     CGRAPH_INTEGER n) {
   cgraph_ivec_t v = cgraph_ivec_create();

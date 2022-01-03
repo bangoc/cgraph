@@ -4,24 +4,22 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-#include "cgen/gtvector.h"
-#include "cgen/s2i.h"
-#include "cgen/svector.h"
+#include "cgen/cgen.h"
+#include "cgen/ext/io.h"
 #include "cgraph.h"
-#include "getline.h"
 
 typedef struct bus_stop {
   long bus;
   long stop;
 } *bus_stop_t;
 
-bn_tree_t stop_id = NULL_PTR;
-vector_t id_stop = NULL_PTR;
-vector_t stop_buses = NULL_PTR;
-bn_tree_t bus_id = NULL_PTR;
-vector_t id_bus = NULL_PTR;
+hmap_t stop_id = NULL_PTR;
+gvec_t id_stop = NULL_PTR;
+gvec_t stop_buses = NULL_PTR;
+hmap_t bus_id = NULL_PTR;
+gvec_t id_bus = NULL_PTR;
 
-vector_t nodes = NULL_PTR;
+gvec_t nodes = NULL_PTR;
 cgraph_ivec_t edges = NULL_PTR;
 cgraph_rvec_t weights = NULL_PTR;
 
@@ -29,45 +27,39 @@ long k_cost_change_bus = 1,
      k_cost_nex_stop = 1000;
 
 void init_global() {
-  stop_id = bn_create_tree(NULL_PTR);
-  id_stop = gtv_create();
-  stop_buses = gtv_create();
-  bus_id = bn_create_tree(NULL_PTR);
-  id_bus = gtv_create();
-  nodes = gtv_create();
+  stop_id = hmap_create(gtype_hash_s, gtype_cmp_s, NULL, NULL);
+  id_stop = gvec_create(5, gtype_free_s);
+  stop_buses = gvec_create(5, gtype_free_ivec_ref);
+  bus_id = hmap_create(gtype_hash_s, gtype_cmp_s, NULL, NULL);
+  id_bus = gvec_create(5, gtype_free_s);
+  nodes = gvec_create(5, gtype_free_v);
   edges = cgraph_ivec_create();
   weights = cgraph_rvec_create();
 }
 
 void free_global() {
-  s2i_free(&stop_id);
-  svec_free(&id_stop);
-  s2i_free(&bus_id);
-  svec_free(&id_bus);
+  hmap_free(stop_id);
+  gvec_free(id_stop);
+  hmap_free(bus_id);
+  gvec_free(id_bus);
+  gvec_free(nodes);
+  gvec_free(stop_buses);
   cgraph_ivec_free(&edges);
   cgraph_rvec_free(&weights);
-  for (int i = 0; i < gtv_size(nodes); ++i) {
-    free(nodes[i].v);
-  }
-  gtv_free(&nodes);
-  for (int i = 0; i < gtv_size(stop_buses); ++i) {
-    cgraph_ivec_t v = stop_buses[i].v;
-    cgraph_ivec_free(&v);
-  }
-  gtv_free(&stop_buses);
 }
 
-long get_save_id(bn_tree_t si, vector_t *is, char *s) {
+long get_save_id(hmap_t si, gvec_t is, char *s) {
   // Xóa khoảng trắng ở đầu và cuối
   while (isspace(*s)) ++s;
   while (strlen(s) > 0 && isspace(s[strlen(s) - 1])) s[strlen(s) - 1] = '\0';
-  long id = s2i_value(si, s);
-  if (id != k_s2i_invalid) {
-    return id;
+  gtype *id = hmap_value(si, gtype_s(s));
+  if (id != NULL) {
+    return id->l;
   }
-  svec_push_back(is, s);
-  id = gtv_size(*is) - 1;
-  s2i_insert(si, s, id);
+  char *str = strdup(s);
+  gvec_append(is, gtype_s(str));
+  id = gvec_size(is) - 1;
+  hmap_insert(si, gtype_s(str), gtype_l(id));
   return id;
 }
 
@@ -75,33 +67,33 @@ void parse_input(char *fname) {
   FILE *inp = fopen(fname, "r");
   long n = 0;
   char *line = NULL_PTR;
-  while (my_getline(&line, &n, inp) > 0) {
+  while (cgetline(&line, &n, inp) > 0) {
     char *cur = strchr(line, ':');
     if (!cur) {
       continue;
     }
     *cur = '\0';
-    long id1 = get_save_id(bus_id, &id_bus, line);
+    long id1 = get_save_id(bus_id, id_bus, line);
     const char *delims = ">";
     char *stop = strtok(cur + 1, delims);
     bool first = true;
     while (stop) {
-      long id2 = get_save_id(stop_id, &id_stop, stop);
+      long id2 = get_save_id(stop_id, id_stop, stop);
       bus_stop_t tmp = malloc(sizeof(struct bus_stop));
       tmp->bus = id1;
       tmp->stop = id2;
-      gtv_push_back(&nodes, (gtype){.v = tmp});
+      gvec_append(nodes, gtype_v(tmp));
       if (!first) {
-        long tmp = gtv_size(nodes) - 1;
+        long tmp = gvec_size(nodes) - 1;
         cgraph_ivec_push_back(&edges, tmp - 1);
         cgraph_ivec_push_back(&edges, tmp);
         cgraph_rvec_push_back(&weights, k_cost_nex_stop);
       }
       first = false;
-      if (id2 >= gtv_size(stop_buses)) {
-        gtv_push_back(&stop_buses, (gtype){.v = cgraph_ivec_create()});
+      if (id2 >= gvec_size(stop_buses)) {
+        gvec_append(stop_buses, gtype_v(cgraph_ivec_create_ref()));
       }
-      cgraph_ivec_push_back(gtv_ref_at(stop_buses, id2, cgraph_ivec_t *), gtv_size(nodes) - 1);
+      cgraph_ivec_push_back(gvec_elem(stop_buses, id2).v, gvec_size(nodes) - 1);
       stop = strtok(NULL, delims);
     }
   }
@@ -110,9 +102,9 @@ void parse_input(char *fname) {
 }
 
 void bus_change() {
-  for (int i = 0; i < gtv_size(stop_buses); ++i) {
-    cgraph_ivec_t v = stop_buses[i].v;
-    long sz = gtv_size(nodes);
+  for (int i = 0; i < gvec_size(stop_buses); ++i) {
+    cgraph_ivec_t v = ivec_at(stop_buses, i);
+    long sz = gvec_size(nodes);
     for (int j = 0; j < cgraph_ivec_size(v); ++j) {
       cgraph_ivec_push_back(&edges, sz + 2 * i);
       cgraph_ivec_push_back(&edges, v[j]);
@@ -147,30 +139,32 @@ int main(int argc, char *argv[]) {
   char *beg = NULL_PTR, *end = NULL_PTR;
   long beg_len = 0, end_len = 0;
   printf("Nhập điểm bắt đầu: ");
-  my_getline(&beg, &beg_len, stdin);
+  remove_tail_lf(cgetline(&beg, &beg_len, stdin));
   printf("Nhập điểm kết thúc: ");
-  my_getline(&end, &end_len, stdin);
+  remove_tail_lf(cgetline(&end, &end_len, stdin));
   printf("Từ %s tới %s: \n", beg, end);
-  long beg_id = s2i_value(stop_id, beg),
-       end_id = s2i_value(stop_id, end);
-  if (beg_id == k_s2i_invalid || end_id == k_s2i_invalid) {
+  gtype *beg_id = hmap_value(stop_id, gtype_s(beg)),
+        *end_id = hmap_value(stop_id, gtype_s(end));
+  if (beg_id == NULL || end_id == NULL) {
     printf("Invalid stop\n");
   } else {
-    long from = gtv_size(nodes) + 2 * beg_id,
-         to = gtv_size(nodes) + 2 * end_id + 1;
+    long from = gvec_size(nodes) + 2 * beg_id->l,
+         to = gvec_size(nodes) + 2 * end_id->l + 1;
     cgraph_ivec_t vpath = cgraph_ivec_create(),
                   epath = cgraph_ivec_create();
     int ret = cgraph_get_shortest_path_dijkstra(g, &vpath, &epath, from, to, weights, CGRAPH_OUT);
     if (ret == 0) {
       printf("Found path: \n");
       for (int i = 1; i < cgraph_ivec_size(vpath) - 1; ++i) {
-        long bus = ((bus_stop_t)nodes[vpath[i]].v)->bus,
-             stop = ((bus_stop_t)nodes[vpath[i]].v)->stop;
-        printf("%s(%s)\n", id_stop[stop].s, id_bus[bus].s);
+        long bus = ((bus_stop_t)(gvec_elem(nodes, vpath[i]).v))->bus,
+             stop = ((bus_stop_t)(gvec_elem(nodes, vpath[i]).v))->stop;
+        printf("%s(%s)\n", gvec_elem(id_stop, stop).s, gvec_elem(id_bus, bus).s);
       }
     } else {
       printf("Path not found.\n");
     }
+    cgraph_ivec_free(&vpath);
+    cgraph_ivec_free(&epath);
   }
   free_global();
   free(beg);

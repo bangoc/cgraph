@@ -1,7 +1,7 @@
 #ifndef CGRAPH_PATHS_H_
 #define CGRAPH_PATHS_H_
 
-#include "cgen/gtvector.h"
+#include "cgen.h"
 #include "cgraph_datatype.h"
 #include "cgraph_constants.h"
 #include "cgraph_ivec.h"
@@ -19,8 +19,8 @@ int cgraph_get_shortest_path(const cgraph_t graph,
         const cgraph_neimode_t mode);
 
 int cgraph_get_shortest_paths_dijkstra(const cgraph_t graph,
-        vector_t vertices,
-        vector_t edges,
+        gvec_t vertices,
+        gvec_t edges,
         CGRAPH_INTEGER from,
         cgraph_ivec_t to,
         const cgraph_rvec_t weights,
@@ -29,8 +29,8 @@ int cgraph_get_shortest_paths_dijkstra(const cgraph_t graph,
         cgraph_ivec_t *inbound_edges);
 
 int cgraph_get_shortest_paths(const cgraph_t graph,
-        vector_t vertices,
-        vector_t edges,
+        gvec_t vertices,
+        gvec_t edges,
         CGRAPH_INTEGER from,
         cgraph_ivec_t to,
         cgraph_neimode_t mode,

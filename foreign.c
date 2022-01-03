@@ -1,6 +1,6 @@
 #include "cgraph_interface.h"
 #include "cgraph_foreign.h"
-#include "cgen/gtvector.h"
+#include "cgen/cgen.h"
 /**
  * \function cgraph_write_graph_dot
  * \brief Xuất đồ thị ra outstream theo định dạng dot

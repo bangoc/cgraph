@@ -104,7 +104,7 @@ int main() {
 
   /* Hand-made example */
 
-#define MAX     do { \
+#define TMAX     do { \
   cgraph_2wheap_delete_max(&Q); \
   if (cgraph_2wheap_check(&Q)) { \
     UT_MSG_FAILED("Case 12. Hand check, delete max"); \
@@ -128,43 +128,43 @@ int main() {
 
   cgraph_2wheap_init(&Q, 21);
   /* 0.00 [ 4] */ PUSH(4, 0);
-  /* MAX     */ MAX;
+  /* MAX     */ TMAX;
   /* 0.63 [11] */ PUSH(11, 0.63);
   /* 0.05 [15] */ PUSH(15, 0.05);
-  /* MAX     */ MAX;
+  /* MAX     */ TMAX;
   /* 0.4  [12] */ PUSH(12, 0.4);
   /* 0.4  [13] */ PUSH(13, 0.4);
   /* 0.12 [16] */ PUSH(16, 0.12);
-  /* MAX     */ MAX;
+  /* MAX     */ TMAX;
   /* 1.1  [ 0] */ PUSH(0, 1.1);
   /* 1.1  [14] */ PUSH(14, 1.1);
-  /* MAX     */ MAX;
+  /* MAX     */ TMAX;
   /* [11]/0.44 */ MOD(11, 0.44);
-  /* MAX     */ MAX;
-  /* MAX     */ MAX;
+  /* MAX     */ TMAX;
+  /* MAX     */ TMAX;
   /* 1.1  [20] */ PUSH(20, 1.1);
-  /* MAX     */ MAX;
+  /* MAX     */ TMAX;
   /* 1.3  [ 7] */ PUSH(7, 1.3);
   /* 1.7  [ 9] */ PUSH(9, 1.7);
-  /* MAX     */ MAX;
+  /* MAX     */ TMAX;
   /* 1.6  [19] */ PUSH(19, 1.6);
-  /* MAX     */ MAX;
+  /* MAX     */ TMAX;
   /* 2.1  [17] */ PUSH(17, 2.1);
   /* 1.3  [18] */ PUSH(18, 1.3);
-  /* MAX     */ MAX;
+  /* MAX     */ TMAX;
   /* 2.3  [ 1] */ PUSH(1, 2.3);
   /* 2.2  [ 5] */ PUSH(5, 2.2);
   /* 2.3  [10] */ PUSH(10, 2.3);
-  /* MAX     */ MAX;
+  /* MAX     */ TMAX;
   /* [17]/1.5  */ MOD(17, 1.5);
-  /* MAX     */ MAX;
+  /* MAX     */ TMAX;
   /* 1.8  [ 6] */ PUSH(6, 1.8);
-  /* MAX     */ MAX;
+  /* MAX     */ TMAX;
   /* 1.3  [ 3] */ PUSH(3, 1.3);
   /* [ 6]/1.3  */ MOD(6, 1.3);
-  /* MAX     */ MAX;
+  /* MAX     */ TMAX;
   /* 1.6  [ 8] */ PUSH(8, 1.6);
-  /* MAX     */ MAX;
+  /* MAX     */ TMAX;
 
   cgraph_2wheap_free(&Q);
   UT_MSG_OK("Cgraph 2wheap test");

@@ -1,2 +1,2 @@
-add_executable(bus main.c getline.c)
-target_link_libraries(bus cgraph)
+add_executable(bus main.c)
+target_link_libraries(bus bkc cgraph)

@@ -7,6 +7,7 @@
 #include "cgraph_paths.h"
 #include "cgraph_topology.h"
 #include "cgraph_types_internal.h"
+#include "cgen_ext.h"
 
 #include <stdlib.h>
 
@@ -242,8 +243,8 @@ int cgraph_topological_sorting(const cgraph_t graph,
 
 
 int cgraph_get_shortest_paths(const cgraph_t graph,
-                              vector_t vertices,
-                              vector_t edges,
+                              gvec_t vertices,
+                              gvec_t edges,
                               CGRAPH_INTEGER from,
                               const cgraph_ivec_t to,
                               cgraph_neimode_t mode,
@@ -264,12 +265,12 @@ int cgraph_get_shortest_paths(const cgraph_t graph,
   }
 
   if (vertices &&
-        cgraph_ivec_size(to) != gtv_size(vertices)) {
+        cgraph_ivec_size(to) != gvec_size(vertices)) {
     CGRAPH_ERROR("Kích thước của `vertices' và `to' phải "
                  "tương đương", CGRAPH_FAILURE);
   }
   if (edges &&
-        cgraph_ivec_size(to) != gtv_size(edges)) {
+        cgraph_ivec_size(to) != gvec_size(edges)) {
     CGRAPH_ERROR("Kích thước của `edges' phải bằng kích thước của `to'",
                  CGRAPH_FAILURE);
   }
@@ -380,10 +381,10 @@ int cgraph_get_shortest_paths(const cgraph_t graph,
       CGRAPH_INTEGER node = to[i];
       cgraph_ivec_t *vvec = 0, *evec = 0;
       if (vertices) {
-        vvec = gtv_ref_at(vertices, i, cgraph_ivec_t *);
+        vvec = gvec_elem(vertices, i).v;
       }
       if (edges) {
-        evec = gtv_ref_at(edges, i, cgraph_ivec_t *);
+        evec = gvec_elem(edges, i).v;
       }
 
       // IGRAPH_ALLOW_INTERRUPTION();
@@ -490,8 +491,8 @@ int cgraph_get_shortest_paths(const cgraph_t graph,
  * \example examples/simple/igraph_get_shortest_paths_dijkstra.c
  */
 int cgraph_get_shortest_paths_dijkstra(const cgraph_t graph,
-                          vector_t vertices,
-                          vector_t edges,
+                          gvec_t vertices,
+                          gvec_t edges,
                           CGRAPH_INTEGER from,
                           cgraph_ivec_t to,
                           const cgraph_rvec_t weights,
@@ -542,12 +543,12 @@ int cgraph_get_shortest_paths_dijkstra(const cgraph_t graph,
   }
 
   if (vertices &&
-    cgraph_ivec_size(to) != gtv_size(vertices)) {
+    cgraph_ivec_size(to) != gvec_size(vertices)) {
     CGRAPH_ERROR("Kích thước của `vertices' và `to' phải tương đương",
                   CGRAPH_FAILURE);
   }
   if (edges &&
-    cgraph_ivec_size(to) != gtv_size(edges)) {
+    cgraph_ivec_size(to) != gvec_size(edges)) {
       CGRAPH_ERROR("Kích thước của `edges' và `to' phải tương đương",
                     CGRAPH_FAILURE);
   }
@@ -652,10 +653,10 @@ int cgraph_get_shortest_paths_dijkstra(const cgraph_t graph,
       CGRAPH_INTEGER size, act, edge;
       cgraph_ivec_t *vvec = NULL, *evec = NULL;
       if (vertices) {
-        vvec = gtv_ref_at(vertices, i, cgraph_ivec_t *);
+        vvec = gvec_elem(vertices, i).v;
       }
       if (edges) {
-        evec = gtv_ref_at(edges, i, cgraph_ivec_t *);
+        evec = gvec_elem(edges, i).v;
       }
 
       size = 0;
@@ -739,15 +740,14 @@ int cgraph_get_shortest_path_dijkstra(const cgraph_t graph,
         CGRAPH_INTEGER to,
         cgraph_rvec_t weights,
         cgraph_neimode_t mode) {
-  vector_t pvertices = NULL,
-           pedges = NULL;
+  gvec_t pvertices = NULL, pedges = NULL;
   if (vertices) {
-    pvertices = gtv_create();
-    gtv_push_back(&pvertices, (gtype){.v = *vertices});
+    pvertices = gvec_create(10, NULL);
+    gvec_append(pvertices, gtype_v(vertices));
   }
   if (edges) {
-    pedges = gtv_create();
-    gtv_push_back(&pedges, (gtype){.v = *edges});
+    pedges = gvec_create(10, NULL);
+    gvec_append(pedges, gtype_v(edges));
   }
   cgraph_ivec_t pto = cgraph_ivec_create();
   cgraph_ivec_push_back(&pto, to);
@@ -762,12 +762,12 @@ int cgraph_get_shortest_path_dijkstra(const cgraph_t graph,
                           &predecessors,
                           NULL);
   if (vertices) {
-    *vertices = pvertices[0].v;
-    gtv_free(&pvertices);
+    *vertices = *(gtype_ivec_ref(gvec_elem(pvertices, 0)));
+    gvec_free(pvertices);
   }
   if (edges) {
-    *edges = pedges[0].v;
-    gtv_free(&pedges);
+    *edges = *(gtype_ivec_ref(gvec_elem(pedges, 0)));
+    gvec_free(pedges);
   }
   CGRAPH_INTEGER pred = predecessors[to];
   cgraph_ivec_free(&pto);
@@ -789,34 +789,33 @@ int cgraph_get_shortest_path(const cgraph_t graph,
         const CGRAPH_INTEGER from,
         const CGRAPH_INTEGER to,
         const cgraph_neimode_t mode) {
-  vector_t pvertices = NULL,
-           pedges = NULL;
+  gvec_t pvertices = NULL, pedges = NULL;
   if (vertices) {
-    pvertices = gtv_create();
-    gtv_push_back(&pvertices, (gtype){.v = *vertices});
+    pvertices = gvec_create(10, NULL);
+    gvec_append(pvertices, gtype_v(vertices));
   }
   if (edges) {
-    pedges = gtv_create();
-    gtv_push_back(&pedges, (gtype){.v = *edges});
+    pedges = gvec_create(10, NULL);
+    gvec_append(pedges, gtype_v(edges));
   }
   cgraph_ivec_t pto = cgraph_ivec_create();
   cgraph_ivec_push_back(&pto, to);
   cgraph_ivec_t predecessors = cgraph_ivec_create();
   cgraph_get_shortest_paths(graph,
-                              pvertices,
-                              pedges,
-                              from,
-                              pto,
-                              mode,
-                              &predecessors,
-                              NULL);
+                            pvertices,
+                            pedges,
+                            from,
+                            pto,
+                            mode,
+                            &predecessors,
+                            NULL);
   if (vertices) {
-    *vertices = pvertices[0].v;
-    gtv_free(&pvertices);
+    *vertices = *(gtype_ivec_ref(gvec_elem(pvertices, 0)));
+    gvec_free(pvertices);
   }
   if (edges) {
-    *edges = pedges[0].v;
-    gtv_free(&pedges);
+    *edges = *(gtype_ivec_ref(gvec_elem(pedges, 0)));
+    gvec_free(pedges);
   }
   cgraph_ivec_free(&pto);
 
