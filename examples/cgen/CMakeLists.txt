@@ -1,2 +1,6 @@
 add_executable(vector_of_ivec vector_of_ivec.c)
-target_link_libraries(vector_of_ivec cgraph)
+add_executable(hsi_demo hsi_demo.c)
+add_executable(queue_demo queue_demo.c)
+foreach (p vector_of_ivec hsi_demo queue_demo)
+  target_link_libraries(${p} cgraph)
+endforeach()
