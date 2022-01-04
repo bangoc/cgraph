@@ -10,7 +10,6 @@ foreach(t cgraph_ivec_t_demo cgraph_rvec_t_demo ivec_as_param ivec_as_param2 cre
   target_link_libraries(${t} cgraph)
 endforeach()
 
-add_subdirectory(ctc)
 add_subdirectory(application)
 add_subdirectory(cgen)
 add_subdirectory(bus)
