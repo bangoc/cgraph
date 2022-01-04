@@ -26,7 +26,6 @@ endif ()
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/cgen)
 add_subdirectory(examples)
-add_subdirectory(ctc)
 add_subdirectory(cgen)
 
 if (${CMAKE_PROJECT_NAME} STREQUAL cgraph)
