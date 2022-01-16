@@ -15,7 +15,7 @@ int main() {
     gsl_push_back(q, gtype_l(value));
   }
   printf("\n");
-  printf("Queue size = %d\n", gsl_length(q));
+  printf("Queue size = %ld\n", gsl_size(q));
   printf("Iterate\n");
   gsl_traverse(cur, q) {
     printf(" %ld", cur->l);
