@@ -52,15 +52,16 @@ long get_save_id(hmap_t si, gvec_t is, char *s) {
   // Xóa khoảng trắng ở đầu và cuối
   while (isspace(*s)) ++s;
   while (strlen(s) > 0 && isspace(s[strlen(s) - 1])) s[strlen(s) - 1] = '\0';
+
   gtype *id = hmap_value(si, gtype_s(s));
   if (id != NULL) {
     return id->l;
   }
   char *str = strdup(s);
   gvec_append(is, gtype_s(str));
-  id = gvec_size(is) - 1;
-  hmap_insert(si, gtype_s(str), gtype_l(id));
-  return id;
+  long tmp = gvec_size(is) - 1;
+  hmap_insert(si, gtype_s(str), gtype_l(tmp));
+  return tmp;
 }
 
 void parse_input(char *fname) {
