@@ -5,8 +5,8 @@
 
 cgraph_error_t cgraph_last_errno = CGRAPH_SUCCESS;
 
-static cgraph_error_handler_t *cgraph_i_error_handler = 0;
-static cgraph_warning_handler_t *cgraph_warning_handler = 0;
+static cgraph_error_handler_t *cgraph_i_error_handler = cgraph_error_print;
+static cgraph_warning_handler_t *cgraph_warning_handler = cgraph_warning_print;
 
 static const char *cgraph_error_strings[] = {
     [CGRAPH_SUCCESS] = "Không có lỗi",

@@ -68,11 +68,11 @@ cgraph_t cgraph_create(cgraph_ivec_t const edges,
   CGRAPH_INTEGER max = has_edges ? cgraph_ivec_max(edges) + 1 : 0;
 
   if (cgraph_ivec_size(edges) % 2 != 0) {
-    // Vec-tơ cạnh không hợp lệ (độ dài lẻ)
+    CGRAPH_WARNING("Vec-tơ cạnh không hợp lệ (độ dài lẻ)");
     return NULL;
   }
   if (has_edges && !cgraph_ivec_isininterval(edges, 0, max - 1)) {
-    // Chỉ số đỉnh không hợp lệ (giá trị âm)
+    CGRAPH_WARNING("Chỉ số đỉnh không hợp lệ (giá trị âm)");
     return NULL;
   }
 
@@ -82,10 +82,12 @@ cgraph_t cgraph_create(cgraph_ivec_t const edges,
     CGRAPH_INTEGER vc = cgraph_vcount(graph);
     if (vc < max) {
       if (cgraph_add_vertices(graph, (CGRAPH_INTEGER) (max - vc)) != CGRAPH_SUCCESS) {
+        CGRAPH_WARNING("Lỗi thêm đỉnh.");
         return NULL;
       }
     }
     if (cgraph_add_edges(graph, edges) != CGRAPH_SUCCESS) {
+      CGRAPH_WARNING("Lỗi thêm cạnh.");
       return NULL;
     }
   }

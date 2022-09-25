@@ -40,7 +40,6 @@ set(cgraph_src
   visitors.c
   structural_properties.c
   foreign.c
-  hsi.c
 )
 
 set(cgraph_inc
