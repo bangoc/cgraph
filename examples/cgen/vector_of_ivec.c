@@ -1,4 +1,4 @@
-#include "cgen.h"
+#include "cgen/all.h"
 #include "cgen_ext.h"
 
 int main() {

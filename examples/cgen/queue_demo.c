@@ -1,21 +1,21 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "cgen/cgen.h"
+#include "cgen/all.h"
 
 void print_i(void *value) {
   printf(" %d", *((int*)value));
 }
 
 int main() {
-  gsl_t q = gsl_create(NULL);
+  gsl_t q = gsl_create_list(NULL);
   printf("Enqueue\n");
   for (int value = 1; value <= 10; ++value) {
     printf(" %d", value);
     gsl_push_back(q, gtype_l(value));
   }
   printf("\n");
-  printf("Queue size = %ld\n", gsl_size(q));
+  printf("Queue size = %ld\n", gsl_length(q));
   printf("Iterate\n");
   gsl_traverse(cur, q) {
     printf(" %ld", cur->l);

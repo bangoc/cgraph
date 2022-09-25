@@ -1,7 +1,7 @@
 #ifndef CGRAPH_PATHS_H_
 #define CGRAPH_PATHS_H_
 
-#include "cgen.h"
+#include "cgen/all.h"
 #include "cgraph_datatype.h"
 #include "cgraph_constants.h"
 #include "cgraph_ivec.h"

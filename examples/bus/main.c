@@ -4,8 +4,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-#include "cgen/cgen.h"
-#include "cgen/ext/io.h"
+#include "cgen/all.h"
 #include "cgraph.h"
 
 typedef struct bus_stop {
@@ -13,15 +12,15 @@ typedef struct bus_stop {
   long stop;
 } *bus_stop_t;
 
-hmap_t stop_id = NULL_PTR;
-gvec_t id_stop = NULL_PTR;
-gvec_t stop_buses = NULL_PTR;
-hmap_t bus_id = NULL_PTR;
-gvec_t id_bus = NULL_PTR;
+hmap_t stop_id = NULL;
+gvec_t id_stop = NULL;
+gvec_t stop_buses = NULL;
+hmap_t bus_id = NULL;
+gvec_t id_bus = NULL;
 
-gvec_t nodes = NULL_PTR;
-cgraph_ivec_t edges = NULL_PTR;
-cgraph_rvec_t weights = NULL_PTR;
+gvec_t nodes = NULL;
+cgraph_ivec_t edges = NULL;
+cgraph_rvec_t weights = NULL;
 
 long k_cost_change_bus = 1,
      k_cost_nex_stop = 1000;
@@ -67,7 +66,7 @@ long get_save_id(hmap_t si, gvec_t is, char *s) {
 void parse_input(char *fname) {
   FILE *inp = fopen(fname, "r");
   long n = 0;
-  char *line = NULL_PTR;
+  char *line = NULL;
   while (cgetline(&line, &n, inp) > 0) {
     char *cur = strchr(line, ':');
     if (!cur) {
@@ -137,7 +136,7 @@ int main(int argc, char *argv[]) {
   bus_change();
   // cgraph_ivec_print(edges);
   cgraph_t g = cgraph_create(edges, 0, true);
-  char *beg = NULL_PTR, *end = NULL_PTR;
+  char *beg = NULL, *end = NULL;
   long beg_len = 0, end_len = 0;
   printf("Nhập điểm bắt đầu: ");
   remove_tail_lf(cgetline(&beg, &beg_len, stdin));

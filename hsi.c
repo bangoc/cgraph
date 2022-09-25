@@ -14,7 +14,7 @@ void hsi_free(hsi_t tbl) {
 
 int hsi_add(hsi_t tbl, const char *key, int val) {
   char *k = strdup(key);
-  hmap_ires res = hmap_insert(tbl, gtype_s(k), gtype_l(val));
+  struct hmap_ires res = hmap_insert(tbl, gtype_s(k), gtype_l(val));
   if (res.inserted) {
     return 0;
   }

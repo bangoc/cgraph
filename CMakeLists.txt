@@ -69,7 +69,7 @@ set(cgraph_inc
 )
 
 add_library(cgraph STATIC ${cgraph_src})
-target_link_libraries(cgraph bkc)
+target_link_libraries(cgraph bkcgen)
 
 if(${BUILD_TESTING})
   add_subdirectory(tests)

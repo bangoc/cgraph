@@ -1,6 +1,6 @@
 add_executable(task1c task1.c)
-target_link_libraries(task1c bkc cgraph)
+target_link_libraries(task1c bkcgen cgraph)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fpermissive")
 add_executable(task1cc task1.cc)
-target_link_libraries(task1cc bkc cgraph)
+target_link_libraries(task1cc bkcgen cgraph)

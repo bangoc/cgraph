@@ -742,11 +742,11 @@ int cgraph_get_shortest_path_dijkstra(const cgraph_t graph,
         cgraph_neimode_t mode) {
   gvec_t pvertices = NULL, pedges = NULL;
   if (vertices) {
-    pvertices = gvec_create(10, NULL);
+    pvertices = gvec_create_full(0, 10, gtype_zero, NULL);
     gvec_append(pvertices, gtype_v(vertices));
   }
   if (edges) {
-    pedges = gvec_create(10, NULL);
+    pedges = gvec_create_full(0, 10, gtype_zero, NULL);
     gvec_append(pedges, gtype_v(edges));
   }
   cgraph_ivec_t pto = cgraph_ivec_create();

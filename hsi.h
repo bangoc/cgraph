@@ -1,7 +1,7 @@
 #ifndef HSI_H_
 #define HSI_H_
 
-#include "cgen/cgen.h"
+#include "cgen/all.h"
 
 typedef hmap_t hsi_t;
 

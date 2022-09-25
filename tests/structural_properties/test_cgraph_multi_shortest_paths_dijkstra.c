@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "cgen/cgen.h"
+#include "cgen/all.h"
 #include "cgraph_error.h"
 #include "gb.h"
 #include "cgen_ext.h"
@@ -20,8 +20,8 @@ int main() {
   // g1-weighted.png
 
   cgraph_ivec_t to = cgraph_ivec_from_array((CGRAPH_INTEGER[]){1, 2, 3, 4, 5}, 5);
-  gvec_t vertices = gvec_create(10, gtype_free_ivec_ref),
-         edges = gvec_create(10, gtype_free_ivec_ref);
+  gvec_t vertices = gvec_create_full(0, 10, gtype_zero, gtype_free_ivec_ref),
+         edges = gvec_create_full(0, 10, gtype_zero, gtype_free_ivec_ref);
   for (int i = 0; i < cgraph_ivec_size(to); ++i) {
     gvec_append(vertices, gtype_v(cgraph_ivec_create_ref()));
     gvec_append(edges, gtype_v(cgraph_ivec_create_ref()));
@@ -91,8 +91,8 @@ int main() {
   cgraph_ivec_push_back(&to, 0);
   cgraph_ivec_push_back(&to, 1);
   cgraph_ivec_push_back(&to, 2);
-  vertices = gvec_create(10, gtype_free_ivec_ref);
-  edges = gvec_create(10, gtype_free_ivec_ref);
+  vertices = gvec_create_full(0, 10, gtype_zero, gtype_free_ivec_ref);
+  edges = gvec_create_full(0, 10, gtype_zero, gtype_free_ivec_ref);
   for (int i = 0; i < cgraph_ivec_size(to); ++i) {
     gvec_append(vertices, gtype_v(cgraph_ivec_create_ref()));
     gvec_append(edges, gtype_v(cgraph_ivec_create_ref()));

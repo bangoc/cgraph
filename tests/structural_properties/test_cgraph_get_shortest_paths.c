@@ -1,4 +1,4 @@
-#include "cgen/cgen.h"
+#include "cgen/all.h"
 
 #include "gb.h"
 #include "cgen_ext.h"
@@ -7,8 +7,8 @@
 bool t1() {
   cgraph_t g = test_create_g1();
   cgraph_ivec_t to = cgraph_ivec_from_array((CGRAPH_INTEGER[]){4, 5}, 2);
-  gvec_t vertices = gvec_create(10, gtype_free_ivec_ref),
-           edges = gvec_create(10, gtype_free_ivec_ref);
+  gvec_t vertices = gvec_create_full(0, 10, gtype_zero, gtype_free_ivec_ref),
+           edges = gvec_create_full(0, 10, gtype_zero, gtype_free_ivec_ref);
   for (int i = 0; i < cgraph_ivec_size(to); ++i) {
     gvec_append(vertices, gtype_v(cgraph_ivec_create_ref()));
     gvec_append(edges, gtype_v(cgraph_ivec_create_ref()));
@@ -54,8 +54,8 @@ bool t1() {
 bool t2() {
   cgraph_t g = test_create_g1();
   cgraph_ivec_t to = cgraph_ivec_from_array((CGRAPH_INTEGER[]){0, 4, 1}, 3);
-  gvec_t vertices = gvec_create(5, gtype_free_ivec_ref),
-           edges = gvec_create(5, gtype_free_ivec_ref);
+  gvec_t vertices = gvec_create_full(0, 5, gtype_zero, gtype_free_ivec_ref),
+           edges = gvec_create_full(0, 5, gtype_zero, gtype_free_ivec_ref);
   for (int i = 0; i < cgraph_ivec_size(to); ++i) {
     gvec_append(vertices, gtype_v(cgraph_ivec_create_ref()));
     gvec_append(edges, gtype_v(cgraph_ivec_create_ref()));
