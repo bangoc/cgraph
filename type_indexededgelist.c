@@ -128,22 +128,20 @@ static int cgraph_i_create_start(
  * \example examples/simple/igraph_add_edges.c
  * TODO: Bổ xung ví dụ cho cgraph
  */
-int cgraph_add_edges(cgraph_t graph, cgraph_ivec_t const edges) {
+int cgraph_add_edges(cgraph_t graph, arr_ptr(CGRAPH_INTEGER) edges) {
     long int no_of_edges = cgraph_ecount(graph);
-    long int edges_to_add = cgraph_ivec_size(edges) / 2;
+    long int edges_to_add = arr_size(edges) / 2;
     long int i = 0;
     cgraph_error_handler_t *oldhandler;
     bool ret1, ret2;
     bool directed = cgraph_is_directed(graph);
 
-    if (cgraph_ivec_size(edges) % 2 != 0) {
+    if (arr_size(edges) % 2 != 0) {
         CGRAPH_ERROR(
-          "Lỗi độ dài vec-tơ cạnh (lẻ)", CGRAPH_FAILURE);
+          "Lỗi độ dài kích thước vec-tơ cạnh (lẻ)", CGRAPH_FAILURE);
     }
-    if (!cgraph_ivec_isininterval(edges,
-              0, cgraph_vcount(graph) - 1)) {
-        CGRAPH_ERROR(
-          "Không thể thêm cạnh", CGRAPH_FAILURE);
+    if (!arr_irange(edges, 0, cgraph_vcount(graph) - 1)) {
+        CGRAPH_ERROR("Chỉ số đỉnh nằm ngoài khoảng", CGRAPH_FAILURE);
     }
 
     cgraph_ivec_t newoi = cgraph_ivec_create(),
@@ -623,7 +621,7 @@ int cgraph_get_eid(const cgraph_t graph, CGRAPH_INTEGER *eid,
  * \example examples/simple/igraph_delete_edges.c
  * TODO: Bổ xung ví dụ
  */
-int cgraph_delete_edges(cgraph_t graph, cgraph_ivec_t edges) {
+int cgraph_delete_edges(cgraph_t graph, arr_ptr(CGRAPH_INTEGER) edges) {
     CGRAPH_INTEGER no_of_edges = cgraph_ecount(graph);
     CGRAPH_INTEGER no_of_nodes = cgraph_vcount(graph);
     CGRAPH_INTEGER edges_to_remove = 0;
@@ -639,7 +637,7 @@ int cgraph_delete_edges(cgraph_t graph, cgraph_ivec_t edges) {
     if (mark == 0) {
       CGRAPH_ERROR("Không thể cấp phát bộ nhớ", CGRAPH_FAILURE);
     }
-    for (i = 0; i < cgraph_ivec_size(edges); ++i) {
+    for (i = 0; i < arr_size(edges); ++i) {
       CGRAPH_INTEGER eid = edges[i];
       if (mark[eid] == 0) {
         edges_to_remove++;
@@ -711,21 +709,22 @@ int cgraph_delete_edges(cgraph_t graph, cgraph_ivec_t edges) {
  *
  */
 int cgraph_disconnect_vertices(cgraph_t graph,
-      cgraph_ivec_t const vertices, cgraph_neimode_t mode) {
+      arr_ptr(CGRAPH_INTEGER) vertices, cgraph_neimode_t mode) {
   CGRAPH_INTEGER no_of_vertices = cgraph_vcount(graph);
   CGRAPH_INTEGER no_of_edges = cgraph_ecount(graph);
   char *vmark = calloc(no_of_vertices, sizeof(char)),
        *emark = calloc(no_of_edges, sizeof(char));
   CGRAPH_INTEGER i, j;
   cgraph_ivec_t tmp = cgraph_ivec_create();
-  cgraph_ivec_t eid = cgraph_ivec_create();
+  arr_make(eid, 0, CGRAPH_INTEGER);
 
 #define FREE_MEMORY() \
   free(vmark); \
   free(emark); \
   cgraph_ivec_free(&tmp); \
-  cgraph_ivec_free(&eid)
-  for (i = 0; i < cgraph_ivec_size(vertices); ++i) {
+  arr_free(eid)
+
+  for (i = 0; i < arr_size(vertices); ++i) {
     if (i < 0 || i >= no_of_vertices) {
       FREE_MEMORY();
       CGRAPH_ERROR("Đỉnh không hợp lệ.", CGRAPH_FAILURE);
@@ -740,16 +739,19 @@ int cgraph_disconnect_vertices(cgraph_t graph,
       for (j = 0; j < cgraph_ivec_size(tmp); ++j) {
         if (!emark[tmp[j]]) {
           emark[tmp[j]] = 1;
-          cgraph_ivec_push_back(&eid, tmp[j]);
+          arr_append(eid, tmp[j]);
         }
       }
     }
   }
 
   int ret = CGRAPH_SUCCESS;
-  if (cgraph_ivec_size(eid) > 0) {
+  if (arr_size(eid) > 0) {
     ret = cgraph_delete_edges(graph, eid);
   }
   FREE_MEMORY();
+
+#undef FREE_MEMORY
+
   return ret;
 }

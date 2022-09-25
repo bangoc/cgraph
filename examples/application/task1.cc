@@ -20,11 +20,11 @@ int main() {
     id_to_name[id++] = buff;
   }
   std::string job1, job2;
-  cgraph_ivec_t edges = cgraph_ivec_create();
+  arr_make(edges, 0, CGRAPH_INTEGER);
   for (int i = 0; i < m; ++i) {
     inp >> job1 >> job2;
-    cgraph_ivec_push_back(&edges, name_to_id[job1]);
-    cgraph_ivec_push_back(&edges, name_to_id[job2]);
+    arr_append(edges, name_to_id[job1]);
+    arr_append(edges, name_to_id[job2]);
   }
 
   cgraph_t g = cgraph_create(edges, 0, true);
@@ -38,7 +38,7 @@ int main() {
       out << id_to_name[ order[i] ] << std::endl;
     }
   }
-  cgraph_ivec_free(&edges);
+  arr_free(edges);
   cgraph_ivec_free(&order);
   cgraph_destroy(&g);
   return 0;

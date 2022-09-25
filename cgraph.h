@@ -10,6 +10,7 @@
 #include "cgraph_topology.h"
 #include "cgraph_visitor.h"
 #include "cgraph_ivec.h"
+#include "cgraph_arr.h"
 #include "cgraph_paths.h"
 #include "cgen_ext.h"
 

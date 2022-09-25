@@ -4,16 +4,16 @@
 #include "tests/base/ut.h"
 
 int main() {
-  cgraph_ivec_t edges =
-      cgraph_ivec_from_array((CGRAPH_INTEGER[]){0, 1,
-                                                2, 3,
-                                                5, 6,
-                                                0, 4,
-                                                1, 3,
-                                                2, 6,
-                                                5, 3,
-                                                1, 2,
-                                                3, 6}, 18);
+  arr_ptr(CGRAPH_INTEGER) edges = arr_ifrom_array(
+           (CGRAPH_INTEGER[]){0, 1,
+                              2, 3,
+                              5, 6,
+                              0, 4,
+                              1, 3,
+                              2, 6,
+                              5, 3,
+                              1, 2,
+                              3, 6}, 18);
   cgraph_t g = cgraph_create(edges, 0, CGRAPH_DIRECTED);
   CHECK_MSG(cgraph_ecount(g) == 9, "Số lượng cạnh ban đầu bằng 9");
   CHECK_MSG(cgraph_vcount(g) == 7, "Số lượng đỉnh ban đầu bằng 7");
@@ -29,8 +29,8 @@ int main() {
       (CGRAPH_INTEGER[]){0, 2, 4, 6, 7, 7, 9, 9}, 8), "g->os");
   CHECK_MSG(cgraph_ivec_equal(g->is,
       (CGRAPH_INTEGER[]){0, 0, 1, 2, 5, 6, 6, 9}, 8), "g->is");
-  cgraph_ivec_t v = cgraph_ivec_create();
-  cgraph_ivec_push_back(&v, 1);
+  arr_make(v, 0, CGRAPH_INTEGER);
+  arr_append(v, 1);
 
   // Xóa các cạnh đi tới 1
   cgraph_disconnect_vertices(g, v, CGRAPH_IN);
@@ -68,11 +68,11 @@ int main() {
   CHECK_MSG(cgraph_ivec_equal(g->is,
       (CGRAPH_INTEGER[]){0, 0, 0, 0, 2, 3, 3, 6}, 8), "g->is 2");
 
-  cgraph_ivec_setsize(v, 0);
-  cgraph_ivec_push_back(&v, 0);
-  cgraph_ivec_push_back(&v, 0);  // cho phép trùng lặp
-  cgraph_ivec_push_back(&v, 3);
-  cgraph_ivec_push_back(&v, 5);
+  arr_resize(v, 0);
+  arr_append(v, 0);
+  arr_append(v, 0);  // cho phép trùng lặp
+  arr_append(v, 3);
+  arr_append(v, 5);
   cgraph_disconnect_vertices(g, v, CGRAPH_ALL);
 
   CHECK_MSG(cgraph_ecount(g) == 1, "Số lượng cạnh còn lại bằng 1");
@@ -90,9 +90,9 @@ int main() {
   CHECK_MSG(cgraph_ivec_equal(g->is,
       (CGRAPH_INTEGER[]){0, 0, 0, 0, 0, 0, 0, 1}, 8), "g->is 3");
 
-  cgraph_ivec_setsize(v, 0);
-  cgraph_ivec_push_back(&v, 2);
-  cgraph_ivec_push_back(&v, 7);  // Đỉnh không hợp lệ
+  arr_resize(v, 0);
+  arr_append(v, 2);
+  arr_append(v, 7);  // Đỉnh không hợp lệ
   CHECK_MSG(cgraph_disconnect_vertices(g, v, CGRAPH_ALL) == CGRAPH_FAILURE,
               "Lỗi ngắt kết nối đỉnh không hợp lệ");
   // Cấu trúc đồ thị được giữ nguyên không thay đổi
@@ -112,10 +112,10 @@ int main() {
       (CGRAPH_INTEGER[]){0, 0, 0, 0, 0, 0, 0, 1}, 8), "g->is 4");
 
 
-  cgraph_ivec_setsize(v, 0);
-  cgraph_ivec_push_back(&v, 3);
-  cgraph_ivec_push_back(&v, 5);
-  cgraph_ivec_push_back(&v, 0);
+  arr_resize(v, 0);
+  arr_append(v, 3);
+  arr_append(v, 5);
+  arr_append(v, 0);
   cgraph_disconnect_vertices(g, v, CGRAPH_ALL);
 
   // Không có cạnh nào, cấu trúc đồ thị được giữ nguyên không thay đổi
@@ -134,8 +134,8 @@ int main() {
   CHECK_MSG(cgraph_ivec_equal(g->is,
       (CGRAPH_INTEGER[]){0, 0, 0, 0, 0, 0, 0, 1}, 8), "g->is 5");
 
-  cgraph_ivec_free(&v);
-  cgraph_ivec_free(&edges);
+  arr_free(v);
+  arr_free(edges);
   cgraph_destroy(&g);
   return 0;
 }

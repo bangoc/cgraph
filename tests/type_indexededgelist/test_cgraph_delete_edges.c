@@ -4,8 +4,8 @@
 #include "tests/base/ut.h"
 
 int main() {
-  cgraph_ivec_t edges = cgraph_ivec_from_array((CGRAPH_INTEGER[]){
-                            0, 1,
+  arr_ptr(CGRAPH_INTEGER) edges = arr_ifrom_array(
+         (CGRAPH_INTEGER[]){0, 1,
                             2, 3,
                             1, 3,
                             0, 2,
@@ -24,7 +24,8 @@ int main() {
   CHECK_MSG(cgraph_ivec_equal(g->os, (CGRAPH_INTEGER []){0, 3, 5, 7, 7, 7, 8}, 7), "g->os");
   CHECK_MSG(cgraph_ivec_equal(g->is, (CGRAPH_INTEGER []){0, 0, 1, 3, 7, 7, 8}, 7), "g->is");
 
-  cgraph_ivec_t v1 = cgraph_ivec_from_array((CGRAPH_INTEGER[]){0, 2, 4}, 3);
+  arr_ptr(CGRAPH_INTEGER) v1 = arr_ifrom_array(
+    (CGRAPH_INTEGER[]){0, 2, 4}, 3);
   cgraph_delete_edges(g, v1);
   CHECK_MSG(cgraph_is_directed(g), "Đồ thị có hướng");
   CHECK_MSG(cgraph_vcount(g) == 6, "Số lượng đỉnh bằng 6");
@@ -38,9 +39,9 @@ int main() {
   CHECK_MSG(cgraph_ivec_equal(g->os, (CGRAPH_INTEGER [])  {0, 2, 2, 4, 4, 4, 5}, 7), "g->os 1");
   CHECK_MSG(cgraph_ivec_equal(g->is, (CGRAPH_INTEGER [])  {0, 0, 0, 1, 4, 4, 5}, 7), "g->is 1");
 
-  cgraph_ivec_t v2 = cgraph_ivec_create();
-  cgraph_ivec_push_back(&v2, 1);
-  cgraph_ivec_push_back(&v2, 3);
+  arr_make(v2, 0, CGRAPH_INTEGER);
+  arr_append(v2, 1);
+  arr_append(v2, 3);
   cgraph_delete_edges(g, v2);
   CHECK_MSG(cgraph_is_directed(g), "Đồ thị có hướng");
   CHECK_MSG(cgraph_vcount(g) == 6, "Số lượng đỉnh bằng 6");
@@ -53,9 +54,9 @@ int main() {
   CHECK_MSG(cgraph_ivec_equal(g->ii, (CGRAPH_INTEGER [])  {1, 0, 2}, 3), "g->ii");
   CHECK_MSG(cgraph_ivec_equal(g->os, (CGRAPH_INTEGER [])  {0, 1, 1, 2, 2, 2, 3}, 7), "g->os");
   CHECK_MSG(cgraph_ivec_equal(g->is, (CGRAPH_INTEGER [])  {0, 0, 0, 0, 3, 3, 3}, 7), "g->is");
-  cgraph_ivec_free(&edges);
-  cgraph_ivec_free(&v1);
-  cgraph_ivec_free(&v2);
+  arr_free(edges);
+  arr_free(v1);
+  arr_free(v2);
   cgraph_destroy(&g);
   return 0;
 }

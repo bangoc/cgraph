@@ -1,7 +1,7 @@
 #include "cgraph.h"
 
 int main() {
-  cgraph_ivec_t edges = cgraph_ivec_from_array(
+  arr_ptr(CGRAPH_INTEGER) edges = arr_ifrom_array(
     (CGRAPH_INTEGER[]) {0, 2,
                         0, 6,
                         0, 7,
@@ -19,5 +19,7 @@ int main() {
                     }, 28);
   cgraph_t g = cgraph_create(edges, 0, true);
   cgraph_print(g);
+  cgraph_destroy(&g);
+  arr_free(edges);
   return 0;
 }

@@ -4,7 +4,7 @@
 #include "tests/base/ut.h"
 
 int main() {
-  cgraph_ivec_t edges = cgraph_ivec_from_array(
+  arr_ptr(CGRAPH_INTEGER) edges = arr_ifrom_array(
         (CGRAPH_INTEGER[]){ 0, 1,
                             0, 3,
                             1, 2}, 6);
@@ -20,7 +20,7 @@ int main() {
   CHECK_MSG(cgraph_is_directed(g), "Đồ thị có hướng");
 
   //  Thêm một số cạnh
-  cgraph_ivec_t edges2 = cgraph_ivec_from_array(
+  arr_ptr(CGRAPH_INTEGER) edges2 = arr_ifrom_array(
           (CGRAPH_INTEGER[]){1, 3,
                              2, 0}, 4);
   cgraph_add_edges(g, edges2);
@@ -35,7 +35,7 @@ int main() {
   CHECK_MSG(cgraph_is_directed(g), "Đồ thị có hướng");
 
   // Thêm cạnh ngoài phạm vi
-  cgraph_ivec_t edges3 = cgraph_ivec_from_array(
+  arr_ptr(CGRAPH_INTEGER) edges3 = arr_ifrom_array(
           (CGRAPH_INTEGER[]) {5, 6}, 2);
   CHECK_MSG(cgraph_add_edges(g, edges3) == CGRAPH_FAILURE, "Trả về mã lỗi");
 
@@ -64,9 +64,9 @@ int main() {
   CHECK_MSG(cgraph_ecount(g) == 6, "Số lượng cạnh bằng 5");
   CHECK_MSG(cgraph_is_directed(g), "Đồ thị có hướng");
 
-  cgraph_ivec_free(&edges);
-  cgraph_ivec_free(&edges2);
-  cgraph_ivec_free(&edges3);
+  arr_free(edges);
+  arr_free(edges2);
+  arr_free(edges3);
   cgraph_destroy(&g);
   return 0;
 }

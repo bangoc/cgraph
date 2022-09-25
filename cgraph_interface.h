@@ -1,6 +1,7 @@
 #ifndef CGRAPH_INTERFACE_H_
 #define CGRAPH_INTERFACE_H_
 
+#include "cgen/vec/arr.h"
 #include "cgraph_datatype.h"
 #include "cgraph_constants.h"
 
@@ -9,11 +10,11 @@ extern "C"{
 #endif
 
 int cgraph_add_vertices(cgraph_t graph, CGRAPH_INTEGER nv);
-int cgraph_delete_edges(cgraph_t graph, cgraph_ivec_t const edges);
+int cgraph_delete_edges(cgraph_t graph, arr_ptr(CGRAPH_INTEGER) edges);
 int cgraph_disconnect_vertices(cgraph_t graph,
-      cgraph_ivec_t const vertices, cgraph_neimode_t mode);
+      arr_ptr(CGRAPH_INTEGER) vertices, cgraph_neimode_t mode);
 void cgraph_destroy(cgraph_t *graph);
-int cgraph_add_edges(cgraph_t graph, cgraph_ivec_t const edges);
+int cgraph_add_edges(cgraph_t graph, arr_ptr(CGRAPH_INTEGER) edges);
 CGRAPH_INTEGER cgraph_vcount(const cgraph_t graph);
 CGRAPH_INTEGER cgraph_ecount(const cgraph_t graph);
 bool cgraph_is_directed(const cgraph_t graph);

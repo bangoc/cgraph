@@ -61,18 +61,18 @@ cgraph_t cgraph_create_empty(CGRAPH_INTEGER n, bool directed) {
   return graph;
 }
 
-cgraph_t cgraph_create(cgraph_ivec_t const edges,
+cgraph_t cgraph_create(arr_ptr(CGRAPH_INTEGER) edges,
           CGRAPH_INTEGER n,
           bool directed) {
-  bool has_edges = cgraph_ivec_size(edges) > 0;
-  CGRAPH_INTEGER max = has_edges ? cgraph_ivec_max(edges) + 1 : 0;
+  bool has_edges = arr_size(edges) > 0;
+  CGRAPH_INTEGER max = has_edges ? arr_imax(edges) + 1 : 0;
 
-  if (cgraph_ivec_size(edges) % 2 != 0) {
+  if (arr_size(edges) % 2 != 0) {
     CGRAPH_WARNING("Vec-tơ cạnh không hợp lệ (độ dài lẻ)");
     return NULL;
   }
-  if (has_edges && !cgraph_ivec_isininterval(edges, 0, max - 1)) {
-    CGRAPH_WARNING("Chỉ số đỉnh không hợp lệ (giá trị âm)");
+  if (has_edges && !arr_irange(edges, 0, max - 1)) {
+    CGRAPH_WARNING("Chỉ số đỉnh không hợp lệ (giá trị nằm ngoài khoảng)");
     return NULL;
   }
 

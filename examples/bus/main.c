@@ -19,7 +19,7 @@ hmap_t bus_id = NULL;
 gvec_t id_bus = NULL;
 
 gvec_t nodes = NULL;
-cgraph_ivec_t edges = NULL;
+arr_ptr(CGRAPH_INTEGER) edges = NULL;
 arr_ptr(CGRAPH_REAL) weights = NULL;
 
 long k_cost_change_bus = 1,
@@ -32,7 +32,7 @@ void init_global() {
   bus_id = hmap_create(gtype_hash_s, gtype_cmp_s, NULL, NULL);
   id_bus = gvec_create(5, gtype_free_s);
   nodes = gvec_create(5, gtype_free_v);
-  edges = cgraph_ivec_create();
+  edges = arr_create(0, CGRAPH_INTEGER);
   weights = arr_create(0, CGRAPH_REAL);
 }
 
@@ -43,7 +43,7 @@ void free_global() {
   gvec_free(id_bus);
   gvec_free(nodes);
   gvec_free(stop_buses);
-  cgraph_ivec_free(&edges);
+  arr_free(edges);
   arr_free(weights);
 }
 
@@ -85,8 +85,8 @@ void parse_input(char *fname) {
       gvec_append(nodes, gtype_v(tmp));
       if (!first) {
         long tmp = gvec_size(nodes) - 1;
-        cgraph_ivec_push_back(&edges, tmp - 1);
-        cgraph_ivec_push_back(&edges, tmp);
+        arr_append(edges, tmp - 1);
+        arr_append(edges, tmp);
         arr_append(weights, k_cost_nex_stop);
       }
       first = false;
@@ -106,19 +106,19 @@ void bus_change() {
     cgraph_ivec_t v = ivec_at(stop_buses, i);
     long sz = gvec_size(nodes);
     for (int j = 0; j < cgraph_ivec_size(v); ++j) {
-      cgraph_ivec_push_back(&edges, sz + 2 * i);
-      cgraph_ivec_push_back(&edges, v[j]);
-      cgraph_ivec_push_back(&edges, v[j]);
-      cgraph_ivec_push_back(&edges, sz + 2 * i + 1);
+      arr_append(edges, sz + 2 * i);
+      arr_append(edges, v[j]);
+      arr_append(edges, v[j]);
+      arr_append(edges, sz + 2 * i + 1);
       arr_append(weights, k_cost_change_bus);
       arr_append(weights, k_cost_change_bus);
     }
     for (int i = 0; i < cgraph_ivec_size(v) - 1; ++i) {
       for (int j = i + 1; j < cgraph_ivec_size(v); ++j) {
-        cgraph_ivec_push_back(&edges, v[i]);
-        cgraph_ivec_push_back(&edges, v[j]);
-        cgraph_ivec_push_back(&edges, v[j]);
-        cgraph_ivec_push_back(&edges, v[i]);
+        arr_append(edges, v[i]);
+        arr_append(edges, v[j]);
+        arr_append(edges, v[j]);
+        arr_append(edges, v[i]);
         arr_append(weights, k_cost_change_bus);
         arr_append(weights, k_cost_change_bus);
       }
@@ -134,7 +134,6 @@ int main(int argc, char *argv[]) {
   init_global();
   parse_input(argv[1]);
   bus_change();
-  // cgraph_ivec_print(edges);
   cgraph_t g = cgraph_create(edges, 0, true);
   char *beg = NULL, *end = NULL;
   long beg_len = 0, end_len = 0;

@@ -17,13 +17,13 @@ int main() {
   }
 
   char job1[256], job2[256];
-  cgraph_ivec_t edges = cgraph_ivec_create();
+  arr_make(edges, 0, CGRAPH_INTEGER);
   for (int i = 0; i < m; ++i) {
     fscanf(inp, "%s%s", job1, job2);
     int j1 = s2w_id(conv, job1),
         j2 = s2w_id(conv, job2);
-    cgraph_ivec_push_back(&edges, j1);
-    cgraph_ivec_push_back(&edges, j2);
+    arr_append(edges, j1);
+    arr_append(edges, j2);
   }
 
   cgraph_t g = cgraph_create(edges, 0, true);
@@ -39,7 +39,7 @@ int main() {
   }
   fclose(out);
   cgraph_destroy(&g);
-  cgraph_ivec_free(&edges);
+  arr_free(edges);
   cgraph_ivec_free(&order);
   s2w_free(conv);
   fclose(inp);

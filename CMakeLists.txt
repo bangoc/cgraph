@@ -35,6 +35,7 @@ endif()
 set(cgraph_src
   cgraph_error.c
   cgraph_ivec.c
+  cgraph_arr.c
   type_indexededgelist.c
   structure_generators.c
   visitors.c
@@ -51,6 +52,7 @@ set(cgraph_inc
   cgraph_error.h
   cgraph_interface.h
   cgraph_ivec.h
+  cgraph_arr.h
   cgraph_topology.h
   cgraph_visitor.h
   cgraph_paths.h
