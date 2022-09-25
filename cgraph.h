@@ -11,7 +11,6 @@
 #include "cgraph_topology.h"
 #include "cgraph_visitor.h"
 #include "cgraph_ivec.h"
-#include "cgraph_istack.h"
 #include "cgraph_paths.h"
 #include "cgraph_rvec.h"
 #include "cgraph_types_internal.h"

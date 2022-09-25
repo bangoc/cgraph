@@ -8,7 +8,6 @@ cgraph_rvec.h
 cgraph_queue.h
 cgraph_queue.c
 cgraph_iqueue.h
-cgraph_istack.h
 cgraph_constructors.h
 cgraph_error.h
 cgraph_interface.h

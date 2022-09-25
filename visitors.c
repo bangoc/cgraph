@@ -3,9 +3,9 @@
 #include "cgraph_error.h"
 #include "cgraph_interface.h"
 #include "cgraph_iqueue.h"
-#include "cgraph_istack.h"
 #include "cgraph_ivec.h"
 #include "cgraph_visitor.h"
+#include "cgen/all.h"
 
 int cgraph_bfs(const cgraph_t graph,
                CGRAPH_INTEGER root,
@@ -232,7 +232,7 @@ int cgraph_dfs(const cgraph_t graph,
                cgraph_ivec_t *father,
                cgraph_ivec_t *dist) {
   CGRAPH_INTEGER no_of_nodes = cgraph_vcount(graph);
-  cgraph_istack_t stack = cgraph_istack_create();
+  struct gsllist *stack = gsl_create_list(NULL);
   bool *added = (bool*)calloc(no_of_nodes, sizeof(bool));
   CGRAPH_INTEGER actroot, act_rank = 0, rank_out = 0, act_dist = 0;
 
@@ -261,7 +261,7 @@ int cgraph_dfs(const cgraph_t graph,
 
 # undef VINIT
 
-  CGRAPH_CHECK(cgraph_istack_push(stack, root));
+  stk_push(stack, gtype_l(root));
   added[root] = true;
   if (father) {
     (*father)[root] = -1;
@@ -281,7 +281,7 @@ int cgraph_dfs(const cgraph_t graph,
   for (actroot = 0; actroot < no_of_nodes; ) {
 
     /* 'root' first, then all other vertices */
-    if (cgraph_istack_empty(stack)) {
+    if (stk_is_empty(stack)) {
       if (!unreachable) {
         break;
       }
@@ -289,7 +289,7 @@ int cgraph_dfs(const cgraph_t graph,
         actroot++;
         continue;
       }
-      CGRAPH_CHECK(cgraph_istack_push(stack, actroot));
+      stk_push(stack, gtype_l(actroot));
       added[actroot] = true;
       if (father) {
         (*father)[actroot] = -1;
@@ -303,9 +303,8 @@ int cgraph_dfs(const cgraph_t graph,
     }
 
     cgraph_ivec_fill(nptr, 0);
-    while (!cgraph_istack_empty(stack)) {
-      CGRAPH_INTEGER actvect;
-      cgraph_istack_top(stack, &actvect);
+    while (!stk_is_empty(stack)) {
+      CGRAPH_INTEGER actvect = stk_top(stack).l;
       if (!neis_cache[actvect]) {
         neis_cache[actvect] = cgraph_ivec_create();
         cgraph_neighbors(graph, neis_cache + actvect, actvect, mode);
@@ -324,7 +323,7 @@ int cgraph_dfs(const cgraph_t graph,
       }
       if (any) {
         /* There is such a neighbor, add it */
-        CGRAPH_CHECK(cgraph_istack_push(stack, nei));
+        stk_push(stack, gtype_l(nei));
         added[nei] = true;
         if (father) {
           (*father)[nei] = actvect;
@@ -338,7 +337,7 @@ int cgraph_dfs(const cgraph_t graph,
         }
       } else {
         /* There is no such neighbor, finished with the subtree */
-        cgraph_istack_pop(stack, NULL);
+        stk_pop(stack);
         if (order_out) {
           (*order_out)[rank_out++] = actvect;
         }
@@ -353,7 +352,7 @@ int cgraph_dfs(const cgraph_t graph,
   }
   free(neis_cache);
   cgraph_ivec_free(&nptr);
-  cgraph_istack_free(&stack);
+  gsl_free(stack);
   free(added);
   return 0;
 }
