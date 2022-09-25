@@ -5,7 +5,6 @@
 #include "cgraph_ivec.h"
 #include "cgraph_paths.h"
 #include "cgraph_topology.h"
-#include "cgraph_types_internal.h"
 #include "cgen/all.h"
 #include "cgen_ext.h"
 
@@ -528,7 +527,7 @@ int cgraph_get_shortest_paths_dijkstra(const cgraph_t graph,
 
   CGRAPH_INTEGER no_of_nodes = cgraph_vcount(graph);
   CGRAPH_INTEGER no_of_edges = cgraph_ecount(graph);
-  cgraph_2wheap_t Q;
+  struct p2ways *q = p2w_create(gtype_cmp_d);
   cgraph_rvec_t dists = cgraph_rvec_create();
   cgraph_rvec_init(&dists, no_of_nodes);
   CGRAPH_INTEGER *parents;
@@ -555,7 +554,6 @@ int cgraph_get_shortest_paths_dijkstra(const cgraph_t graph,
                     CGRAPH_FAILURE);
   }
 
-  CGRAPH_CHECK(cgraph_2wheap_init(&Q, no_of_nodes));
   cgraph_rvec_fill(dists, -1.0);
 
   parents = calloc(no_of_nodes, sizeof(CGRAPH_INTEGER));
@@ -582,12 +580,12 @@ int cgraph_get_shortest_paths_dijkstra(const cgraph_t graph,
 
   dists[from] = 0.0;
   parents[from] = 0;
-  cgraph_2wheap_push_with_index(&Q, from, 0.0);
+  p2w_push_with_index(q, from, gtype_d(0.0));
 
   cgraph_ivec_t neis = cgraph_ivec_create();
-  while (!cgraph_2wheap_empty(&Q) && to_reach > 0) {
-    CGRAPH_INTEGER nlen, minnei = cgraph_2wheap_max_index(&Q);
-    CGRAPH_REAL mindist = -cgraph_2wheap_delete_max(&Q);
+  while (!p2w_is_empty(q) && to_reach > 0) {
+    CGRAPH_INTEGER nlen, minnei = p2w_max_index(q);
+    CGRAPH_REAL mindist = -p2w_delete_max(q).d;
 
     if (is_target[minnei]) {
       is_target[minnei] = false;
@@ -607,10 +605,10 @@ int cgraph_get_shortest_paths_dijkstra(const cgraph_t graph,
         dists[tto] = altdist;
         parents[tto] = edge + 1;
         CGRAPH_CHECK(
-          cgraph_2wheap_push_with_index(&Q, tto, -altdist));
+          p2w_push_with_index(q, tto, gtype_d(-altdist)));
       }
     }
-  } /* !igraph_2wheap_empty(&Q) */
+  } /* !igraph_2wheap_empty(q) */
 
   if (to_reach > 0) {
     CGRAPH_WARNING("Không thể đi tới một số đỉnh");
@@ -690,7 +688,7 @@ int cgraph_get_shortest_paths_dijkstra(const cgraph_t graph,
     }
   }
 
-  cgraph_2wheap_free(&Q);
+  p2w_free(q);
   cgraph_rvec_free(&dists);
   cgraph_ivec_free(&neis);
   free(is_target);

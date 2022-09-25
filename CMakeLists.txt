@@ -40,7 +40,6 @@ set(cgraph_src
   visitors.c
   structural_properties.c
   cgraph_rvec.c
-  heap.c
   foreign.c
   hsi.c
 )
@@ -58,7 +57,6 @@ set(cgraph_inc
   cgraph_visitor.h
   cgraph_paths.h
   cgraph_rvec.h
-  cgraph_types_internal.h
   cgraph_foreigh.h
 )
 
@@ -85,7 +83,6 @@ if(${BUILD_TESTING})
   add_test(NAME CgraphTopologicalSorting COMMAND cgraph_topological_sorting_ut)
   add_test(NAME CgraphSingleShortestPathDijkstra COMMAND
                 cgraph_single_shortest_path_dijkstra_ut)
-  add_test(NAME Cgraph2wHeap COMMAND cgraph_2wheap_ut)
   add_test(NAME CgraphEdge COMMAND cgraph_edge_ut)
   add_test(NAME CgraphGetEid COMMAND cgraph_get_eid_ut)
   add_test(NAME CgraphIvecAppend COMMAND cgraph_ivec_append_ut)

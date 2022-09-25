@@ -12,7 +12,6 @@
 #include "cgraph_ivec.h"
 #include "cgraph_paths.h"
 #include "cgraph_rvec.h"
-#include "cgraph_types_internal.h"
 #include "cgen_ext.h"
 
 #endif  // CGRAPH_H_

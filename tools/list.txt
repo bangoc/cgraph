@@ -11,7 +11,6 @@ cgraph_interface.h
 cgraph_topology.h
 cgraph_visitor.h
 cgraph_paths.h
-cgraph_types_internal.h
 cgraph_error.c
 cgraph_ivec.c
 type_indexededgelist.c
@@ -19,4 +18,3 @@ structure_generators.c
 visitors.c
 structural_properties.c
 cgraph_rvec.c
-heap.c
