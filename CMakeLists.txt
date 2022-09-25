@@ -38,8 +38,6 @@ set(cgraph_src
   type_indexededgelist.c
   structure_generators.c
   visitors.c
-  cgraph_iqueue.c
-  cgraph_queue.c
   structural_properties.c
   cgraph_rvec.c
   heap.c
@@ -55,9 +53,7 @@ set(cgraph_inc
   cgraph_datatype.h
   cgraph_error.h
   cgraph_interface.h
-  cgraph_iqueue.h
   cgraph_ivec.h
-  cgraph_queue.h
   cgraph_topology.h
   cgraph_visitor.h
   cgraph_paths.h
@@ -82,7 +78,6 @@ if(${BUILD_TESTING})
   add_test(NAME CgraphIvecAsValue COMMAND cgraph_ivec_as_value_ut)
   add_test(NAME CgraphIvecAsRef COMMAND cgraph_ivec_as_ref_ut)
   add_test(NAME CgraphBfs COMMAND cgraph_bfs_ut)
-  add_test(NAME CgraphIQueue COMMAND cgraph_iqueue_ut)
   add_test(NAME CgraphDegree COMMAND cgraph_degree_ut)
   add_test(NAME CgraphIsDag COMMAND cgraph_is_dag_ut)
   add_test(NAME CgraphSimpleBfs COMMAND cgraph_simple_bfs_ut)

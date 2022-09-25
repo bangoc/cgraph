@@ -2,7 +2,6 @@
 
 #include "cgraph_error.h"
 #include "cgraph_interface.h"
-#include "cgraph_iqueue.h"
 #include "cgraph_ivec.h"
 #include "cgraph_visitor.h"
 #include "cgen/all.h"
@@ -40,7 +39,7 @@ int cgraph_bfs(const cgraph_t graph,
     CGRAPH_ERROR("Lỗi tham số chế độ", CGRAPH_FAILURE);
   }
 
-  cgraph_iqueue_t q = cgraph_iqueue_create();
+  struct gsllist *q = gsl_create_list(NULL);
 
   if (!cgraph_is_directed(graph)) {
      mode = CGRAPH_ALL;
@@ -97,8 +96,8 @@ VINIT(dist);
       continue;
     }
 
-    CGRAPH_CHECK(cgraph_iqueue_enqueue(q, actroot));
-    CGRAPH_CHECK(cgraph_iqueue_enqueue(q, 0));
+    que_enq(q, gtype_l(actroot));
+    que_enq(q, gtype_l(0));
     added[actroot] = true;
     if (father) {
       (*father)[actroot] = -1;
@@ -106,11 +105,11 @@ VINIT(dist);
 
     pred_vec = -1;
 
-    while (!cgraph_iqueue_empty(q)) {
-      CGRAPH_INTEGER actvect;
-      cgraph_iqueue_poll(q, &actvect);
-      CGRAPH_INTEGER actdist;
-      cgraph_iqueue_poll(q, &actdist);
+    while (!que_is_empty(q)) {
+      CGRAPH_INTEGER actvect = que_peek(q).l;
+      que_deq(q);
+      CGRAPH_INTEGER actdist = que_peek(q).l;
+      que_deq(q);
       CGRAPH_INTEGER succ_vec;
 
       cgraph_neighbors(graph, &neis, actvect, mode);
@@ -133,18 +132,18 @@ VINIT(dist);
         CGRAPH_INTEGER nei = neis[i];
         if (!added[nei]) {
           added[nei] = true;
-          CGRAPH_CHECK(cgraph_iqueue_enqueue(q, nei));
-          CGRAPH_CHECK(cgraph_iqueue_enqueue(q, actdist + 1));
+          que_enq(q, gtype_l(nei));
+          que_enq(q, gtype_l(actdist + 1));
           if (father) {
             (*father)[nei] = actvect;
           }
         }
       }
 
-      if (cgraph_iqueue_empty(q)) {
+      if (que_is_empty(q)) {
         succ_vec = -1;
       } else {
-        cgraph_iqueue_peek(q, &succ_vec);
+        succ_vec = que_peek(q).l;
       }
 
       if (succ) {
@@ -156,7 +155,7 @@ VINIT(dist);
   } /* while (1) */
   free(added);
   cgraph_ivec_free(&neis);
-  cgraph_iqueue_free(&q);
+  gsl_free(q);
   return 0;
 }
 

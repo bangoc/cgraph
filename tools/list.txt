@@ -5,9 +5,6 @@ cgraph_constants.h
 cgraph_ivec.h
 cgraph_datatype.h
 cgraph_rvec.h
-cgraph_queue.h
-cgraph_queue.c
-cgraph_iqueue.h
 cgraph_constructors.h
 cgraph_error.h
 cgraph_interface.h
@@ -20,8 +17,6 @@ cgraph_ivec.c
 type_indexededgelist.c
 structure_generators.c
 visitors.c
-cgraph_iqueue.c
 structural_properties.c
-cgraph_istack.c
 cgraph_rvec.c
 heap.c

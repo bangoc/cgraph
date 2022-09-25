@@ -1,2 +1,0 @@
-add_executable(cgraph_iqueue_ut test_cgraph_iqueue.c)
-target_link_libraries(cgraph_iqueue_ut cgraph ut_base)

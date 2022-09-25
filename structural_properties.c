@@ -2,11 +2,11 @@
 #include "cgraph_datatype.h"
 #include "cgraph_error.h"
 #include "cgraph_interface.h"
-#include "cgraph_iqueue.h"
 #include "cgraph_ivec.h"
 #include "cgraph_paths.h"
 #include "cgraph_topology.h"
 #include "cgraph_types_internal.h"
+#include "cgen/all.h"
 #include "cgen_ext.h"
 
 #include <stdlib.h>
@@ -37,7 +37,7 @@ bool cgraph_is_dag(const cgraph_t graph) {
   CGRAPH_INTEGER no_of_nodes = cgraph_vcount(graph);
   cgraph_ivec_t degrees = cgraph_ivec_create(),
                 neis = cgraph_ivec_create();
-  cgraph_iqueue_t sources = cgraph_iqueue_create();
+  struct gsllist *sources = gsl_create_list(NULL);
   CGRAPH_INTEGER node, i, j, nei, vertices_left;
 
   cgraph_degree_all(graph, &degrees, CGRAPH_OUT, true);
@@ -47,13 +47,14 @@ bool cgraph_is_dag(const cgraph_t graph) {
   /* Kiểm tra xem chúng ta có đỉnh không có cạnh đi ra hay không? */
   for (i = 0; i < no_of_nodes; i++) {
     if (degrees[i] == 0) {
-      CGRAPH_CHECK(cgraph_iqueue_enqueue(sources, i));
+      que_enq(sources, gtype_l(i));
     }
   }
 
   /* Xử lý và xóa các đỉnh không có cạnh đi ra */
-  while (!cgraph_iqueue_empty(sources)) {
-    cgraph_iqueue_poll(sources, &node);
+  while (!que_is_empty(sources)) {
+    node = que_peek(sources).l;
+    que_deq(sources);
 
     /* Đánh dấu để bỏ qua trong các lần tìm kiếm tiếp theo */
     degrees[node] = -1;
@@ -69,14 +70,14 @@ bool cgraph_is_dag(const cgraph_t graph) {
       // }
       degrees[nei]--;
       if (degrees[nei] == 0) {
-        CGRAPH_CHECK(cgraph_iqueue_enqueue(sources, nei));
+        que_enq(sources, gtype_l(nei));
       }
     }
   }
 
   cgraph_ivec_free(&degrees);
   cgraph_ivec_free(&neis);
-  cgraph_iqueue_free(&sources);
+  gsl_free(sources);
 
   return (vertices_left == 0);
 }
@@ -132,7 +133,7 @@ int cgraph_topological_sorting(const cgraph_t graph,
 
   cgraph_ivec_t degrees = cgraph_ivec_create(),
               neis = cgraph_ivec_create();
-  cgraph_iqueue_t sources = cgraph_iqueue_create();
+  struct gsllist *sources = gsl_create_list(NULL);
 
   /* Không tính đỉnh lặp */
   CGRAPH_CHECK(cgraph_degree_all(graph, &degrees, deg_mode, false));
@@ -141,28 +142,29 @@ int cgraph_topological_sorting(const cgraph_t graph,
   /* Chúng ta có đỉnh không có láng giềng đứng trước hay không? */
   for (CGRAPH_INTEGER i = 0; i < no_of_nodes; i++) {
     if (degrees[i] == 0) {
-      CGRAPH_CHECK(cgraph_iqueue_enqueue(sources, i));
+      que_enq(sources, gtype_l(i));
     }
   }
 
   /* Lấy và xóa tất cả các đỉnh không có láng giềng đứng trước */
-  while (!cgraph_iqueue_empty(sources)) {
+  while (!que_is_empty(sources)) {
     CGRAPH_INTEGER node;
-    cgraph_iqueue_poll(sources, &node);
+    node = que_peek(sources).l;
+    que_deq(sources);
     cgraph_ivec_push_back(res, node);
     degrees[node] = -1;
     CGRAPH_CHECK(cgraph_neighbors(graph, &neis, node, mode));
     for (CGRAPH_INTEGER i = 0; i < cgraph_ivec_size(neis); i++) {
       degrees[neis[i]]--;
       if (degrees[neis[i]] == 0) {
-        CGRAPH_CHECK(cgraph_iqueue_enqueue(sources, neis[i]));
+        que_enq(sources, gtype_l(neis[i]));
       }
     }
   }
 
   cgraph_ivec_free(&degrees);
   cgraph_ivec_free(&neis);
-  cgraph_iqueue_free(&sources);
+  gsl_free(sources);
 
   if (cgraph_ivec_size(*res) < no_of_nodes) {
     CGRAPH_ERROR("đồ thị chứa một chu trình, một phần"
@@ -280,7 +282,7 @@ int cgraph_get_shortest_paths(const cgraph_t graph,
     CGRAPH_ERROR("không thể tìm các đường đi ngắn nhất",
                  CGRAPH_FAILURE);
   }
-  cgraph_iqueue_t q = cgraph_iqueue_create();
+  struct gsllist *q = gsl_create_list(NULL);
   cgraph_ivec_t tmp = cgraph_ivec_create();
 
   /* Đánh dấu các đỉnh cần đi tới */
@@ -308,7 +310,7 @@ int cgraph_get_shortest_paths(const cgraph_t graph,
    * tới i cộng 2.
    */
 
-  CGRAPH_CHECK(cgraph_iqueue_enqueue(q, from + 1));
+  que_enq(q, gtype_l(from + 1));
   /*
     Trường hợp from có trong to
   */
@@ -317,9 +319,9 @@ int cgraph_get_shortest_paths(const cgraph_t graph,
   }
   father[from] = 1;
 
-  while (!cgraph_iqueue_empty(q) && reached < to_reach) {
-    CGRAPH_INTEGER act;
-    cgraph_iqueue_poll(q, &act);
+  while (!que_is_empty(q) && reached < to_reach) {
+    CGRAPH_INTEGER act = que_peek(q).l;
+    que_deq(q);
 
     // Các giá trị trong hàng đợi là mã đỉnh + 1
     --act;
@@ -334,7 +336,7 @@ int cgraph_get_shortest_paths(const cgraph_t graph,
         reached++;
       }
       father[neighbor] = edge + 2;
-      CGRAPH_CHECK(cgraph_iqueue_enqueue(q, neighbor + 1));
+      que_enq(q, gtype_l(neighbor + 1));
     }
   }
 
@@ -422,7 +424,7 @@ int cgraph_get_shortest_paths(const cgraph_t graph,
   }
 
   free(father);
-  cgraph_iqueue_free(&q);
+  gsl_free(q);
   cgraph_ivec_free(&tmp);
 
   return 0;

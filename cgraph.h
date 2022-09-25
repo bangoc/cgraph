@@ -7,7 +7,6 @@
 #include "cgraph_error.h"
 #include "cgraph_foreign.h"
 #include "cgraph_interface.h"
-#include "cgraph_iqueue.h"
 #include "cgraph_topology.h"
 #include "cgraph_visitor.h"
 #include "cgraph_ivec.h"
