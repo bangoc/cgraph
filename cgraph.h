@@ -11,7 +11,6 @@
 #include "cgraph_visitor.h"
 #include "cgraph_ivec.h"
 #include "cgraph_paths.h"
-#include "cgraph_rvec.h"
 #include "cgen_ext.h"
 
 #endif  // CGRAPH_H_

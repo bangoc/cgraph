@@ -13,9 +13,9 @@ int main() {
   cgraph_t g = test_create_g1();
   double w[] = {3, 30, 5, 5, 10, 12, 11, 1, 6};
   int n = sizeof(w) / sizeof(double);
-  cgraph_rvec_t weights = cgraph_rvec_create();
+  arr_make(weights, 0, CGRAPH_REAL);
   for (int i = 0; i < n; ++i) {
-    cgraph_rvec_push_back(&weights, w[i]);
+    arr_append(weights, w[i]);
   }
   // g1-weighted.png
 
@@ -111,7 +111,7 @@ int main() {
   gvec_free(edges);
   cgraph_ivec_free(&predecessors);
   cgraph_ivec_free(&inbound_edges);
-  cgraph_rvec_free(&weights);
+  arr_free(weights);
   cgraph_ivec_free(&to);
   cgraph_destroy(&g);
   if (any) {

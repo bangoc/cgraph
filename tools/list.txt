@@ -4,7 +4,6 @@ cgraph_basic_types.h
 cgraph_constants.h
 cgraph_ivec.h
 cgraph_datatype.h
-cgraph_rvec.h
 cgraph_constructors.h
 cgraph_error.h
 cgraph_interface.h
@@ -17,4 +16,3 @@ type_indexededgelist.c
 structure_generators.c
 visitors.c
 structural_properties.c
-cgraph_rvec.c

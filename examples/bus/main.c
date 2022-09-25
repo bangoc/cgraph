@@ -20,20 +20,20 @@ gvec_t id_bus = NULL;
 
 gvec_t nodes = NULL;
 cgraph_ivec_t edges = NULL;
-cgraph_rvec_t weights = NULL;
+arr_ptr(CGRAPH_REAL) weights = NULL;
 
 long k_cost_change_bus = 1,
      k_cost_nex_stop = 1000;
 
 void init_global() {
   stop_id = hmap_create(gtype_hash_s, gtype_cmp_s, NULL, NULL);
-  id_stop = gvec_create(5, gtype_free_s);
-  stop_buses = gvec_create(5, gtype_free_ivec_ref);
+  id_stop = gvec_create(0, gtype_free_s);
+  stop_buses = gvec_create(0, gtype_free_ivec_ref);
   bus_id = hmap_create(gtype_hash_s, gtype_cmp_s, NULL, NULL);
   id_bus = gvec_create(5, gtype_free_s);
   nodes = gvec_create(5, gtype_free_v);
   edges = cgraph_ivec_create();
-  weights = cgraph_rvec_create();
+  weights = arr_create(0, CGRAPH_REAL);
 }
 
 void free_global() {
@@ -44,7 +44,7 @@ void free_global() {
   gvec_free(nodes);
   gvec_free(stop_buses);
   cgraph_ivec_free(&edges);
-  cgraph_rvec_free(&weights);
+  arr_free(weights);
 }
 
 long get_save_id(hmap_t si, gvec_t is, char *s) {
@@ -87,7 +87,7 @@ void parse_input(char *fname) {
         long tmp = gvec_size(nodes) - 1;
         cgraph_ivec_push_back(&edges, tmp - 1);
         cgraph_ivec_push_back(&edges, tmp);
-        cgraph_rvec_push_back(&weights, k_cost_nex_stop);
+        arr_append(weights, k_cost_nex_stop);
       }
       first = false;
       if (id2 >= gvec_size(stop_buses)) {
@@ -110,8 +110,8 @@ void bus_change() {
       cgraph_ivec_push_back(&edges, v[j]);
       cgraph_ivec_push_back(&edges, v[j]);
       cgraph_ivec_push_back(&edges, sz + 2 * i + 1);
-      cgraph_rvec_push_back(&weights, k_cost_change_bus);
-      cgraph_rvec_push_back(&weights, k_cost_change_bus);
+      arr_append(weights, k_cost_change_bus);
+      arr_append(weights, k_cost_change_bus);
     }
     for (int i = 0; i < cgraph_ivec_size(v) - 1; ++i) {
       for (int j = i + 1; j < cgraph_ivec_size(v); ++j) {
@@ -119,8 +119,8 @@ void bus_change() {
         cgraph_ivec_push_back(&edges, v[j]);
         cgraph_ivec_push_back(&edges, v[j]);
         cgraph_ivec_push_back(&edges, v[i]);
-        cgraph_rvec_push_back(&weights, k_cost_change_bus);
-        cgraph_rvec_push_back(&weights, k_cost_change_bus);
+        arr_append(weights, k_cost_change_bus);
+        arr_append(weights, k_cost_change_bus);
       }
     }
   }

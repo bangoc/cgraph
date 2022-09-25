@@ -496,7 +496,7 @@ int cgraph_get_shortest_paths_dijkstra(const cgraph_t graph,
                           gvec_t edges,
                           CGRAPH_INTEGER from,
                           cgraph_ivec_t to,
-                          const cgraph_rvec_t weights,
+                          arr_ptr(CGRAPH_REAL) weights,
                           cgraph_neimode_t mode,
                           cgraph_ivec_t *predecessors,
                           cgraph_ivec_t *inbound_edges) {
@@ -528,19 +528,19 @@ int cgraph_get_shortest_paths_dijkstra(const cgraph_t graph,
   CGRAPH_INTEGER no_of_nodes = cgraph_vcount(graph);
   CGRAPH_INTEGER no_of_edges = cgraph_ecount(graph);
   struct p2ways *q = p2w_create(gtype_cmp_d);
-  cgraph_rvec_t dists = cgraph_rvec_create();
-  cgraph_rvec_init(&dists, no_of_nodes);
+  arr_make(dists, no_of_nodes, CGRAPH_REAL);
   CGRAPH_INTEGER *parents;
   bool *is_target;
   CGRAPH_INTEGER i, to_reach;
 
-  if (cgraph_rvec_size(weights) != no_of_edges) {
+  if (arr_size(weights) != no_of_edges) {
     CGRAPH_ERROR("Độ dài vec-tơ trọng số không khớp",
                  CGRAPH_FAILURE);
   }
-  if (cgraph_rvec_min(weights) < 0) {
-    CGRAPH_ERROR("Các trọng số không được âm",
-                 CGRAPH_FAILURE);
+  for (i = 0; i < no_of_edges; ++i) {
+    if (weights[i] < 0) {
+      CGRAPH_ERROR("Các trọng số không được âm", CGRAPH_FAILURE);
+    }
   }
 
   if (vertices &&
@@ -554,7 +554,9 @@ int cgraph_get_shortest_paths_dijkstra(const cgraph_t graph,
                     CGRAPH_FAILURE);
   }
 
-  cgraph_rvec_fill(dists, -1.0);
+  for (i = 0; i < arr_size(dists); ++i) {
+    dists[i] = -1.0;
+  }
 
   parents = calloc(no_of_nodes, sizeof(CGRAPH_INTEGER));
   if (parents == 0) {
@@ -689,7 +691,7 @@ int cgraph_get_shortest_paths_dijkstra(const cgraph_t graph,
   }
 
   p2w_free(q);
-  cgraph_rvec_free(&dists);
+  arr_free(dists);
   cgraph_ivec_free(&neis);
   free(is_target);
   free(parents);
@@ -738,7 +740,7 @@ int cgraph_get_shortest_path_dijkstra(const cgraph_t graph,
         cgraph_ivec_t *edges,
         CGRAPH_INTEGER from,
         CGRAPH_INTEGER to,
-        cgraph_rvec_t weights,
+        arr_ptr(CGRAPH_REAL) weights,
         cgraph_neimode_t mode) {
   gvec_t pvertices = NULL, pedges = NULL;
   if (vertices) {

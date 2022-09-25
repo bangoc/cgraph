@@ -39,7 +39,6 @@ set(cgraph_src
   structure_generators.c
   visitors.c
   structural_properties.c
-  cgraph_rvec.c
   foreign.c
   hsi.c
 )
@@ -56,7 +55,6 @@ set(cgraph_inc
   cgraph_topology.h
   cgraph_visitor.h
   cgraph_paths.h
-  cgraph_rvec.h
   cgraph_foreigh.h
 )
 
