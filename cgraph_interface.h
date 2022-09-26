@@ -28,7 +28,7 @@ int cgraph_incident(const cgraph_t graph,
                     cgraph_neimode_t mode);
 
 int cgraph_degree_all(const cgraph_t graph,
-                      cgraph_ivec_t *res,
+                      arr_ptr(CGRAPH_INTEGER) *res,
                       cgraph_neimode_t mode,
                       bool loops);
 

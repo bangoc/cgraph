@@ -34,8 +34,8 @@ bool cgraph_is_dag(const cgraph_t graph) {
   }
 
   CGRAPH_INTEGER no_of_nodes = cgraph_vcount(graph);
-  cgraph_ivec_t degrees = cgraph_ivec_create(),
-                neis = cgraph_ivec_create();
+  arr_make(degrees, 0, CGRAPH_INTEGER);
+  cgraph_ivec_t neis = cgraph_ivec_create();
   struct gsllist *sources = gsl_create_list(NULL);
   CGRAPH_INTEGER node, i, j, nei, vertices_left;
 
@@ -74,7 +74,7 @@ bool cgraph_is_dag(const cgraph_t graph) {
     }
   }
 
-  cgraph_ivec_free(&degrees);
+  arr_free(degrees);
   cgraph_ivec_free(&neis);
   gsl_free(sources);
 
@@ -129,9 +129,8 @@ int cgraph_topological_sorting(const cgraph_t graph,
   } else {
     CGRAPH_ERROR("Thuộc tính không hợp lệ", CGRAPH_FAILURE);
   }
-
-  cgraph_ivec_t degrees = cgraph_ivec_create(),
-              neis = cgraph_ivec_create();
+  arr_make(degrees, 0, CGRAPH_INTEGER);
+  cgraph_ivec_t neis = cgraph_ivec_create();
   struct gsllist *sources = gsl_create_list(NULL);
 
   /* Không tính đỉnh lặp */
@@ -161,7 +160,7 @@ int cgraph_topological_sorting(const cgraph_t graph,
     }
   }
 
-  cgraph_ivec_free(&degrees);
+  arr_free(degrees);
   cgraph_ivec_free(&neis);
   gsl_free(sources);
 

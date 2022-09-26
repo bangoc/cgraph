@@ -6,7 +6,7 @@
 
 int main() {
   cgraph_t g = test_create_g2();
-  cgraph_ivec_t degree = cgraph_ivec_create();
+  arr_make(degree, 0, CGRAPH_INTEGER);
   bool failed = false;
 
 
@@ -21,7 +21,7 @@ int main() {
 
 #define TEST_ALL(vec, arr, n, msg) \
   { \
-    if (!cgraph_ivec_equal(vec, arr, n)) { \
+    if (!arr_iequal(vec, arr, n)) { \
       UT_MSG_FAILED(msg); \
       print_ivec(vec); \
       failed = true; \

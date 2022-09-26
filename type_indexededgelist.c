@@ -1,3 +1,4 @@
+#include "cgraph_arr.h"
 #include "cgraph_error.h"
 #include "cgraph_interface.h"
 #include "cgraph_ivec.h"
@@ -391,7 +392,7 @@ int cgraph_incident(const cgraph_t graph,
 }
 
 int cgraph_degree_all(const cgraph_t graph,
-                      cgraph_ivec_t *res,
+                      arr_ptr(CGRAPH_INTEGER) *res,
                       cgraph_neimode_t mode,
                       bool loops) {
   if (mode != CGRAPH_OUT && mode != CGRAPH_IN &&
@@ -403,9 +404,9 @@ int cgraph_degree_all(const cgraph_t graph,
   }
   CGRAPH_INTEGER no_of_nodes = cgraph_vcount(graph);
   CGRAPH_INTEGER no_of_edges = cgraph_ecount(graph);
-  cgraph_ivec_init(res, no_of_nodes);
-  cgraph_ivec_t v = *res;
-  cgraph_ivec_fill(v, 0);
+  arr_resize(*res, no_of_nodes);
+  arr_ptr(CGRAPH_INTEGER) v = *res;
+  arr_ifill(v, 0);
 
   for (CGRAPH_INTEGER ed = 0; ed < no_of_edges; ++ed) {
     if (loops || graph->from[ed] != graph->to[ed]) {

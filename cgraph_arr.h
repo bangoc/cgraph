@@ -18,4 +18,11 @@ int arr_irange(arr_ptr(CGRAPH_INTEGER) a,
 
 arr_ptr(CGRAPH_INTEGER) arr_ifrom_array(CGRAPH_INTEGER *a, CGRAPH_INTEGER n);
 
+#define arr_ifill(v, value) \
+  do { \
+    for (long i = 0; i < arr_size(v); ++i) { \
+      v[i] = value; \
+    } \
+  } while (0)
+
 #endif  // CGRAPH_ARR_H_
