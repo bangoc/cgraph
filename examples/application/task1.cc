@@ -28,18 +28,18 @@ int main() {
   }
 
   cgraph_t g = cgraph_create(edges, 0, true);
-  cgraph_ivec_t order = cgraph_ivec_create();
+  arr_make(order, 0, CGRAPH_INTEGER);
   cgraph_topological_sorting(g, &order, CGRAPH_OUT);
   std::ofstream out("output.txt");
-  if (cgraph_ivec_size(order) < n) {
+  if (arr_size(order) < n) {
     out << "-1" << std::endl;
   } else {
-    for (int i = 0; i < cgraph_ivec_size(order); ++i) {
+    for (int i = 0; i < arr_size(order); ++i) {
       out << id_to_name[ order[i] ] << std::endl;
     }
   }
   arr_free(edges);
-  cgraph_ivec_free(&order);
+  arr_free(order);
   cgraph_destroy(&g);
   return 0;
 }

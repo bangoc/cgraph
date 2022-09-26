@@ -114,7 +114,7 @@ bool cgraph_is_dag(const cgraph_t graph) {
  *
  */
 int cgraph_topological_sorting(const cgraph_t graph,
-                               cgraph_ivec_t *res,
+                               arr_ptr(CGRAPH_INTEGER) *res,
                                cgraph_neimode_t mode) {
   CGRAPH_INTEGER no_of_nodes = cgraph_vcount(graph);
   cgraph_neimode_t deg_mode;
@@ -136,7 +136,7 @@ int cgraph_topological_sorting(const cgraph_t graph,
   /* Không tính đỉnh lặp */
   CGRAPH_CHECK(cgraph_degree_all(graph, &degrees, deg_mode, false));
 
-  cgraph_ivec_setsize(*res, 0);
+  arr_resize(*res, 0);
   /* Chúng ta có đỉnh không có láng giềng đứng trước hay không? */
   for (CGRAPH_INTEGER i = 0; i < no_of_nodes; i++) {
     if (degrees[i] == 0) {
@@ -149,7 +149,7 @@ int cgraph_topological_sorting(const cgraph_t graph,
     CGRAPH_INTEGER node;
     node = que_peek(sources).l;
     que_deq(sources);
-    cgraph_ivec_push_back(res, node);
+    arr_append(*res, node);
     degrees[node] = -1;
     CGRAPH_CHECK(cgraph_neighbors(graph, &neis, node, mode));
     for (CGRAPH_INTEGER i = 0; i < arr_size(neis); i++) {
@@ -164,7 +164,7 @@ int cgraph_topological_sorting(const cgraph_t graph,
   arr_free(neis);
   gsl_free(sources);
 
-  if (cgraph_ivec_size(*res) < no_of_nodes) {
+  if (arr_size(*res) < no_of_nodes) {
     CGRAPH_ERROR("đồ thị chứa một chu trình, một phần"
                  " kết quả được trả về", CGRAPH_FAILURE);
   }

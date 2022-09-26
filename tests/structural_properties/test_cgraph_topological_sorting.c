@@ -6,7 +6,7 @@
 #include "ut.h"
 
 bool is_valid_topological_order(cgraph_t g,
-                                cgraph_ivec_t const v,
+                                arr_ptr(CGRAPH_INTEGER) v,
                                 cgraph_neimode_t mode) {
   cgraph_neimode_t deg_mode;
   if (mode == CGRAPH_IN) {
@@ -19,7 +19,7 @@ bool is_valid_topological_order(cgraph_t g,
   arr_make(neis, 0, CGRAPH_INTEGER);
   cgraph_degree_all(g, &degrees, deg_mode, true);
 
-  CGRAPH_INTEGER sz = cgraph_ivec_size(v);
+  CGRAPH_INTEGER sz = arr_size(v);
   bool *removed = calloc(no_of_nodes, sizeof(bool));
   bool any = false;
   for (CGRAPH_INTEGER i = 0; i < sz; ++i) {
@@ -47,22 +47,22 @@ bool is_valid_topological_order(cgraph_t g,
 int main() {
   cgraph_t g = test_create_g3();
   bool any = false;
-  cgraph_ivec_t res = cgraph_ivec_create();
+  arr_make(res, 0, CGRAPH_INTEGER);
   /*
   out: {0, 1, 2, 3, 4, 5}
   in: {4, 5, 2, 3, 1, 0}
   */
   cgraph_topological_sorting(g, &res, CGRAPH_OUT);
-  if (!is_valid_topological_order(g, res, CGRAPH_OUT) || cgraph_ivec_size(res) != 6) {
+  if (!is_valid_topological_order(g, res, CGRAPH_OUT) || arr_size(res) != 6) {
     UT_MSG_FAILED("Out topological sorting on G3");
     any = true;
   }
   cgraph_topological_sorting(g, &res, CGRAPH_IN);
-  if (!is_valid_topological_order(g, res, CGRAPH_IN) || cgraph_ivec_size(res) != 6) {
+  if (!is_valid_topological_order(g, res, CGRAPH_IN) || arr_size(res) != 6) {
     UT_MSG_FAILED("In topological sorting on G3");
     any = true;
   }
-  cgraph_ivec_free(&res);
+  arr_free(res);
   cgraph_destroy(&g);
   if (any) {
     return 1;

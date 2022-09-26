@@ -9,7 +9,7 @@ extern "C"{
 
 bool cgraph_is_dag(const cgraph_t graph);
 int cgraph_topological_sorting(const cgraph_t graph,
-                               cgraph_ivec_t *res,
+                               arr_ptr(CGRAPH_INTEGER) *res,
                                cgraph_neimode_t mode);
 
 #ifdef __cplusplus

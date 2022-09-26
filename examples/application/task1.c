@@ -27,20 +27,20 @@ int main() {
   }
 
   cgraph_t g = cgraph_create(edges, 0, true);
-  cgraph_ivec_t order = cgraph_ivec_create();
+  arr_make(order, 0, CGRAPH_INTEGER);
   cgraph_topological_sorting(g, &order, CGRAPH_OUT);
   FILE *out = fopen("output.txt", "w");
-  if (cgraph_ivec_size(order) < n) {
+  if (arr_size(order) < n) {
     fprintf(out, "-1");
   } else {
-    for (int i = 0; i < cgraph_ivec_size(order); ++i) {
+    for (int i = 0; i < arr_size(order); ++i) {
       fprintf(out, "%s\n", s2w_str(conv, i));
     }
   }
   fclose(out);
   cgraph_destroy(&g);
   arr_free(edges);
-  cgraph_ivec_free(&order);
+  arr_free(order);
   s2w_free(conv);
   fclose(inp);
   return 0;
