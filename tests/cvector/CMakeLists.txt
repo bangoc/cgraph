@@ -1,1 +1,0 @@
-add_executable(cvector_create_empty_ut test_cvector_create_empty.c)

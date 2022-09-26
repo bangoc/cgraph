@@ -1,7 +1,6 @@
 include_directories(${CMAKE_CURRENT_LIST_DIR}/base)
 
 add_subdirectory(base)
-add_subdirectory(cvector)
 add_subdirectory(structure_generators)
 add_subdirectory(type_indexededgelist)
 add_subdirectory(visitors)
