@@ -29,3 +29,15 @@ arr_ptr(CGRAPH_INTEGER) arr_ifrom_array(CGRAPH_INTEGER *a, CGRAPH_INTEGER n) {
   }
   return tmp;
 }
+
+arr_ptr(CGRAPH_INTEGER) *arr_icreate_ref() {
+  arr_ptr(CGRAPH_INTEGER) *vref = malloc(sizeof(arr_ptr(CGRAPH_INTEGER)));
+  *vref = arr_create(0, CGRAPH_INTEGER);
+  return vref;
+}
+
+void gtype_free_iarr_ref(gtype v) {
+  arr_ptr(CGRAPH_INTEGER) *vref = (arr_ptr(CGRAPH_INTEGER) *)(v.v);
+  arr_free(*vref);
+  free(vref);
+}

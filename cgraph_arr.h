@@ -8,6 +8,7 @@
  * sử dụng trong cgraph
  */
 
+#include "cgen/base/gtype.h"
 #include "cgen/vec/arr.h"
 #include "cgraph_datatype.h"
 
@@ -24,5 +25,11 @@ arr_ptr(CGRAPH_INTEGER) arr_ifrom_array(CGRAPH_INTEGER *a, CGRAPH_INTEGER n);
       v[i] = value; \
     } \
   } while (0)
+
+arr_ptr(CGRAPH_INTEGER) *arr_icreate_ref();
+void gtype_free_iarr_ref(gtype v);
+
+#define arr_iptr_at(vec, i) \
+  (*((arr_ptr(CGRAPH_INTEGER)*)(gvec_elem(vec, i).v)))
 
 #endif  // CGRAPH_ARR_H_
