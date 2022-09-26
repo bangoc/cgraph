@@ -33,8 +33,8 @@ if (${CMAKE_PROJECT_NAME} STREQUAL cgraph)
 endif()
 
 set(cgraph_src
-  cgraph_error.c
-  cgraph_arr.c
+  base/cgraph_error.c
+  base/cgraph_arr.c
   type_indexededgelist.c
   structure_generators.c
   visitors.c
@@ -44,13 +44,13 @@ set(cgraph_src
 
 set(cgraph_inc
   cgraph.h
-  cgraph_basic_types.h
-  cgraph_constants.h
+  base/cgraph_basic_types.h
+  base/cgraph_constants.h
   cgraph_constructors.h
-  cgraph_datatype.h
-  cgraph_error.h
+  base/cgraph_datatype.h
+  base/cgraph_error.h
   cgraph_interface.h
-  cgraph_arr.h
+  base/cgraph_arr.h
   cgraph_topology.h
   cgraph_visitor.h
   cgraph_paths.h

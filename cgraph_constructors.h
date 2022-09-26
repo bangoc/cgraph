@@ -4,7 +4,7 @@
 /* (C) Nguyen Ba Ngoc 2021-2022 */
 
 #include "cgen/vec/arr.h"
-#include "cgraph_datatype.h"
+#include "base/cgraph_datatype.h"
 
 #ifdef __cplusplus
 extern "C"{

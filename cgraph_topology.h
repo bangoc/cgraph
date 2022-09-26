@@ -1,7 +1,7 @@
 #ifndef CGRAPH_TOPOLOGY_H_
 #define CGRAPH_TOPOLOGY_H_
 
-#include "cgraph_datatype.h"
+#include "base/cgraph_datatype.h"
 
 #ifdef __cplusplus
 extern "C"{

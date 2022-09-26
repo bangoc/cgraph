@@ -1,6 +1,6 @@
 /* (C) Nguyen Ba Ngoc 2022 */
 
-#include "cgraph_arr.h"
+#include "base/cgraph_arr.h"
 
 CGRAPH_INTEGER arr_imax(arr_ptr(CGRAPH_INTEGER) a) {
   CGRAPH_INTEGER max = a[0];

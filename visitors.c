@@ -1,7 +1,7 @@
 #include <stdlib.h>
 
-#include "cgraph_arr.h"
-#include "cgraph_error.h"
+#include "base/cgraph_arr.h"
+#include "base/cgraph_error.h"
 #include "cgraph_interface.h"
 #include "cgraph_visitor.h"
 #include "cgen/all.h"

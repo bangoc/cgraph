@@ -1,8 +1,8 @@
-#ifndef CGRAPH_DATATYPE_H_
-#define CGRAPH_DATATYPE_H_
+#ifndef BASE_CGRAPH_DATATYPE_H_
+#define BASE_CGRAPH_DATATYPE_H_
 
 #include "cgen/vec/arr.h"
-#include "cgraph_basic_types.h"
+#include "base/cgraph_basic_types.h"
 
 /**
  * \brief Cấu trúc dữ liệu biểu diễn đồ thị
@@ -56,4 +56,4 @@ typedef struct cgraph_s {
     void *attr;
 } *cgraph_t;
 
-#endif  // CGRAPH_DATATYPE_H_
+#endif  // BASE_CGRAPH_DATATYPE_H_

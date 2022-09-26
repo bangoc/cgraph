@@ -1,5 +1,5 @@
-#ifndef CGRAPH_ERROR_H_
-#define CGRAPH_ERROR_H_
+#ifndef BASE_CGRAPH_ERROR_H_
+#define BASE_CGRAPH_ERROR_H_
 
 #include <stdbool.h>
 
@@ -78,4 +78,4 @@ cgraph_warning_handler_t* cgraph_set_warning_handler(
 }
 #endif
 
-#endif  // CGRAPH_ERROR_H_
+#endif  // BASE_CGRAPH_ERROR_H_

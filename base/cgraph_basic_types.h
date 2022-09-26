@@ -1,5 +1,5 @@
-#ifndef CGRAPH_BASIC_TYPES_H
-#define CGRAPH_BASIC_TYPES_H
+#ifndef BASE_CGRAPH_BASIC_TYPES_H
+#define BASE_CGRAPH_BASIC_TYPES_H
 
 #include <inttypes.h>
 #include <stdbool.h>
@@ -20,4 +20,4 @@
     #define CGRAPH_NAN (INT_LEAST32_MIN)
 #endif
 
-#endif  // CGRAPH_BASIC_TYPES_H
+#endif  // BASE_CGRAPH_BASIC_TYPES_H

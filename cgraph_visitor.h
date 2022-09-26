@@ -2,8 +2,8 @@
 #define CGRAPH_VISITOR_H_
 
 #include "cgen/vec/arr.h"
-#include "cgraph_datatype.h"
-#include "cgraph_constants.h"
+#include "base/cgraph_datatype.h"
+#include "base/cgraph_constants.h"
 
 #ifdef __cplusplus
 extern "C"{

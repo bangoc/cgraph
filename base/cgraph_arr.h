@@ -1,5 +1,5 @@
-#ifndef CGRAPH_ARR_H_
-#define CGRAPH_ARR_H_
+#ifndef BASE_CGRAPH_ARR_H_
+#define BASE_CGRAPH_ARR_H_
 
 /* (C) Nguyen Ba Ngoc 2022 */
 
@@ -10,7 +10,7 @@
 
 #include "cgen/base/gtype.h"
 #include "cgen/vec/arr.h"
-#include "cgraph_datatype.h"
+#include "base/cgraph_datatype.h"
 
 CGRAPH_INTEGER arr_imax(arr_ptr(CGRAPH_INTEGER) a);
 
@@ -38,4 +38,4 @@ int arr_iorder(arr_ptr(CGRAPH_INTEGER) v,
                arr_ptr(CGRAPH_INTEGER) v2,
                arr_ptr(CGRAPH_INTEGER) res);
 
-#endif  // CGRAPH_ARR_H_
+#endif  // BASE_CGRAPH_ARR_H_

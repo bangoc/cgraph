@@ -1,5 +1,5 @@
-#ifndef CGRAPH_CONSTANTS_H_
-#define CGRAPH_CONSTANTS_H_
+#ifndef BASE_CGRAPH_CONSTANTS_H_
+#define BASE_CGRAPH_CONSTANTS_H_
 
 typedef enum {
   CGRAPH_OUT = 1,
@@ -13,4 +13,4 @@ typedef enum {
   CGRAPH_DIRECTED = 1
 } cgraph_i_directed_t;
 
-#endif  // CGRAPH_CONSTANTS_H_
+#endif  // BASE_CGRAPH_CONSTANTS_H_

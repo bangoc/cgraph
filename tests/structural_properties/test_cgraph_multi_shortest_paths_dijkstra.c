@@ -3,7 +3,7 @@
 #include <stdlib.h>
 
 #include "cgen/all.h"
-#include "cgraph_error.h"
+#include "base/cgraph_error.h"
 #include "gb.h"
 #include "ut.h"
 
