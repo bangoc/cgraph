@@ -7,7 +7,7 @@ int main() {
   cgraph_t g = test_create_g1();
 #define TEST_VEC(vec, arr, n, msg) \
 { \
-  if (!cgraph_ivec_equal(vec, arr, n)) { \
+  if (!arr_iequal(vec, arr, n)) { \
     UT_MSG_FAILED(msg); \
     failed = true; \
   } \

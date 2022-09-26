@@ -28,7 +28,7 @@ long k_cost_change_bus = 1,
 void init_global() {
   stop_id = hmap_create(gtype_hash_s, gtype_cmp_s, NULL, NULL);
   id_stop = gvec_create(0, gtype_free_s);
-  stop_buses = gvec_create(0, gtype_free_ivec_ref);
+  stop_buses = gvec_create(0, gtype_free_iarr_ref);
   bus_id = hmap_create(gtype_hash_s, gtype_cmp_s, NULL, NULL);
   id_bus = gvec_create(5, gtype_free_s);
   nodes = gvec_create(5, gtype_free_v);

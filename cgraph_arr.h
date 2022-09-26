@@ -34,4 +34,8 @@ void gtype_free_iarr_ref(gtype v);
 
 void arr_iminmax(arr_ptr(CGRAPH_INTEGER) a, CGRAPH_INTEGER *min, CGRAPH_INTEGER *max);
 
+int arr_iorder(arr_ptr(CGRAPH_INTEGER) v,
+               arr_ptr(CGRAPH_INTEGER) v2,
+               arr_ptr(CGRAPH_INTEGER) res);
+
 #endif  // CGRAPH_ARR_H_

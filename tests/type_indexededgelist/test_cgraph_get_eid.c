@@ -5,7 +5,7 @@
 
 int main() {
   cgraph_t g = test_create_g1();
-  cgraph_ivec_t edges = cgraph_ivec_from_array(
+  arr_ptr(CGRAPH_INTEGER) edges = arr_ifrom_array(
       (CGRAPH_INTEGER[]){ 0, 1,
                           0, 3,
                           1, 2,
@@ -40,6 +40,7 @@ int main() {
     UT_MSG_FAILED("Case 3. No edge");
     any = true;
   }
+  arr_free(edges);
   if (any) {
     UT_MSG_FAILED("Test edge");
     return 1;

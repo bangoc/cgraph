@@ -2,7 +2,6 @@ cgraph-fat.c
 cgraph.h
 cgraph_basic_types.h
 cgraph_constants.h
-cgraph_ivec.h
 cgraph_arr.h
 cgraph_datatype.h
 cgraph_constructors.h
@@ -12,7 +11,6 @@ cgraph_topology.h
 cgraph_visitor.h
 cgraph_paths.h
 cgraph_error.c
-cgraph_ivec.c
 cgraph_arr.c
 type_indexededgelist.c
 structure_generators.c

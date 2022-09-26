@@ -1,8 +1,8 @@
 #ifndef CGRAPH_DATATYPE_H_
 #define CGRAPH_DATATYPE_H_
 
+#include "cgen/vec/arr.h"
 #include "cgraph_basic_types.h"
-#include "cgraph_ivec.h"
 
 /**
  * \brief Cấu trúc dữ liệu biểu diễn đồ thị
@@ -47,12 +47,12 @@
 typedef struct cgraph_s {
     CGRAPH_INTEGER n;
     bool directed;
-    cgraph_ivec_t from;
-    cgraph_ivec_t to;
-    cgraph_ivec_t oi;
-    cgraph_ivec_t ii;
-    cgraph_ivec_t os;
-    cgraph_ivec_t is;
+    arr_ptr(CGRAPH_INTEGER) from;
+    arr_ptr(CGRAPH_INTEGER) to;
+    arr_ptr(CGRAPH_INTEGER) oi;
+    arr_ptr(CGRAPH_INTEGER) ii;
+    arr_ptr(CGRAPH_INTEGER) os;
+    arr_ptr(CGRAPH_INTEGER) is;
     void *attr;
 } *cgraph_t;
 

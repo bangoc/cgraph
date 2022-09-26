@@ -34,7 +34,6 @@ endif()
 
 set(cgraph_src
   cgraph_error.c
-  cgraph_ivec.c
   cgraph_arr.c
   type_indexededgelist.c
   structure_generators.c
@@ -51,7 +50,6 @@ set(cgraph_inc
   cgraph_datatype.h
   cgraph_error.h
   cgraph_interface.h
-  cgraph_ivec.h
   cgraph_arr.h
   cgraph_topology.h
   cgraph_visitor.h
@@ -65,15 +63,9 @@ target_link_libraries(cgraph bkcgen)
 if(${BUILD_TESTING})
   add_subdirectory(tests)
   add_test(NAME CvectorCreateEmpty COMMAND cvector_create_empty_ut)
-  add_test(NAME CGraphIVecMax COMMAND cgraph_ivec_max_ut)
-  add_test(NAME CGraphIvecIsInInterval COMMAND cgraph_ivec_isininterval_ut)
-  add_test(NAME CGraphIvecGrowAndSetsize COMMAND cgraph_ivec_grow_and_setsize_ut)
-  add_test(NAME CGraphIvecOrder COMMAND cgraph_ivec_order_ut)
   add_test(NAME CreateGraph COMMAND create_graph_ut)
   add_test(NAME CgraphNeighbors COMMAND cgraph_neighbors_ut)
   add_test(NAME CgraphIncident COMMAND cgraph_incident_ut)
-  add_test(NAME CgraphIvecAsValue COMMAND cgraph_ivec_as_value_ut)
-  add_test(NAME CgraphIvecAsRef COMMAND cgraph_ivec_as_ref_ut)
   add_test(NAME CgraphBfs COMMAND cgraph_bfs_ut)
   add_test(NAME CgraphDegree COMMAND cgraph_degree_ut)
   add_test(NAME CgraphIsDag COMMAND cgraph_is_dag_ut)
@@ -84,9 +76,6 @@ if(${BUILD_TESTING})
                 cgraph_single_shortest_path_dijkstra_ut)
   add_test(NAME CgraphEdge COMMAND cgraph_edge_ut)
   add_test(NAME CgraphGetEid COMMAND cgraph_get_eid_ut)
-  add_test(NAME CgraphIvecAppend COMMAND cgraph_ivec_append_ut)
-  add_test(NAME CgraphIvecFromArray COMMAND
-                cgraph_ivec_from_array_ut)
   add_test(NAME CgraphMultiShortestPathDijkstra COMMAND
                 cgraph_multi_shortest_paths_dijkstra_ut)
   add_test(NAME CgraphGetShortestPaths COMMAND

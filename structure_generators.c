@@ -1,7 +1,6 @@
 #include "cgraph_constructors.h"
 #include "cgraph_error.h"
 #include "cgraph_interface.h"
-#include "cgraph_ivec.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -43,15 +42,15 @@ cgraph_t cgraph_create_empty(CGRAPH_INTEGER n, bool directed) {
 
   graph->n = 0;
   graph->directed = directed;
-  graph->from = cgraph_ivec_create();
-  graph->to = cgraph_ivec_create();
-  graph->oi = cgraph_ivec_create();
-  graph->ii = cgraph_ivec_create();
-  graph->os = cgraph_ivec_create();
-  graph->is = cgraph_ivec_create();
+  graph->from = arr_create(0, CGRAPH_INTEGER);
+  graph->to = arr_create(0, CGRAPH_INTEGER);
+  graph->oi = arr_create(0, CGRAPH_INTEGER);
+  graph->ii = arr_create(0, CGRAPH_INTEGER);
+  graph->os = arr_create(0, CGRAPH_INTEGER);
+  graph->is = arr_create(0, CGRAPH_INTEGER);
 
-  cgraph_ivec_push_back(&graph->os, 0);
-  cgraph_ivec_push_back(&graph->is, 0);
+  arr_append(graph->os, 0);
+  arr_append(graph->is, 0);
 
   /* thêm các đỉnh */
   if (cgraph_add_vertices(graph, n) != CGRAPH_SUCCESS) {
@@ -98,25 +97,25 @@ cgraph_t cgraph_create(arr_ptr(CGRAPH_INTEGER) edges,
 void cgraph_print(cgraph_t const g) {
   printf("n = %lld\n", (long long)cgraph_vcount(g));
   printf("có hướng? = %s\n", cgraph_is_directed(g)? "true": "false");
-#define PRINT_IVEC(v) \
+#define PRINT_ARR(v) \
   do { \
     printf("\t{%d", v[0]); \
-    for (int i = 1; i < cgraph_ivec_size(v); ++i) { \
+    for (int i = 1; i < arr_size(v); ++i) { \
       printf(", %d", v[i]); \
     } \
     printf("}\n"); \
   } while (0)
   printf("from = ");
-  PRINT_IVEC(g->from);
+  PRINT_ARR(g->from);
   printf("to = ");
-  PRINT_IVEC(g->to);
+  PRINT_ARR(g->to);
   printf("oi = ");
-  PRINT_IVEC(g->oi);
+  PRINT_ARR(g->oi);
   printf("ii = ");
-  PRINT_IVEC(g->ii);
+  PRINT_ARR(g->ii);
   printf("os = ");
-  PRINT_IVEC(g->os);
+  PRINT_ARR(g->os);
   printf("is = ");
-  PRINT_IVEC(g->is);
-#undef PRINT_IVEC
+  PRINT_ARR(g->is);
+#undef PRINT_ARR
 }

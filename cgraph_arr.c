@@ -59,3 +59,29 @@ void arr_iminmax(arr_ptr(CGRAPH_INTEGER) a, CGRAPH_INTEGER *min, CGRAPH_INTEGER 
     *max = _max;
   }
 }
+
+static arr_ptr(CGRAPH_INTEGER) _v;
+static arr_ptr(CGRAPH_INTEGER) _v2;
+static int ref_cmp(const void *o1, const void *o2) {
+  CGRAPH_INTEGER i1 = *((CGRAPH_INTEGER*)o1),
+                i2 = *((CGRAPH_INTEGER*)o2);
+  if (_v[i1] < _v[i2]) {
+    return -1;
+  } else if (_v[i1] > _v[i2]) {
+    return 1;
+  }
+  return _v2[i1] - _v2[i2];
+}
+
+int arr_iorder(arr_ptr(CGRAPH_INTEGER) v,
+               arr_ptr(CGRAPH_INTEGER) v2,
+               arr_ptr(CGRAPH_INTEGER) res) {
+  _v = v;
+  _v2 = v2;
+  long n = arr_size(v);
+  for (long i = 0; i < n; ++i) {
+    res[i] = i;
+  }
+  qsort(res, n, sizeof(CGRAPH_INTEGER), ref_cmp);
+  return 0;
+}

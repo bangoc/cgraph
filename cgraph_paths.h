@@ -4,7 +4,6 @@
 #include "cgen/all.h"
 #include "cgraph_datatype.h"
 #include "cgraph_constants.h"
-#include "cgraph_ivec.h"
 
 #ifdef __cplusplus
 extern "C"{

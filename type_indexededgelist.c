@@ -1,7 +1,6 @@
 #include "cgraph_arr.h"
 #include "cgraph_error.h"
 #include "cgraph_interface.h"
-#include "cgraph_ivec.h"
 
 #include <stdlib.h>
 
@@ -31,7 +30,7 @@ CGRAPH_INTEGER cgraph_vcount(const cgraph_t graph) {
  * Độ phức tạp: O(1)
  */
 CGRAPH_INTEGER cgraph_ecount(const cgraph_t graph) {
-  return (CGRAPH_INTEGER) cgraph_ivec_size(graph->from);
+  return (CGRAPH_INTEGER) arr_size(graph->from);
 }
 
 /**
@@ -56,46 +55,48 @@ bool cgraph_is_directed(const cgraph_t graph) {
  */
 
 static int cgraph_i_create_start(
-        cgraph_ivec_t res, cgraph_ivec_t el,
-        cgraph_ivec_t iindex, CGRAPH_INTEGER nodes) {
+        arr_ptr(CGRAPH_INTEGER) res,
+        arr_ptr(CGRAPH_INTEGER) el,
+        arr_ptr(CGRAPH_INTEGER) iindex,
+        CGRAPH_INTEGER nodes) {
 
 # define EDGE(i) el[ iindex[(i)] ]
 
-    CGRAPH_INTEGER no_of_nodes;
-    CGRAPH_INTEGER no_of_edges;
-    CGRAPH_INTEGER i, j, idx;
+  CGRAPH_INTEGER no_of_nodes;
+  CGRAPH_INTEGER no_of_edges;
+  CGRAPH_INTEGER i, j, idx;
 
-    no_of_nodes = nodes;
-    no_of_edges = cgraph_ivec_size(el);
+  no_of_nodes = nodes;
+  no_of_edges = arr_size(el);
 
-    /* kết quả */
+  /* kết quả */
 
-    cgraph_ivec_setsize(res, nodes + 1);
+  arr_resize(res, nodes + 1);
 
-    /* tạo chỉ mục */
+  /* tạo chỉ mục */
 
-    if (cgraph_ivec_size(el) == 0) {
-        /* đồ thị rỗng */
-        cgraph_ivec_null(res);
-    } else {
-        idx = -1;
-        for (i = 0; i <= EDGE(0); i++) {
-            idx++; res[idx] = 0;
-        }
-        for (i = 1; i < no_of_edges; i++) {
-            CGRAPH_INTEGER n =
-              (CGRAPH_INTEGER) (EDGE(i) - EDGE(res[idx]));
-            for (j = 0; j < n; j++) {
-                idx++; res[idx] = i;
-            }
-        }
-        j = EDGE(res[idx]);
-        for (i = 0; i < no_of_nodes - j; i++) {
-            idx++; res[idx] = no_of_edges;
-        }
+  if (arr_size(el) == 0) {
+    /* đồ thị rỗng */
+    arr_ifill(res, 0);
+  } else {
+    idx = -1;
+    for (i = 0; i <= EDGE(0); i++) {
+      idx++; res[idx] = 0;
     }
+    for (i = 1; i < no_of_edges; i++) {
+      CGRAPH_INTEGER n =
+        (CGRAPH_INTEGER) (EDGE(i) - EDGE(res[idx]));
+      for (j = 0; j < n; j++) {
+        idx++; res[idx] = i;
+      }
+    }
+    j = EDGE(res[idx]);
+    for (i = 0; i < no_of_nodes - j; i++) {
+      idx++; res[idx] = no_of_edges;
+    }
+  }
 
-    /* dọn dẹp */
+  /* dọn dẹp */
 
 # undef EDGE
     return 0;
@@ -145,14 +146,12 @@ int cgraph_add_edges(cgraph_t graph, arr_ptr(CGRAPH_INTEGER) edges) {
         CGRAPH_ERROR("Chỉ số đỉnh nằm ngoài khoảng", CGRAPH_FAILURE);
     }
 
-    cgraph_ivec_t newoi = cgraph_ivec_create(),
-                  newii = cgraph_ivec_create();
+    arr_make(newoi, 0, CGRAPH_INTEGER);
+    arr_make(newii, 0, CGRAPH_INTEGER);
 
     /* from & to */
-    CGRAPH_CHECK(cgraph_ivec_grow(&graph->from,
-                      no_of_edges + edges_to_add));
-    CGRAPH_CHECK(cgraph_ivec_grow(&graph->to,
-                      no_of_edges + edges_to_add));
+    arr_reserve(graph->from, no_of_edges + edges_to_add);
+    arr_reserve(graph->to, no_of_edges + edges_to_add);
 
     /*
      * Nếu là đồ thị có hướng thì from - to được xác định theo đúng
@@ -163,11 +162,11 @@ int cgraph_add_edges(cgraph_t graph, arr_ptr(CGRAPH_INTEGER) edges) {
      */
     while (i < edges_to_add * 2) {
         if (directed || edges[i] > edges[i + 1]) {
-            cgraph_ivec_push_back(&graph->from, edges[i++]);
-            cgraph_ivec_push_back(&graph->to,   edges[i++]);
+          arr_append(graph->from, edges[i++]);
+          arr_append(graph->to,   edges[i++]);
         } else {
-            cgraph_ivec_push_back(&graph->to,   edges[i++]);
-            cgraph_ivec_push_back(&graph->from, edges[i++]);
+          arr_append(graph->to,   edges[i++]);
+          arr_append(graph->from, edges[i++]);
         }
     }
 
@@ -176,38 +175,43 @@ int cgraph_add_edges(cgraph_t graph, arr_ptr(CGRAPH_INTEGER) edges) {
         cgraph_set_error_handler(cgraph_error_handler_ignore);
 
     /* oi & ii */
-    ret1 = cgraph_ivec_init(&newoi, no_of_edges + edges_to_add);
-    ret2 = cgraph_ivec_init(&newii, no_of_edges + edges_to_add);
-    if (ret1 != 0 || ret2 != 0) {
-      /* Thu gọn vec-tơ */
-      cgraph_ivec_setsize(graph->from, no_of_edges);
-      cgraph_ivec_setsize(graph->to, no_of_edges);
+    arr_resize(newoi, no_of_edges + edges_to_add);
+    arr_resize(newii, no_of_edges + edges_to_add);
 
-      /* Khôi phục xử lý lỗi */
-      cgraph_set_error_handler(oldhandler);
+    // TODO: Xử lý lỗi
+    // if (ret1 != 0 || ret2 != 0) {
+    //   // Thu gọn vec-tơ
+    //   cgraph_ivec_setsize(graph->from, no_of_edges);
+    //   cgraph_ivec_setsize(graph->to, no_of_edges);
 
-      cgraph_ivec_free(&newoi);
-      cgraph_ivec_free(&newii);
-      CGRAPH_ERROR("Không thể thêm cạnh", CGRAPH_FAILURE);
-    }
-    ret1 = cgraph_ivec_order(graph->from, graph->to, newoi);
-    ret2 = cgraph_ivec_order(graph->to, graph->from, newii);
-    if (ret1 != 0 || ret2 != 0) {
-        cgraph_ivec_setsize(graph->from, no_of_edges);
-        cgraph_ivec_setsize(graph->to, no_of_edges);
-        cgraph_ivec_free(&newoi);
-        cgraph_ivec_free(&newii);
-        cgraph_set_error_handler(oldhandler);
-        CGRAPH_ERROR("Không thể thêm cạnh", CGRAPH_FAILURE);
-    }
+    //   // Khôi phục xử lý lỗi
+    //   cgraph_set_error_handler(oldhandler);
+
+    //   cgraph_ivec_free(&newoi);
+    //   cgraph_ivec_free(&newii);
+    //   CGRAPH_ERROR("Không thể thêm cạnh", CGRAPH_FAILURE);
+    // }
+
+    arr_iorder(graph->from, graph->to, newoi);
+    arr_iorder(graph->to, graph->from, newii);
+
+    // TODO: Khôi phục xử lý lỗi
+    // if (ret1 != 0 || ret2 != 0) {
+    //   cgraph_ivec_setsize(graph->from, no_of_edges);
+    //   cgraph_ivec_setsize(graph->to, no_of_edges);
+    //   cgraph_ivec_free(&newoi);
+    //   cgraph_ivec_free(&newii);
+    //   cgraph_set_error_handler(oldhandler);
+    //   CGRAPH_ERROR("Không thể thêm cạnh", CGRAPH_FAILURE);
+    // }
 
     /* os & is, độ dài của nó không thay đổi, thao tác an toàn */
     cgraph_i_create_start(graph->os, graph->from, newoi, graph->n);
     cgraph_i_create_start(graph->is, graph->to, newii, graph->n);
 
     /* Tất cả đều đã ổn  */
-    cgraph_ivec_free(&graph->oi);
-    cgraph_ivec_free(&graph->ii);
+    arr_free(graph->oi);
+    arr_free(graph->ii);
     graph->oi = newoi;
     graph->ii = newii;
     cgraph_set_error_handler(oldhandler);
@@ -242,10 +246,8 @@ int cgraph_add_vertices(cgraph_t graph, CGRAPH_INTEGER nv) {
     CGRAPH_ERROR("Không thể thêm số lượng đỉnh âm", CGRAPH_FAILURE);
   }
 
-  CGRAPH_CHECK(cgraph_ivec_grow(&graph->os, graph->n + nv + 1));
-  CGRAPH_CHECK(cgraph_ivec_grow(&graph->is, graph->n + nv + 1));
-  cgraph_ivec_setsize(graph->os, graph->n + nv + 1);
-  cgraph_ivec_setsize(graph->is, graph->n + nv + 1);
+  arr_resize(graph->os, graph->n + nv + 1);
+  arr_resize(graph->is, graph->n + nv + 1);
 
   for (i = graph->n + 1; i < graph->n + nv + 1; i++) {
     (graph->os)[i] = ec;
@@ -275,12 +277,12 @@ int cgraph_add_vertices(cgraph_t graph, CGRAPH_INTEGER nv) {
  */
 void cgraph_destroy(cgraph_t *graph) {
   cgraph_t g = *graph;
-  cgraph_ivec_free(&g->from);
-  cgraph_ivec_free(&g->to);
-  cgraph_ivec_free(&g->oi);
-  cgraph_ivec_free(&g->ii);
-  cgraph_ivec_free(&g->os);
-  cgraph_ivec_free(&g->is);
+  arr_free(g->from);
+  arr_free(g->to);
+  arr_free(g->oi);
+  arr_free(g->ii);
+  arr_free(g->os);
+  arr_free(g->is);
   free(g);
   *graph = NULL;
 }
@@ -628,8 +630,8 @@ int cgraph_delete_edges(cgraph_t graph, arr_ptr(CGRAPH_INTEGER) edges) {
     CGRAPH_INTEGER edges_to_remove = 0;
     CGRAPH_INTEGER remaining_edges;
 
-    cgraph_ivec_t newfrom = cgraph_ivec_create(),
-                    newto = cgraph_ivec_create();
+    arr_make(newfrom, 0, CGRAPH_INTEGER);
+    arr_make(newto, 0, CGRAPH_INTEGER);
 
     CGRAPH_INTEGER *mark;
     CGRAPH_INTEGER i, j;
@@ -647,8 +649,8 @@ int cgraph_delete_edges(cgraph_t graph, arr_ptr(CGRAPH_INTEGER) edges) {
     }
     remaining_edges = no_of_edges - edges_to_remove;
 
-    cgraph_ivec_init(&newfrom, remaining_edges);
-    cgraph_ivec_init(&newto, remaining_edges);
+    arr_resize(newfrom, remaining_edges);
+    arr_resize(newto, remaining_edges);
 
     /* Lưu các cạnh không bị xóa vào newfrom và newto */
     for (i = 0, j = 0; j < remaining_edges; i++) {
@@ -660,19 +662,17 @@ int cgraph_delete_edges(cgraph_t graph, arr_ptr(CGRAPH_INTEGER) edges) {
     }
 
     /* Tạo các chỉ mục, thao tác này có thể cấp phát thêm bộ nhớ */
-    cgraph_ivec_t newoi = cgraph_ivec_create(),
-                  newii = cgraph_ivec_create();
-    cgraph_ivec_init(&newoi, remaining_edges);
-    cgraph_ivec_init(&newii, remaining_edges);
+    arr_make(newoi, remaining_edges, CGRAPH_INTEGER);
+    arr_make(newii, remaining_edges, CGRAPH_INTEGER);
 
-    CGRAPH_CHECK(cgraph_ivec_order(newfrom, newto, newoi));
-    CGRAPH_CHECK(cgraph_ivec_order(newto, newfrom, newii));
+    arr_iorder(newfrom, newto, newoi);
+    arr_iorder(newto, newfrom, newii);
 
     /* Ok, chúng ta giải phóng bộ nhớ cho các cấu trúc cũ  */
-    cgraph_ivec_free(&graph->from);
-    cgraph_ivec_free(&graph->to);
-    cgraph_ivec_free(&graph->oi);
-    cgraph_ivec_free(&graph->ii);
+    arr_free(graph->from);
+    arr_free(graph->to);
+    arr_free(graph->oi);
+    arr_free(graph->ii);
     graph->from = newfrom;
     graph->to = newto;
     graph->oi = newoi;
@@ -681,10 +681,8 @@ int cgraph_delete_edges(cgraph_t graph, arr_ptr(CGRAPH_INTEGER) edges) {
     free(mark);
 
     /* Tạo vec-tơ bắt đầu, không cần thêm bộ nhớ cho thao tác này */
-    cgraph_i_create_start(graph->os, graph->from, graph->oi,
-                          no_of_nodes);
-    cgraph_i_create_start(graph->is, graph->to,   graph->ii,
-                          no_of_nodes);
+    cgraph_i_create_start(graph->os, graph->from, graph->oi, no_of_nodes);
+    cgraph_i_create_start(graph->is, graph->to, graph->ii, no_of_nodes);
     return CGRAPH_SUCCESS;
 }
 

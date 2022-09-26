@@ -2,19 +2,6 @@
 
 #include "ut.h"
 
-bool cgraph_ivec_equal(cgraph_ivec_t const v, CGRAPH_INTEGER *a, CGRAPH_INTEGER n) {
-  CGRAPH_INTEGER sz = cgraph_ivec_size(v);
-  if (sz != n) {
-    return false;
-  }
-  for (int i = 0; i < sz; ++i) {
-    if (v[i] != a[i]) {
-      return false;
-    }
-  }
-  return true;
-}
-
 int arr_iequal(arr_ptr(CGRAPH_INTEGER) v, CGRAPH_INTEGER *a, long n) {
   if (arr_size(v) != n) {
     return 0;
@@ -25,14 +12,6 @@ int arr_iequal(arr_ptr(CGRAPH_INTEGER) v, CGRAPH_INTEGER *a, long n) {
     }
   }
   return 1;
-}
-
-void print_ivec(cgraph_ivec_t const v) {
-  printf("sz = %d, ", (int)cgraph_ivec_size(v));
-  for (int i = 0; i < cgraph_ivec_size(v); ++i) {
-    printf(" %d", v[i]);
-  }
-  printf("\n");
 }
 
 void arr_iprint(arr_ptr(CGRAPH_INTEGER) v) {

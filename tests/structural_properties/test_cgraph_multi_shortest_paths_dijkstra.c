@@ -5,7 +5,6 @@
 #include "cgen/all.h"
 #include "cgraph_error.h"
 #include "gb.h"
-#include "cgen_ext.h"
 #include "ut.h"
 
 int main() {

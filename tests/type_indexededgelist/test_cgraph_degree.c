@@ -23,7 +23,7 @@ int main() {
   { \
     if (!arr_iequal(vec, arr, n)) { \
       UT_MSG_FAILED(msg); \
-      print_ivec(vec); \
+      arr_iprint(vec); \
       failed = true; \
     } \
   }
