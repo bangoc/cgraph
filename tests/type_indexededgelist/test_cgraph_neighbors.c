@@ -5,22 +5,22 @@
 
 int main() {
   cgraph_t g = test_create_g1();
-  cgraph_ivec_t v = cgraph_ivec_create();
+  arr_make(v, 0, CGRAPH_INTEGER);
   cgraph_neighbors(g, &v, 1, CGRAPH_IN);
-  if (!cgraph_ivec_equal(v, (CGRAPH_INTEGER[]){0, 3}, 2)) {
-    print_ivec(v);
+  if (!arr_iequal(v, (CGRAPH_INTEGER[]){0, 3}, 2)) {
+    arr_iprint(v);
     UT_MSG_FAILED("Test IN Neighbors");
     return 1;
   }
   cgraph_neighbors(g, &v, 1, CGRAPH_OUT);
-  if (!cgraph_ivec_equal(v, (CGRAPH_INTEGER[]){2, 3, 4}, 3)) {
-    print_ivec(v);
+  if (!arr_iequal(v, (CGRAPH_INTEGER[]){2, 3, 4}, 3)) {
+    arr_iprint(v);
     UT_MSG_FAILED("Test OUT Neighbors");
     return 1;
   }
   cgraph_neighbors(g, &v, 1, CGRAPH_ALL);
-  if (!cgraph_ivec_equal(v, (CGRAPH_INTEGER[]){0, 2, 3, 3, 4}, 5)) {
-    print_ivec(v);
+  if (!arr_iequal(v, (CGRAPH_INTEGER[]){0, 2, 3, 3, 4}, 5)) {
+    arr_iprint(v);
     UT_MSG_FAILED("Test ALL Neighbors");
     return 1;
   }

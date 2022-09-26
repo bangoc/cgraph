@@ -35,7 +35,7 @@ bool cgraph_is_dag(const cgraph_t graph) {
 
   CGRAPH_INTEGER no_of_nodes = cgraph_vcount(graph);
   arr_make(degrees, 0, CGRAPH_INTEGER);
-  cgraph_ivec_t neis = cgraph_ivec_create();
+  arr_make(neis, 0, CGRAPH_INTEGER);
   struct gsllist *sources = gsl_create_list(NULL);
   CGRAPH_INTEGER node, i, j, nei, vertices_left;
 
@@ -61,7 +61,7 @@ bool cgraph_is_dag(const cgraph_t graph) {
 
     /* Lấy các láng giềng đi vào và giảm bậc ra một đơn vị */
     CGRAPH_CHECK(cgraph_neighbors(graph, &neis, node, CGRAPH_IN));
-    j = cgraph_ivec_size(neis);
+    j = arr_size(neis);
     for (i = 0; i < j; i++) {
       nei = neis[i];
       // if (nei == node) {
@@ -75,7 +75,7 @@ bool cgraph_is_dag(const cgraph_t graph) {
   }
 
   arr_free(degrees);
-  cgraph_ivec_free(&neis);
+  arr_free(neis);
   gsl_free(sources);
 
   return (vertices_left == 0);
@@ -130,7 +130,7 @@ int cgraph_topological_sorting(const cgraph_t graph,
     CGRAPH_ERROR("Thuộc tính không hợp lệ", CGRAPH_FAILURE);
   }
   arr_make(degrees, 0, CGRAPH_INTEGER);
-  cgraph_ivec_t neis = cgraph_ivec_create();
+  arr_make(neis, 0, CGRAPH_INTEGER);
   struct gsllist *sources = gsl_create_list(NULL);
 
   /* Không tính đỉnh lặp */
@@ -152,7 +152,7 @@ int cgraph_topological_sorting(const cgraph_t graph,
     cgraph_ivec_push_back(res, node);
     degrees[node] = -1;
     CGRAPH_CHECK(cgraph_neighbors(graph, &neis, node, mode));
-    for (CGRAPH_INTEGER i = 0; i < cgraph_ivec_size(neis); i++) {
+    for (CGRAPH_INTEGER i = 0; i < arr_size(neis); i++) {
       degrees[neis[i]]--;
       if (degrees[neis[i]] == 0) {
         que_enq(sources, gtype_l(neis[i]));
@@ -161,7 +161,7 @@ int cgraph_topological_sorting(const cgraph_t graph,
   }
 
   arr_free(degrees);
-  cgraph_ivec_free(&neis);
+  arr_free(neis);
   gsl_free(sources);
 
   if (cgraph_ivec_size(*res) < no_of_nodes) {

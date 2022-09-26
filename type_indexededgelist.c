@@ -286,7 +286,7 @@ void cgraph_destroy(cgraph_t *graph) {
 }
 
 int cgraph_neighbors(const cgraph_t graph,
-                     cgraph_ivec_t *neis,
+                     arr_ptr(CGRAPH_INTEGER) *neis,
                      CGRAPH_INTEGER vid,
                      cgraph_neimode_t mode) {
   const CGRAPH_INTEGER node = vid;
@@ -303,19 +303,19 @@ int cgraph_neighbors(const cgraph_t graph,
       mode = CGRAPH_ALL;
   }
 
-  cgraph_ivec_setsize(*neis, 0);
+  arr_resize(*neis, 0);
 
   if (!cgraph_is_directed(graph) || mode != CGRAPH_ALL) {
     if (mode & CGRAPH_OUT) {
       CGRAPH_INTEGER j = (graph->os)[node + 1];
       for (CGRAPH_INTEGER i = (graph->os)[node]; i < j; i++) {
-        cgraph_ivec_push_back(neis, (graph->to)[ (graph->oi)[i] ]);
+        arr_append(*neis, (graph->to)[ (graph->oi)[i] ]);
       }
     }
     if (mode & CGRAPH_IN) {
       CGRAPH_INTEGER j = (graph->is)[node + 1];
       for (CGRAPH_INTEGER i = (graph->is)[node]; i < j; i++) {
-        cgraph_ivec_push_back(neis, (graph->from)[ (graph->ii)[i] ]);
+        arr_append(*neis, (graph->from)[ (graph->ii)[i] ]);
       }
     }
   } else {
@@ -330,26 +330,26 @@ int cgraph_neighbors(const cgraph_t graph,
       CGRAPH_INTEGER n1 = (graph->to)[ (graph->oi)[i1] ];
       CGRAPH_INTEGER n2 = (graph->from)[ (graph->ii)[i2] ];
       if (n1 < n2) {
-        cgraph_ivec_push_back(neis, n1);
+        arr_append(*neis, n1);
         i1++;
       } else if (n1 > n2) {
-        cgraph_ivec_push_back(neis, n2);
+        arr_append(*neis, n2);
         i2++;
       } else {
-        cgraph_ivec_push_back(neis, n1);
-        cgraph_ivec_push_back(neis, n2);
+        arr_append(*neis, n1);
+        arr_append(*neis, n2);
         i1++;
         i2++;
       }
     }
     while (i1 < j1) {
       CGRAPH_INTEGER n1 = (graph->to)[ (graph->oi)[i1] ];
-      cgraph_ivec_push_back(neis, n1);
+      arr_append(*neis, n1);
       i1++;
     }
     while (i2 < j2) {
       CGRAPH_INTEGER n2 = (graph->from)[ (graph->ii)[i2] ];
-      cgraph_ivec_push_back(neis, n2);
+      arr_append(*neis, n2);
       i2++;
     }
   }

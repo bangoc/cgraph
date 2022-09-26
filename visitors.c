@@ -75,7 +75,7 @@ VINIT(dist);
 # undef VINIT
 
   int rootpos = 0;
-  cgraph_ivec_t neis = cgraph_ivec_create();
+  arr_make(neis, 0, CGRAPH_INTEGER);
   while (1) {
     if (rootpos == 0) {
       actroot = root;
@@ -113,7 +113,7 @@ VINIT(dist);
       CGRAPH_INTEGER succ_vec;
 
       cgraph_neighbors(graph, &neis, actvect, mode);
-      long int i, n = cgraph_ivec_size(neis);
+      long int i, n = arr_size(neis);
 
       if (pred) {
         (*pred)[actvect] = pred_vec;
@@ -154,7 +154,7 @@ VINIT(dist);
     } /* while q !empty */
   } /* while (1) */
   free(added);
-  cgraph_ivec_free(&neis);
+  arr_free(neis);
   gsl_free(q);
   return 0;
 }
@@ -274,9 +274,9 @@ int cgraph_dfs(const cgraph_t graph,
 
   cgraph_ivec_t nptr = cgraph_ivec_create();
   cgraph_ivec_init(&nptr, no_of_nodes);
-  cgraph_ivec_t *neis_cache =
-    (cgraph_ivec_t *)calloc(no_of_nodes, sizeof(cgraph_ivec_t));
-  cgraph_ivec_t neis = NULL;
+  arr_ptr(CGRAPH_INTEGER) *neis_cache =
+    calloc(no_of_nodes, sizeof(arr_ptr(CGRAPH_INTEGER)));
+  arr_ptr(CGRAPH_INTEGER) neis = NULL;
   for (actroot = 0; actroot < no_of_nodes; ) {
 
     /* 'root' first, then all other vertices */
@@ -305,11 +305,11 @@ int cgraph_dfs(const cgraph_t graph,
     while (!stk_is_empty(stack)) {
       CGRAPH_INTEGER actvect = stk_top(stack).l;
       if (!neis_cache[actvect]) {
-        neis_cache[actvect] = cgraph_ivec_create();
+        neis_cache[actvect] = arr_create(0, CGRAPH_INTEGER);
         cgraph_neighbors(graph, neis_cache + actvect, actvect, mode);
       }
       neis = neis_cache[actvect];
-      CGRAPH_INTEGER n = cgraph_ivec_size(neis);
+      CGRAPH_INTEGER n = arr_size(neis);
 
       /* Search for a neighbor that was not yet visited */
       bool any = 0;
@@ -346,7 +346,7 @@ int cgraph_dfs(const cgraph_t graph,
   }
   for (CGRAPH_INTEGER i = 0; i < no_of_nodes; ++i) {
     if (neis_cache[i]) {
-      cgraph_ivec_free(neis_cache + i);
+      arr_free(neis_cache[i]);
     }
   }
   free(neis_cache);

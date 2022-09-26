@@ -9,6 +9,8 @@ int arr_iequal(arr_ptr(CGRAPH_INTEGER) v, CGRAPH_INTEGER *a, long n);
 
 void print_ivec(cgraph_ivec_t const v);
 
+void arr_iprint(arr_ptr(CGRAPH_INTEGER) v);
+
 #define UT_MSG_FAILED(msg) \
     do { \
       printf("%s: Failed\n", msg); \

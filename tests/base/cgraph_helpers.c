@@ -35,6 +35,14 @@ void print_ivec(cgraph_ivec_t const v) {
   printf("\n");
 }
 
+void arr_iprint(arr_ptr(CGRAPH_INTEGER) v) {
+  printf("sz = %d, ", (int)arr_size(v));
+  for (int i = 0; i < arr_size(v); ++i) {
+    printf(" %d", v[i]);
+  }
+  printf("\n");
+}
+
 bool ut_is_connected(cgraph_t g, CGRAPH_INTEGER pfrom, CGRAPH_INTEGER pto,
         bool directed) {
   CGRAPH_INTEGER eid = -1;

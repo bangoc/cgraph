@@ -16,7 +16,7 @@ bool is_valid_topological_order(cgraph_t g,
   }
   CGRAPH_INTEGER no_of_nodes = cgraph_vcount(g);
   arr_make(degrees, 0, CGRAPH_INTEGER);
-  cgraph_ivec_t neis = cgraph_ivec_create();
+  arr_make(neis, 0, CGRAPH_INTEGER);
   cgraph_degree_all(g, &degrees, deg_mode, true);
 
   CGRAPH_INTEGER sz = cgraph_ivec_size(v);
@@ -30,15 +30,14 @@ bool is_valid_topological_order(cgraph_t g,
     removed[ v[i] ] = true;
     CGRAPH_INTEGER node = v[i];
     cgraph_neighbors(g, &neis, node, mode);
-    for (CGRAPH_INTEGER i = 0;
-         i < cgraph_ivec_size(neis); i++) {
+    for (CGRAPH_INTEGER i = 0; i < arr_size(neis); i++) {
       CGRAPH_INTEGER nei = neis[i];
       degrees[nei]--;
     }
   }
   free(removed);
   arr_free(degrees);
-  cgraph_ivec_free(&neis);
+  arr_free(neis);
   if (any) {
     return false;
   }
