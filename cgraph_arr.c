@@ -41,3 +41,21 @@ void gtype_free_iarr_ref(gtype v) {
   arr_free(*vref);
   free(vref);
 }
+
+void arr_iminmax(arr_ptr(CGRAPH_INTEGER) a, CGRAPH_INTEGER *min, CGRAPH_INTEGER *max) {
+  CGRAPH_INTEGER _min, _max;
+  _min = _max = a[0];
+  for (CGRAPH_INTEGER i = 1; i < arr_size(a); ++i) {
+    if (a[i] > _max) {
+      _max = a[i];
+    } else if (a[i] < _min) {
+      _min = a[i];
+    }
+  }
+  if (min) {
+    *min = _min;
+  }
+  if (max) {
+    *max = _max;
+  }
+}

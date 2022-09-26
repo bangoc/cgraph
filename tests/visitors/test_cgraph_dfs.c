@@ -5,16 +5,16 @@
 
 int main() {
   cgraph_t g = test_create_g1();
-  cgraph_ivec_t order     = cgraph_ivec_create(),
-                order_out = cgraph_ivec_create(),
-                father    = cgraph_ivec_create(),
-                dist      = cgraph_ivec_create();
+  arr_make(order, 0, CGRAPH_INTEGER);
+  arr_make(order_out, 0, CGRAPH_INTEGER);
+  arr_make(father, 0, CGRAPH_INTEGER);
+  arr_make(dist, 0, CGRAPH_INTEGER);
   cgraph_dfs(g, 1, CGRAPH_OUT, false, &order, &order_out, &father, &dist);
   bool any = false;
 #define TEST(vec, arr, n, msg) { \
-    if (!cgraph_ivec_equal(vec, arr, n)) { \
+    if (!arr_iequal(vec, arr, n)) { \
       UT_MSG_FAILED(msg); \
-      print_ivec(vec); \
+      arr_iprint(vec); \
       any = true; \
     } \
   }
@@ -65,6 +65,10 @@ int main() {
   TEST(father, ((CGRAPH_INTEGER[]){-1, -1, 1, 1, 2, 3}), 6, "Case 4. father");
   TEST(dist, ((CGRAPH_INTEGER[]){0, 0, 1, 1, 2, 2}), 6, "Case 4. dist");
   cgraph_destroy(&g);
+  arr_free(order);
+  arr_free(order_out);
+  arr_free(father);
+  arr_free(dist);
   if (any) {
     return 1;
   }

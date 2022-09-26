@@ -1,5 +1,6 @@
 #include <stdlib.h>
 
+#include "cgraph_arr.h"
 #include "cgraph_error.h"
 #include "cgraph_interface.h"
 #include "cgraph_ivec.h"
@@ -10,13 +11,13 @@ int cgraph_bfs(const cgraph_t graph,
                CGRAPH_INTEGER root,
                cgraph_neimode_t mode,
                bool unreachable,
-               cgraph_ivec_t const restricted,
-               cgraph_ivec_t *order,
-               cgraph_ivec_t *rank,
-               cgraph_ivec_t *father,
-               cgraph_ivec_t *pred,
-               cgraph_ivec_t *succ,
-               cgraph_ivec_t *dist) {
+               arr_ptr(CGRAPH_INTEGER) restricted,
+               arr_ptr(CGRAPH_INTEGER) *order,
+               arr_ptr(CGRAPH_INTEGER) *rank,
+               arr_ptr(CGRAPH_INTEGER) *father,
+               arr_ptr(CGRAPH_INTEGER) *pred,
+               arr_ptr(CGRAPH_INTEGER) *succ,
+               arr_ptr(CGRAPH_INTEGER) *dist) {
   CGRAPH_INTEGER no_of_nodes = cgraph_vcount(graph);
   CGRAPH_INTEGER actroot = root;
 
@@ -28,9 +29,7 @@ int cgraph_bfs(const cgraph_t graph,
   }
 
   if (restricted) {
-    CGRAPH_INTEGER min, max;
-    cgraph_ivec_minmax(restricted, &min, &max);
-    if (min < 0 || max >= no_of_nodes) {
+    if (!arr_irange(restricted, 0, no_of_nodes - 1)) {
       CGRAPH_ERROR("Mã đỉnh không hợp lệ trong tập restricted", CGRAPH_FAILURE);
     }
   }
@@ -51,7 +50,7 @@ int cgraph_bfs(const cgraph_t graph,
   found. Special care must be taken for vertices that are not in
   the restricted set, but are to be used as 'root' vertices. */
   if (restricted) {
-    long int i, n = cgraph_ivec_size(restricted);
+    long int i, n = arr_size(restricted);
     for (i = 0; i < no_of_nodes; ++i) {
      added[i] = true;
     }
@@ -62,9 +61,11 @@ int cgraph_bfs(const cgraph_t graph,
 
   /* Resize result vectors, and fill them with IGRAPH_NAN */
 
-# define VINIT(v) if (v) {                      \
-   cgraph_ivec_init((v), no_of_nodes);   \
-   cgraph_ivec_fill((*v), CGRAPH_NAN); }
+#define VINIT(vref) \
+  if (vref) {     \
+    arr_resize((*vref), no_of_nodes);   \
+    arr_ifill((*vref), CGRAPH_NAN); \
+  }
 
 VINIT(order);
 VINIT(rank);
@@ -72,7 +73,8 @@ VINIT(father);
 VINIT(pred);
 VINIT(succ);
 VINIT(dist);
-# undef VINIT
+
+#undef VINIT
 
   int rootpos = 0;
   arr_make(neis, 0, CGRAPH_INTEGER);
@@ -163,8 +165,8 @@ int cgraph_simple_bfs(const cgraph_t graph,
                CGRAPH_INTEGER root,
                cgraph_neimode_t mode,
                bool unreachable,
-               cgraph_ivec_t *father,
-               cgraph_ivec_t *dist) {
+               arr_ptr(CGRAPH_INTEGER) *father,
+               arr_ptr(CGRAPH_INTEGER) *dist) {
   return cgraph_bfs(graph,
       root,
       mode,
@@ -226,10 +228,10 @@ int cgraph_dfs(const cgraph_t graph,
                CGRAPH_INTEGER root,
                cgraph_neimode_t mode,
                bool unreachable,
-               cgraph_ivec_t *order,
-               cgraph_ivec_t *order_out,
-               cgraph_ivec_t *father,
-               cgraph_ivec_t *dist) {
+               arr_ptr(CGRAPH_INTEGER) *order,
+               arr_ptr(CGRAPH_INTEGER) *order_out,
+               arr_ptr(CGRAPH_INTEGER) *father,
+               arr_ptr(CGRAPH_INTEGER) *dist) {
   CGRAPH_INTEGER no_of_nodes = cgraph_vcount(graph);
   struct gsllist *stack = gsl_create_list(NULL);
   bool *added = (bool*)calloc(no_of_nodes, sizeof(bool));
@@ -249,16 +251,18 @@ int cgraph_dfs(const cgraph_t graph,
 
 /* Resize result vectors and fill them with IGRAPH_NAN */
 
-# define VINIT(v) if (v) {                \
-  cgraph_ivec_init(v, no_of_nodes);       \
-  cgraph_ivec_fill((*v), CGRAPH_NAN); }
+#define VINIT(vref) \
+  if (vref) {            \
+    arr_resize((*vref), no_of_nodes);       \
+    arr_ifill((*vref), CGRAPH_NAN);  \
+  }
 
   VINIT(order);
   VINIT(order_out);
   VINIT(father);
   VINIT(dist);
 
-# undef VINIT
+#undef VINIT
 
   stk_push(stack, gtype_l(root));
   added[root] = true;
@@ -272,14 +276,13 @@ int cgraph_dfs(const cgraph_t graph,
     (*dist)[root] = 0;
   }
 
-  cgraph_ivec_t nptr = cgraph_ivec_create();
-  cgraph_ivec_init(&nptr, no_of_nodes);
+  arr_make(nptr, no_of_nodes, CGRAPH_INTEGER);
   arr_ptr(CGRAPH_INTEGER) *neis_cache =
     calloc(no_of_nodes, sizeof(arr_ptr(CGRAPH_INTEGER)));
   arr_ptr(CGRAPH_INTEGER) neis = NULL;
   for (actroot = 0; actroot < no_of_nodes; ) {
 
-    /* 'root' first, then all other vertices */
+    /* Đầu tiên là gốc và sau đó là các đỉnh khác */
     if (stk_is_empty(stack)) {
       if (!unreachable) {
         break;
@@ -301,7 +304,7 @@ int cgraph_dfs(const cgraph_t graph,
       }
     }
 
-    cgraph_ivec_fill(nptr, 0);
+    arr_ifill(nptr, 0);
     while (!stk_is_empty(stack)) {
       CGRAPH_INTEGER actvect = stk_top(stack).l;
       if (!neis_cache[actvect]) {
@@ -350,7 +353,7 @@ int cgraph_dfs(const cgraph_t graph,
     }
   }
   free(neis_cache);
-  cgraph_ivec_free(&nptr);
+  arr_free(nptr);
   gsl_free(stack);
   free(added);
   return 0;

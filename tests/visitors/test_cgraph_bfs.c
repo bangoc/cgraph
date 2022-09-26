@@ -6,12 +6,12 @@
 int main() {
   cgraph_t g = test_create_g1();
 
-  cgraph_ivec_t order = cgraph_ivec_create(),
-                rank = cgraph_ivec_create(),
-                father = cgraph_ivec_create(),
-                pred = cgraph_ivec_create(),
-                succ = cgraph_ivec_create(),
-                dist = cgraph_ivec_create();
+  arr_make(order, 0, CGRAPH_INTEGER);
+  arr_make(rank, 0, CGRAPH_INTEGER);
+  arr_make(father, 0, CGRAPH_INTEGER);
+  arr_make(pred, 0, CGRAPH_INTEGER);
+  arr_make(succ, 0, CGRAPH_INTEGER);
+  arr_make(dist, 0, CGRAPH_INTEGER);
 
   // printf("Case 1\n");
   cgraph_bfs(g,
@@ -27,9 +27,9 @@ int main() {
              &dist);
 
 #define TEST(vec, arr, n, msg) \
-  if (!cgraph_ivec_equal(vec, arr, n)) { \
+  if (!arr_iequal(vec, arr, n)) { \
     UT_MSG_FAILED(msg); \
-    print_ivec(vec); \
+    arr_iprint(vec); \
     return 1; \
   }
 
@@ -101,5 +101,11 @@ int main() {
 #undef TEST
   UT_MSG_OK("Test neightbors");
   cgraph_destroy(&g);
+  arr_free(order);
+  arr_free(rank);
+  arr_free(father);
+  arr_free(pred);
+  arr_free(succ);
+  arr_free(dist);
   return 0;
 }

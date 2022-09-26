@@ -1,6 +1,7 @@
 #ifndef CGRAPH_VISITOR_H_
 #define CGRAPH_VISITOR_H_
 
+#include "cgen/vec/arr.h"
 #include "cgraph_datatype.h"
 #include "cgraph_constants.h"
 
@@ -12,29 +13,29 @@ int cgraph_bfs(const cgraph_t graph,
                CGRAPH_INTEGER root,
                cgraph_neimode_t mode,
                bool unreachable,
-               cgraph_ivec_t const restricted,
-               cgraph_ivec_t *order,
-               cgraph_ivec_t *rank,
-               cgraph_ivec_t *father,
-               cgraph_ivec_t *pred,
-               cgraph_ivec_t *succ,
-               cgraph_ivec_t *dist);
+               arr_ptr(CGRAPH_INTEGER) restricted,
+               arr_ptr(CGRAPH_INTEGER) *order,
+               arr_ptr(CGRAPH_INTEGER) *rank,
+               arr_ptr(CGRAPH_INTEGER) *father,
+               arr_ptr(CGRAPH_INTEGER) *pred,
+               arr_ptr(CGRAPH_INTEGER) *succ,
+               arr_ptr(CGRAPH_INTEGER) *dist);
 
 int cgraph_simple_bfs(const cgraph_t graph,
                CGRAPH_INTEGER root,
                cgraph_neimode_t mode,
                bool unreachable,
-               cgraph_ivec_t *father,
-               cgraph_ivec_t *dist);
+               arr_ptr(CGRAPH_INTEGER) *father,
+               arr_ptr(CGRAPH_INTEGER) *dist);
 
 int cgraph_dfs(const cgraph_t graph,
                CGRAPH_INTEGER root,
                cgraph_neimode_t mode,
                bool unreachable,
-               cgraph_ivec_t *order,
-               cgraph_ivec_t *order_out,
-               cgraph_ivec_t *father,
-               cgraph_ivec_t *dist);
+               arr_ptr(CGRAPH_INTEGER) *order,
+               arr_ptr(CGRAPH_INTEGER) *order_out,
+               arr_ptr(CGRAPH_INTEGER) *father,
+               arr_ptr(CGRAPH_INTEGER) *dist);
 
 #ifdef __cplusplus
 }

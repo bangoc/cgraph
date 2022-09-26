@@ -32,4 +32,6 @@ void gtype_free_iarr_ref(gtype v);
 #define arr_iptr_at(vec, i) \
   (*((arr_ptr(CGRAPH_INTEGER)*)(gvec_elem(vec, i).v)))
 
+void arr_iminmax(arr_ptr(CGRAPH_INTEGER) a, CGRAPH_INTEGER *min, CGRAPH_INTEGER *max);
+
 #endif  // CGRAPH_ARR_H_
