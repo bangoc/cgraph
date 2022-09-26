@@ -357,7 +357,7 @@ int cgraph_neighbors(const cgraph_t graph,
 }
 
 int cgraph_incident(const cgraph_t graph,
-                    cgraph_ivec_t *eids,
+                    arr_ptr(CGRAPH_INTEGER) *eids,
                     CGRAPH_INTEGER vid,
                     cgraph_neimode_t mode) {
   const CGRAPH_INTEGER node = vid;
@@ -373,18 +373,18 @@ int cgraph_incident(const cgraph_t graph,
     mode = CGRAPH_ALL;
   }
 
-  cgraph_ivec_setsize(*eids, 0);
+  arr_resize(*eids, 0);
 
   if (mode & CGRAPH_OUT) {
     CGRAPH_INTEGER j = (graph->os)[node + 1];
     for (CGRAPH_INTEGER i = (graph->os)[node]; i < j; i++) {
-      cgraph_ivec_push_back(eids, (graph->oi)[i]);
+      arr_append(*eids, (graph->oi)[i]);
     }
   }
   if (mode & CGRAPH_IN) {
     CGRAPH_INTEGER j = (graph->is)[node + 1];
     for (CGRAPH_INTEGER i = (graph->is)[node]; i < j; i++) {
-      cgraph_ivec_push_back(eids, (graph->ii)[i]);
+      arr_append(*eids, (graph->ii)[i]);
     }
   }
   return 0;
@@ -715,13 +715,13 @@ int cgraph_disconnect_vertices(cgraph_t graph,
   char *vmark = calloc(no_of_vertices, sizeof(char)),
        *emark = calloc(no_of_edges, sizeof(char));
   CGRAPH_INTEGER i, j;
-  cgraph_ivec_t tmp = cgraph_ivec_create();
+  arr_make(tmp, 0, CGRAPH_INTEGER);
   arr_make(eid, 0, CGRAPH_INTEGER);
 
 #define FREE_MEMORY() \
   free(vmark); \
   free(emark); \
-  cgraph_ivec_free(&tmp); \
+  arr_free(tmp); \
   arr_free(eid)
 
   for (i = 0; i < arr_size(vertices); ++i) {
@@ -736,7 +736,7 @@ int cgraph_disconnect_vertices(cgraph_t graph,
         CGRAPH_ERROR("Lỗi lấy danh sách cạnh", CGRAPH_FAILURE);
       }
       // Đã lấy danh sách cạnh
-      for (j = 0; j < cgraph_ivec_size(tmp); ++j) {
+      for (j = 0; j < arr_size(tmp); ++j) {
         if (!emark[tmp[j]]) {
           emark[tmp[j]] = 1;
           arr_append(eid, tmp[j]);

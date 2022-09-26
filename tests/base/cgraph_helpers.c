@@ -15,6 +15,18 @@ bool cgraph_ivec_equal(cgraph_ivec_t const v, CGRAPH_INTEGER *a, CGRAPH_INTEGER 
   return true;
 }
 
+int arr_iequal(arr_ptr(CGRAPH_INTEGER) v, CGRAPH_INTEGER *a, long n) {
+  if (arr_size(v) != n) {
+    return 0;
+  }
+  for (long i = 0; i < n; ++i) {
+    if (v[i] != a[i]) {
+      return 0;
+    }
+  }
+  return 1;
+}
+
 void print_ivec(cgraph_ivec_t const v) {
   printf("sz = %d, ", (int)cgraph_ivec_size(v));
   for (int i = 0; i < cgraph_ivec_size(v); ++i) {

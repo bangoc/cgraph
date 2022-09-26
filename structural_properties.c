@@ -282,7 +282,7 @@ int cgraph_get_shortest_paths(const cgraph_t graph,
                  CGRAPH_FAILURE);
   }
   struct gsllist *q = gsl_create_list(NULL);
-  cgraph_ivec_t tmp = cgraph_ivec_create();
+  arr_make(tmp, 0, CGRAPH_INTEGER);
 
   /* Đánh dấu các đỉnh cần đi tới */
   to_reach = cgraph_ivec_size(to);
@@ -326,7 +326,7 @@ int cgraph_get_shortest_paths(const cgraph_t graph,
     --act;
 
     CGRAPH_CHECK(cgraph_incident(graph, &tmp, act, mode));
-    for (int j = 0; j < cgraph_ivec_size(tmp); j++) {
+    for (int j = 0; j < arr_size(tmp); j++) {
       CGRAPH_INTEGER edge = tmp[j];
       CGRAPH_INTEGER neighbor = CGRAPH_OTHER(graph, edge, act);
       if (father[neighbor] > 0) {
@@ -424,7 +424,7 @@ int cgraph_get_shortest_paths(const cgraph_t graph,
 
   free(father);
   gsl_free(q);
-  cgraph_ivec_free(&tmp);
+  arr_free(tmp);
 
   return 0;
 }
@@ -584,7 +584,7 @@ int cgraph_get_shortest_paths_dijkstra(const cgraph_t graph,
   parents[from] = 0;
   p2w_push_with_index(q, from, gtype_d(0.0));
 
-  cgraph_ivec_t neis = cgraph_ivec_create();
+  arr_make(neis, 0, CGRAPH_INTEGER);
   while (!p2w_is_empty(q) && to_reach > 0) {
     CGRAPH_INTEGER nlen, minnei = p2w_max_index(q);
     CGRAPH_REAL mindist = -p2w_delete_max(q).d;
@@ -596,7 +596,7 @@ int cgraph_get_shortest_paths_dijkstra(const cgraph_t graph,
 
     // Cập nhật đường đi ngắn nhất cho các láng giềng của 'minnei'
     cgraph_incident(graph, &neis, minnei, mode);
-    nlen = cgraph_ivec_size(neis);
+    nlen = arr_size(neis);
     for (CGRAPH_INTEGER i = 0; i < nlen; i++) {
       CGRAPH_INTEGER edge = neis[i];
       CGRAPH_INTEGER tto = CGRAPH_OTHER(graph, edge, minnei);
@@ -692,7 +692,7 @@ int cgraph_get_shortest_paths_dijkstra(const cgraph_t graph,
 
   p2w_free(q);
   arr_free(dists);
-  cgraph_ivec_free(&neis);
+  arr_free(neis);
   free(is_target);
   free(parents);
 

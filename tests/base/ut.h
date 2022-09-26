@@ -5,6 +5,8 @@
 
 bool cgraph_ivec_equal(cgraph_ivec_t v, CGRAPH_INTEGER *a, CGRAPH_INTEGER n);
 
+int arr_iequal(arr_ptr(CGRAPH_INTEGER) v, CGRAPH_INTEGER *a, long n);
+
 void print_ivec(cgraph_ivec_t const v);
 
 #define UT_MSG_FAILED(msg) \
