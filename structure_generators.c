@@ -60,7 +60,7 @@ cgraph_t cgraph_create_empty(CGRAPH_INTEGER n, bool directed) {
   return graph;
 }
 
-cgraph_t cgraph_create(arr_ptr(CGRAPH_INTEGER) edges,
+cgraph_t cgraph_create(atype(CGRAPH_INTEGER) *edges,
           CGRAPH_INTEGER n,
           bool directed) {
   bool has_edges = arr_size(edges) > 0;

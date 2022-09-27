@@ -2,7 +2,7 @@
 
 #include "base/cgraph_arr.h"
 
-CGRAPH_INTEGER arr_imax(arr_ptr(CGRAPH_INTEGER) a) {
+CGRAPH_INTEGER arr_imax(atype(CGRAPH_INTEGER) *a) {
   CGRAPH_INTEGER max = a[0];
   for (long i = 1; i < arr_size(a); ++i) {
     if (a[i] > max) {
@@ -12,7 +12,7 @@ CGRAPH_INTEGER arr_imax(arr_ptr(CGRAPH_INTEGER) a) {
   return max;
 }
 
-int arr_irange(arr_ptr(CGRAPH_INTEGER) a,
+int arr_irange(atype(CGRAPH_INTEGER) *a,
                CGRAPH_INTEGER low, CGRAPH_INTEGER high) {
   for (long i = 0; i < arr_size(a); ++i) {
     if (a[i] < low || a[i] > high) {
@@ -22,7 +22,7 @@ int arr_irange(arr_ptr(CGRAPH_INTEGER) a,
   return 1;
 }
 
-arr_ptr(CGRAPH_INTEGER) arr_ifrom_array(CGRAPH_INTEGER *a, CGRAPH_INTEGER n) {
+atype(CGRAPH_INTEGER) *arr_ifrom_array(CGRAPH_INTEGER *a, CGRAPH_INTEGER n) {
   arr_make(tmp, n, CGRAPH_INTEGER);
   for (long i = 0; i < n; ++i) {
     tmp[i] = a[i];
@@ -30,20 +30,20 @@ arr_ptr(CGRAPH_INTEGER) arr_ifrom_array(CGRAPH_INTEGER *a, CGRAPH_INTEGER n) {
   return tmp;
 }
 
-arr_ptr(CGRAPH_INTEGER) *arr_icreate_ref() {
-  arr_ptr(CGRAPH_INTEGER) *vref = malloc(sizeof(arr_ptr(CGRAPH_INTEGER)));
+atype(CGRAPH_INTEGER) **arr_icreate_ref() {
+  atype(CGRAPH_INTEGER) **vref = malloc(sizeof(atype(CGRAPH_INTEGER) *));
   *vref = arr_create(0, CGRAPH_INTEGER);
   return vref;
 }
 
 void gtype_free_iarr_ref(gtype v) {
-  arr_ptr(CGRAPH_INTEGER) *vref = (arr_ptr(CGRAPH_INTEGER) *)(v.v);
+  atype(CGRAPH_INTEGER) **vref = (atype(CGRAPH_INTEGER) **)(v.v);
   arr_free(*vref);
   free(vref);
 }
 
-static arr_ptr(CGRAPH_INTEGER) _v;
-static arr_ptr(CGRAPH_INTEGER) _v2;
+static atype(CGRAPH_INTEGER) *_v;
+static atype(CGRAPH_INTEGER) *_v2;
 static int ref_cmp(const void *o1, const void *o2) {
   CGRAPH_INTEGER i1 = *((CGRAPH_INTEGER*)o1),
                 i2 = *((CGRAPH_INTEGER*)o2);
@@ -55,9 +55,9 @@ static int ref_cmp(const void *o1, const void *o2) {
   return _v2[i1] - _v2[i2];
 }
 
-int arr_iorder(arr_ptr(CGRAPH_INTEGER) v,
-               arr_ptr(CGRAPH_INTEGER) v2,
-               arr_ptr(CGRAPH_INTEGER) res) {
+int arr_iorder(atype(CGRAPH_INTEGER) *v,
+               atype(CGRAPH_INTEGER) *v2,
+               atype(CGRAPH_INTEGER) *res) {
   _v = v;
   _v2 = v2;
   long n = arr_size(v);

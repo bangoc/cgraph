@@ -3,9 +3,9 @@
 
 #include "cgraph.h"
 
-int arr_iequal(arr_ptr(CGRAPH_INTEGER) v, CGRAPH_INTEGER *a, long n);
+int arr_iequal(atype(CGRAPH_INTEGER) *v, CGRAPH_INTEGER *a, long n);
 
-void arr_iprint(arr_ptr(CGRAPH_INTEGER) v);
+void arr_iprint(atype(CGRAPH_INTEGER) *v);
 
 #define UT_MSG_FAILED(msg) \
     do { \

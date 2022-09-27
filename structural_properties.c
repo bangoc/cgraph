@@ -113,7 +113,7 @@ bool cgraph_is_dag(const cgraph_t graph) {
  *
  */
 int cgraph_topological_sorting(const cgraph_t graph,
-                               arr_ptr(CGRAPH_INTEGER) *res,
+                               atype(CGRAPH_INTEGER) **res,
                                cgraph_neimode_t mode) {
   CGRAPH_INTEGER no_of_nodes = cgraph_vcount(graph);
   cgraph_neimode_t deg_mode;
@@ -243,10 +243,10 @@ int cgraph_get_shortest_paths(const cgraph_t graph,
                               gvec_t vertices,
                               gvec_t edges,
                               CGRAPH_INTEGER from,
-                              arr_ptr(CGRAPH_INTEGER) to,
+                              atype(CGRAPH_INTEGER) *to,
                               cgraph_neimode_t mode,
-                              arr_ptr(CGRAPH_INTEGER) *predecessors,
-                              arr_ptr(CGRAPH_INTEGER) *inbound_edges) {
+                              atype(CGRAPH_INTEGER) **predecessors,
+                              atype(CGRAPH_INTEGER) **inbound_edges) {
   CGRAPH_INTEGER no_of_nodes = cgraph_vcount(graph);
   CGRAPH_INTEGER *father;
 
@@ -374,8 +374,8 @@ int cgraph_get_shortest_paths(const cgraph_t graph,
   if (vertices || edges) {
     for (int i = 0; i < arr_size(to); ++i) {
       CGRAPH_INTEGER node = to[i];
-      arr_ptr(CGRAPH_INTEGER) *vvec = NULL;
-      arr_ptr(CGRAPH_INTEGER) *evec = NULL;
+      atype(CGRAPH_INTEGER) **vvec = NULL;
+      atype(CGRAPH_INTEGER) **evec = NULL;
       if (vertices) {
         vvec = gvec_elem(vertices, i).v;
       }
@@ -490,11 +490,11 @@ int cgraph_get_shortest_paths_dijkstra(const cgraph_t graph,
                           gvec_t vertices,
                           gvec_t edges,
                           CGRAPH_INTEGER from,
-                          arr_ptr(CGRAPH_INTEGER) to,
-                          arr_ptr(CGRAPH_REAL) weights,
+                          atype(CGRAPH_INTEGER) *to,
+                          atype(CGRAPH_REAL) *weights,
                           cgraph_neimode_t mode,
-                          arr_ptr(CGRAPH_INTEGER) *predecessors,
-                          arr_ptr(CGRAPH_INTEGER) *inbound_edges) {
+                          atype(CGRAPH_INTEGER) **predecessors,
+                          atype(CGRAPH_INTEGER) **inbound_edges) {
     /* Chi tiết triển khai. Đây là triển khai cơ bản cho giải thuật
     Dijkstra với một heap nhị phân. Heap được đánh chỉ mục, nghĩa là,
     nó không chỉ chứa các khoảng cách, mà còn chứa các đỉnh gắn với
@@ -647,8 +647,8 @@ int cgraph_get_shortest_paths_dijkstra(const cgraph_t graph,
     for (CGRAPH_INTEGER i = 0; i < arr_size(to); i++) {
       CGRAPH_INTEGER node = to[i];
       CGRAPH_INTEGER size, act, edge;
-      arr_ptr(CGRAPH_INTEGER) *vvec = NULL;
-      arr_ptr(CGRAPH_INTEGER) *evec = NULL;
+      atype(CGRAPH_INTEGER) **vvec = NULL;
+      atype(CGRAPH_INTEGER) **evec = NULL;
       if (vertices) {
         vvec = gvec_elem(vertices, i).v;
       }
@@ -731,11 +731,11 @@ int cgraph_get_shortest_paths_dijkstra(const cgraph_t graph,
  * nhiều đỉnh đích hơn.
  **/
 int cgraph_get_shortest_path_dijkstra(const cgraph_t graph,
-        arr_ptr(CGRAPH_INTEGER) *vertices,
-        arr_ptr(CGRAPH_INTEGER) *edges,
+        atype(CGRAPH_INTEGER) **vertices,
+        atype(CGRAPH_INTEGER) **edges,
         CGRAPH_INTEGER from,
         CGRAPH_INTEGER to,
-        arr_ptr(CGRAPH_REAL) weights,
+        atype(CGRAPH_REAL) *weights,
         cgraph_neimode_t mode) {
   gvec_t pvertices = NULL, pedges = NULL;
   if (vertices) {
@@ -781,8 +781,8 @@ int cgraph_get_shortest_path_dijkstra(const cgraph_t graph,
  * \ref igraph_get_shortest_path
  **/
 int cgraph_get_shortest_path(const cgraph_t graph,
-        arr_ptr(CGRAPH_INTEGER) *vertices,
-        arr_ptr(CGRAPH_INTEGER) *edges,
+        atype(CGRAPH_INTEGER) **vertices,
+        atype(CGRAPH_INTEGER) **edges,
         const CGRAPH_INTEGER from,
         const CGRAPH_INTEGER to,
         const cgraph_neimode_t mode) {

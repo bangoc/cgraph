@@ -4,7 +4,7 @@
 #include "tests/base/ut.h"
 
 int main() {
-  arr_ptr(CGRAPH_INTEGER) edges = arr_ifrom_array(
+  atype(CGRAPH_INTEGER) *edges = arr_ifrom_array(
          (CGRAPH_INTEGER[]){0, 1,
                             2, 3,
                             1, 3,
@@ -24,7 +24,7 @@ int main() {
   CHECK_MSG(arr_iequal(g->os, (CGRAPH_INTEGER []){0, 3, 5, 7, 7, 7, 8}, 7), "g->os");
   CHECK_MSG(arr_iequal(g->is, (CGRAPH_INTEGER []){0, 0, 1, 3, 7, 7, 8}, 7), "g->is");
 
-  arr_ptr(CGRAPH_INTEGER) v1 = arr_ifrom_array(
+  atype(CGRAPH_INTEGER) *v1 = arr_ifrom_array(
     (CGRAPH_INTEGER[]){0, 2, 4}, 3);
   cgraph_delete_edges(g, v1);
   CHECK_MSG(cgraph_is_directed(g), "Đồ thị có hướng");

@@ -12,12 +12,12 @@
 #include "cgen/vec/arr.h"
 #include "base/cgraph_datatype.h"
 
-CGRAPH_INTEGER arr_imax(arr_ptr(CGRAPH_INTEGER) a);
+CGRAPH_INTEGER arr_imax(atype(CGRAPH_INTEGER) *a);
 
-int arr_irange(arr_ptr(CGRAPH_INTEGER) a,
+int arr_irange(atype(CGRAPH_INTEGER) *a,
                CGRAPH_INTEGER low, CGRAPH_INTEGER high);
 
-arr_ptr(CGRAPH_INTEGER) arr_ifrom_array(CGRAPH_INTEGER *a, CGRAPH_INTEGER n);
+atype(CGRAPH_INTEGER) *arr_ifrom_array(CGRAPH_INTEGER *a, CGRAPH_INTEGER n);
 
 #define arr_ifill(v, value) \
   do { \
@@ -26,14 +26,14 @@ arr_ptr(CGRAPH_INTEGER) arr_ifrom_array(CGRAPH_INTEGER *a, CGRAPH_INTEGER n);
     } \
   } while (0)
 
-arr_ptr(CGRAPH_INTEGER) *arr_icreate_ref();
+atype(CGRAPH_INTEGER) **arr_icreate_ref();
 void gtype_free_iarr_ref(gtype v);
 
 #define arr_iptr_at(vec, i) \
-  (*((arr_ptr(CGRAPH_INTEGER)*)(gvec_elem(vec, i).v)))
+  (*((atype(CGRAPH_INTEGER) **)(gvec_elem(vec, i).v)))
 
-int arr_iorder(arr_ptr(CGRAPH_INTEGER) v,
-               arr_ptr(CGRAPH_INTEGER) v2,
-               arr_ptr(CGRAPH_INTEGER) res);
+int arr_iorder(atype(CGRAPH_INTEGER) *v,
+               atype(CGRAPH_INTEGER) *v2,
+               atype(CGRAPH_INTEGER) *res);
 
 #endif  // BASE_CGRAPH_ARR_H_

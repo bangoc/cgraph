@@ -19,8 +19,8 @@ hmap_t bus_id = NULL;
 gvec_t id_bus = NULL;
 
 gvec_t nodes = NULL;
-arr_ptr(CGRAPH_INTEGER) edges = NULL;
-arr_ptr(CGRAPH_REAL) weights = NULL;
+atype(CGRAPH_INTEGER) *edges = NULL;
+atype(CGRAPH_REAL) *weights = NULL;
 
 long k_cost_change_bus = 1,
      k_cost_nex_stop = 1000;
@@ -103,7 +103,7 @@ void parse_input(char *fname) {
 
 void bus_change() {
   for (int i = 0; i < gvec_size(stop_buses); ++i) {
-    arr_ptr(CGRAPH_INTEGER) v = *((arr_ptr(CGRAPH_INTEGER)*)(gvec_elem(stop_buses, i).v));
+    atype(CGRAPH_INTEGER) *v = *((atype(CGRAPH_INTEGER) **)(gvec_elem(stop_buses, i).v));
     long sz = gvec_size(nodes);
     for (int j = 0; j < arr_size(v); ++j) {
       arr_append(edges, sz + 2 * i);

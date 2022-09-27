@@ -4,7 +4,7 @@
 #include "tests/base/ut.h"
 
 int main() {
-  arr_ptr(CGRAPH_INTEGER) edges = arr_ifrom_array(
+  atype(CGRAPH_INTEGER) *edges = arr_ifrom_array(
         (CGRAPH_INTEGER[]){ 0, 1,
                             0, 3,
                             1, 2}, 6);
@@ -20,7 +20,7 @@ int main() {
   CHECK_MSG(cgraph_is_directed(g), "Đồ thị có hướng");
 
   //  Thêm một số cạnh
-  arr_ptr(CGRAPH_INTEGER) edges2 = arr_ifrom_array(
+  atype(CGRAPH_INTEGER) *edges2 = arr_ifrom_array(
           (CGRAPH_INTEGER[]){1, 3,
                              2, 0}, 4);
   cgraph_add_edges(g, edges2);
@@ -35,7 +35,7 @@ int main() {
   CHECK_MSG(cgraph_is_directed(g), "Đồ thị có hướng");
 
   // Thêm cạnh ngoài phạm vi
-  arr_ptr(CGRAPH_INTEGER) edges3 = arr_ifrom_array(
+  atype(CGRAPH_INTEGER) *edges3 = arr_ifrom_array(
           (CGRAPH_INTEGER[]) {5, 6}, 2);
   CHECK_MSG(cgraph_add_edges(g, edges3) == CGRAPH_FAILURE, "Trả về mã lỗi");
 

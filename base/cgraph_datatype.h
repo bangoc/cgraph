@@ -47,12 +47,12 @@
 typedef struct cgraph_s {
     CGRAPH_INTEGER n;
     bool directed;
-    arr_ptr(CGRAPH_INTEGER) from;
-    arr_ptr(CGRAPH_INTEGER) to;
-    arr_ptr(CGRAPH_INTEGER) oi;
-    arr_ptr(CGRAPH_INTEGER) ii;
-    arr_ptr(CGRAPH_INTEGER) os;
-    arr_ptr(CGRAPH_INTEGER) is;
+    atype(CGRAPH_INTEGER) *from;
+    atype(CGRAPH_INTEGER) *to;
+    atype(CGRAPH_INTEGER) *oi;
+    atype(CGRAPH_INTEGER) *ii;
+    atype(CGRAPH_INTEGER) *os;
+    atype(CGRAPH_INTEGER) *is;
     void *attr;
 } *cgraph_t;
 

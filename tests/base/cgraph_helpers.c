@@ -2,7 +2,7 @@
 
 #include "ut.h"
 
-int arr_iequal(arr_ptr(CGRAPH_INTEGER) v, CGRAPH_INTEGER *a, long n) {
+int arr_iequal(atype(CGRAPH_INTEGER) *v, CGRAPH_INTEGER *a, long n) {
   if (arr_size(v) != n) {
     return 0;
   }
@@ -14,7 +14,7 @@ int arr_iequal(arr_ptr(CGRAPH_INTEGER) v, CGRAPH_INTEGER *a, long n) {
   return 1;
 }
 
-void arr_iprint(arr_ptr(CGRAPH_INTEGER) v) {
+void arr_iprint(atype(CGRAPH_INTEGER) *v) {
   printf("sz = %d, ", (int)arr_size(v));
   for (int i = 0; i < arr_size(v); ++i) {
     printf(" %d", v[i]);

@@ -6,7 +6,7 @@
 #include "ut.h"
 
 bool is_valid_topological_order(cgraph_t g,
-                                arr_ptr(CGRAPH_INTEGER) v,
+                                atype(CGRAPH_INTEGER) *v,
                                 cgraph_neimode_t mode) {
   cgraph_neimode_t deg_mode;
   if (mode == CGRAPH_IN) {

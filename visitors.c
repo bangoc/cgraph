@@ -10,13 +10,13 @@ int cgraph_bfs(const cgraph_t graph,
                CGRAPH_INTEGER root,
                cgraph_neimode_t mode,
                bool unreachable,
-               arr_ptr(CGRAPH_INTEGER) restricted,
-               arr_ptr(CGRAPH_INTEGER) *order,
-               arr_ptr(CGRAPH_INTEGER) *rank,
-               arr_ptr(CGRAPH_INTEGER) *father,
-               arr_ptr(CGRAPH_INTEGER) *pred,
-               arr_ptr(CGRAPH_INTEGER) *succ,
-               arr_ptr(CGRAPH_INTEGER) *dist) {
+               atype(CGRAPH_INTEGER) *restricted,
+               atype(CGRAPH_INTEGER) **order,
+               atype(CGRAPH_INTEGER) **rank,
+               atype(CGRAPH_INTEGER) **father,
+               atype(CGRAPH_INTEGER) **pred,
+               atype(CGRAPH_INTEGER) **succ,
+               atype(CGRAPH_INTEGER) **dist) {
   CGRAPH_INTEGER no_of_nodes = cgraph_vcount(graph);
   CGRAPH_INTEGER actroot = root;
 
@@ -164,8 +164,8 @@ int cgraph_simple_bfs(const cgraph_t graph,
                CGRAPH_INTEGER root,
                cgraph_neimode_t mode,
                bool unreachable,
-               arr_ptr(CGRAPH_INTEGER) *father,
-               arr_ptr(CGRAPH_INTEGER) *dist) {
+               atype(CGRAPH_INTEGER) **father,
+               atype(CGRAPH_INTEGER) **dist) {
   return cgraph_bfs(graph,
       root,
       mode,
@@ -227,10 +227,10 @@ int cgraph_dfs(const cgraph_t graph,
                CGRAPH_INTEGER root,
                cgraph_neimode_t mode,
                bool unreachable,
-               arr_ptr(CGRAPH_INTEGER) *order,
-               arr_ptr(CGRAPH_INTEGER) *order_out,
-               arr_ptr(CGRAPH_INTEGER) *father,
-               arr_ptr(CGRAPH_INTEGER) *dist) {
+               atype(CGRAPH_INTEGER) **order,
+               atype(CGRAPH_INTEGER) **order_out,
+               atype(CGRAPH_INTEGER) **father,
+               atype(CGRAPH_INTEGER) **dist) {
   CGRAPH_INTEGER no_of_nodes = cgraph_vcount(graph);
   struct gsllist *stack = gsl_create_list(NULL);
   bool *added = (bool*)calloc(no_of_nodes, sizeof(bool));
@@ -276,9 +276,9 @@ int cgraph_dfs(const cgraph_t graph,
   }
 
   arr_make(nptr, no_of_nodes, CGRAPH_INTEGER);
-  arr_ptr(CGRAPH_INTEGER) *neis_cache =
-    calloc(no_of_nodes, sizeof(arr_ptr(CGRAPH_INTEGER)));
-  arr_ptr(CGRAPH_INTEGER) neis = NULL;
+  atype(CGRAPH_INTEGER) **neis_cache =
+    calloc(no_of_nodes, sizeof(atype(CGRAPH_INTEGER) *));
+  atype(CGRAPH_INTEGER) *neis = NULL;
   for (actroot = 0; actroot < no_of_nodes; ) {
 
     /* Đầu tiên là gốc và sau đó là các đỉnh khác */

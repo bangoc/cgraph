@@ -4,7 +4,7 @@
 #include "tests/base/ut.h"
 
 int main() {
-  arr_ptr(CGRAPH_INTEGER) edges = arr_ifrom_array(
+  atype(CGRAPH_INTEGER) *edges = arr_ifrom_array(
            (CGRAPH_INTEGER[]){0, 1,
                               2, 3,
                               5, 6,

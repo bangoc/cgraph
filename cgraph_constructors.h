@@ -12,7 +12,7 @@ extern "C"{
 
 cgraph_t cgraph_create_empty(CGRAPH_INTEGER n, bool directed);
 
-cgraph_t cgraph_create(arr_ptr(CGRAPH_INTEGER) edges,
+cgraph_t cgraph_create(atype(CGRAPH_INTEGER) *edges,
                   CGRAPH_INTEGER n,
                   bool directed);
 void cgraph_print(cgraph_t const g);

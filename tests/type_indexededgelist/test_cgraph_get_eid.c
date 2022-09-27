@@ -5,7 +5,7 @@
 
 int main() {
   cgraph_t g = test_create_g1();
-  arr_ptr(CGRAPH_INTEGER) edges = arr_ifrom_array(
+  atype(CGRAPH_INTEGER) *edges = arr_ifrom_array(
       (CGRAPH_INTEGER[]){ 0, 1,
                           0, 3,
                           1, 2,

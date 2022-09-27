@@ -18,7 +18,7 @@ int main() {
   }
   // g1-weighted.png
 
-  arr_ptr(CGRAPH_INTEGER) to = arr_ifrom_array((CGRAPH_INTEGER[]){1, 2, 3, 4, 5}, 5);
+  atype(CGRAPH_INTEGER) *to = arr_ifrom_array((CGRAPH_INTEGER[]){1, 2, 3, 4, 5}, 5);
   gvec_t vertices = gvec_create_full(0, 10, gtype_zero, gtype_free_iarr_ref),
          edges = gvec_create_full(0, 10, gtype_zero, gtype_free_iarr_ref);
   for (int i = 0; i < arr_size(to); ++i) {

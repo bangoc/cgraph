@@ -55,9 +55,9 @@ bool cgraph_is_directed(const cgraph_t graph) {
  */
 
 static int cgraph_i_create_start(
-        arr_ptr(CGRAPH_INTEGER) res,
-        arr_ptr(CGRAPH_INTEGER) el,
-        arr_ptr(CGRAPH_INTEGER) iindex,
+        atype(CGRAPH_INTEGER) *res,
+        atype(CGRAPH_INTEGER) *el,
+        atype(CGRAPH_INTEGER) *iindex,
         CGRAPH_INTEGER nodes) {
 
 # define EDGE(i) el[ iindex[(i)] ]
@@ -130,7 +130,7 @@ static int cgraph_i_create_start(
  * \example examples/simple/igraph_add_edges.c
  * TODO: Bổ xung ví dụ cho cgraph
  */
-int cgraph_add_edges(cgraph_t graph, arr_ptr(CGRAPH_INTEGER) edges) {
+int cgraph_add_edges(cgraph_t graph, atype(CGRAPH_INTEGER) *edges) {
     long int no_of_edges = cgraph_ecount(graph);
     long int edges_to_add = arr_size(edges) / 2;
     long int i = 0;
@@ -288,7 +288,7 @@ void cgraph_destroy(cgraph_t *graph) {
 }
 
 int cgraph_neighbors(const cgraph_t graph,
-                     arr_ptr(CGRAPH_INTEGER) *neis,
+                     atype(CGRAPH_INTEGER) **neis,
                      CGRAPH_INTEGER vid,
                      cgraph_neimode_t mode) {
   const CGRAPH_INTEGER node = vid;
@@ -360,7 +360,7 @@ int cgraph_neighbors(const cgraph_t graph,
 }
 
 int cgraph_incident(const cgraph_t graph,
-                    arr_ptr(CGRAPH_INTEGER) *eids,
+                    atype(CGRAPH_INTEGER) **eids,
                     CGRAPH_INTEGER vid,
                     cgraph_neimode_t mode) {
   const CGRAPH_INTEGER node = vid;
@@ -394,7 +394,7 @@ int cgraph_incident(const cgraph_t graph,
 }
 
 int cgraph_degree_all(const cgraph_t graph,
-                      arr_ptr(CGRAPH_INTEGER) *res,
+                      atype(CGRAPH_INTEGER) **res,
                       cgraph_neimode_t mode,
                       bool loops) {
   if (mode != CGRAPH_OUT && mode != CGRAPH_IN &&
@@ -407,7 +407,7 @@ int cgraph_degree_all(const cgraph_t graph,
   CGRAPH_INTEGER no_of_nodes = cgraph_vcount(graph);
   CGRAPH_INTEGER no_of_edges = cgraph_ecount(graph);
   arr_resize(*res, no_of_nodes);
-  arr_ptr(CGRAPH_INTEGER) v = *res;
+  atype(CGRAPH_INTEGER) *v = *res;
   arr_ifill(v, 0);
 
   for (CGRAPH_INTEGER ed = 0; ed < no_of_edges; ++ed) {
@@ -624,7 +624,7 @@ int cgraph_get_eid(const cgraph_t graph, CGRAPH_INTEGER *eid,
  * \example examples/simple/igraph_delete_edges.c
  * TODO: Bổ xung ví dụ
  */
-int cgraph_delete_edges(cgraph_t graph, arr_ptr(CGRAPH_INTEGER) edges) {
+int cgraph_delete_edges(cgraph_t graph, atype(CGRAPH_INTEGER) *edges) {
     CGRAPH_INTEGER no_of_edges = cgraph_ecount(graph);
     CGRAPH_INTEGER no_of_nodes = cgraph_vcount(graph);
     CGRAPH_INTEGER edges_to_remove = 0;
@@ -708,7 +708,7 @@ int cgraph_delete_edges(cgraph_t graph, arr_ptr(CGRAPH_INTEGER) edges) {
  *
  */
 int cgraph_disconnect_vertices(cgraph_t graph,
-      arr_ptr(CGRAPH_INTEGER) vertices, cgraph_neimode_t mode) {
+      atype(CGRAPH_INTEGER) *vertices, cgraph_neimode_t mode) {
   CGRAPH_INTEGER no_of_vertices = cgraph_vcount(graph);
   CGRAPH_INTEGER no_of_edges = cgraph_ecount(graph);
   char *vmark = calloc(no_of_vertices, sizeof(char)),

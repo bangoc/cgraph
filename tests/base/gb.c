@@ -12,7 +12,7 @@ os    = {0, 3, 6, 7, 9, 9, 9}
 is    = {0, 0, 2, 4, 6, 8, 9}
 */
 cgraph_t test_create_g1() {
-  arr_ptr(CGRAPH_INTEGER) edges = arr_ifrom_array(
+  atype(CGRAPH_INTEGER) *edges = arr_ifrom_array(
         (CGRAPH_INTEGER[]){ 0, 1,
                             0, 3,
                             1, 2,
@@ -38,7 +38,7 @@ os   = {0, 3, 6, 8, 10, 10, 10}
 is   = {0, 0, 2, 5, 7, 9, 10}
 */
 cgraph_t test_create_g2() {
-  arr_ptr(CGRAPH_INTEGER) edges = arr_ifrom_array(
+  atype(CGRAPH_INTEGER) *edges = arr_ifrom_array(
         (CGRAPH_INTEGER[]){ 0, 1,
                             0, 3,
                             1, 2,
@@ -65,7 +65,7 @@ os   = {0, 3, 6, 7, 8, 8, 8}
 is   = {0, 0, 1, 3, 5, 7, 8}
 */
 cgraph_t test_create_g3() {
-  arr_ptr(CGRAPH_INTEGER) edges = arr_ifrom_array(
+  atype(CGRAPH_INTEGER) *edges = arr_ifrom_array(
         (CGRAPH_INTEGER[]){ 0, 1,
                             0, 3,
                             1, 2,
@@ -90,7 +90,7 @@ os   = {0, 0, 1, 3, 5, 7, 8}
 is   = {0, 3, 6, 7, 8, 8, 8}
 */
 cgraph_t test_create_g4() {
-  arr_ptr(CGRAPH_INTEGER) edges = arr_ifrom_array(
+  atype(CGRAPH_INTEGER) *edges = arr_ifrom_array(
         (CGRAPH_INTEGER[]){ 0, 1,
                             3, 0,
                             1, 2,
@@ -115,7 +115,7 @@ os   = {0, 0, 1, 4, 6, 8, 9}
 is   = {0, 3, 6, 8, 9, 9, 9}
 */
 cgraph_t test_create_g5() {
-  arr_ptr(CGRAPH_INTEGER) edges = arr_ifrom_array(
+  atype(CGRAPH_INTEGER) *edges = arr_ifrom_array(
         (CGRAPH_INTEGER[]){ 0, 1,
                             0, 3,
                             1, 2,
@@ -132,7 +132,7 @@ cgraph_t test_create_g5() {
 }
 
 cgraph_t test_create_g6() {
-  arr_ptr(CGRAPH_INTEGER) edges = arr_ifrom_array(
+  atype(CGRAPH_INTEGER) *edges = arr_ifrom_array(
     (CGRAPH_INTEGER[]) {0, 2,
                         0, 6,
                         0, 7,

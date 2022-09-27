@@ -5,7 +5,7 @@
 
 bool t1() {
   cgraph_t g = test_create_g1();
-  arr_ptr(CGRAPH_INTEGER) to = arr_ifrom_array((CGRAPH_INTEGER[]){4, 5}, 2);
+  atype(CGRAPH_INTEGER) *to = arr_ifrom_array((CGRAPH_INTEGER[]){4, 5}, 2);
   gvec_t vertices = gvec_create_full(0, 10, gtype_zero, gtype_free_iarr_ref),
            edges = gvec_create_full(0, 10, gtype_zero, gtype_free_iarr_ref);
   for (int i = 0; i < arr_size(to); ++i) {
@@ -52,7 +52,7 @@ bool t1() {
 
 bool t2() {
   cgraph_t g = test_create_g1();
-  arr_ptr(CGRAPH_INTEGER) to = arr_ifrom_array((CGRAPH_INTEGER[]){0, 4, 1}, 3);
+  atype(CGRAPH_INTEGER) *to = arr_ifrom_array((CGRAPH_INTEGER[]){0, 4, 1}, 3);
   gvec_t vertices = gvec_create_full(0, 5, gtype_zero, gtype_free_iarr_ref),
            edges = gvec_create_full(0, 5, gtype_zero, gtype_free_iarr_ref);
   for (int i = 0; i < arr_size(to); ++i) {

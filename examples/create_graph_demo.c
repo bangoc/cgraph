@@ -1,7 +1,7 @@
 #include "cgraph.h"
 
 int main() {
-  arr_ptr(CGRAPH_INTEGER) edges = arr_ifrom_array(
+  atype(CGRAPH_INTEGER) *edges = arr_ifrom_array(
     (CGRAPH_INTEGER[]) {0, 2,
                         0, 6,
                         0, 7,
