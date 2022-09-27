@@ -29,11 +29,11 @@ int main() {
   }
 
   CGRAPH_INTEGER d = 0;
-  cgraph_degree_one(g, &d, 1, CGRAPH_OUT, false);
+  d = cgraph_degree_one(g, 1, CGRAPH_OUT, false);
   TEST_ONE(d, 3, "g2. Test one - out degree");
-  cgraph_degree_one(g, &d, 1, CGRAPH_IN, false);
+  d = cgraph_degree_one(g, 1, CGRAPH_IN, false);
   TEST_ONE(d, 2, "g2. Test one - in degree");
-  cgraph_degree_one(g, &d, 1, CGRAPH_ALL, false);
+  d = cgraph_degree_one(g, 1, CGRAPH_ALL, false);
   TEST_ONE(d, 5, "g2. Test one - in+out degree");
 
   cgraph_degree_all(g, &degree, CGRAPH_OUT, false);
@@ -56,18 +56,18 @@ int main() {
   // Test undirected graph with loop
   g = test_create_g5();
 
-  cgraph_degree_one(g, &d, 2, CGRAPH_OUT, false);
+  d = cgraph_degree_one(g, 2, CGRAPH_OUT, false);
   TEST_ONE(d, 3, "g5. Test one - out degree");
-  cgraph_degree_one(g, &d, 2, CGRAPH_IN, false);
+  d = cgraph_degree_one(g, 2, CGRAPH_IN, false);
   TEST_ONE(d, 3, "g5. Test one - in degree");
-  cgraph_degree_one(g, &d, 2, CGRAPH_ALL, false);
+  d = cgraph_degree_one(g, 2, CGRAPH_ALL, false);
   TEST_ONE(d, 3, "g5. Test one - in+out degree");
 
-  cgraph_degree_one(g, &d, 2, CGRAPH_OUT, true);
+  d = cgraph_degree_one(g, 2, CGRAPH_OUT, true);
   TEST_ONE(d, 5, "g5. Test one - out degree");
-  cgraph_degree_one(g, &d, 2, CGRAPH_IN, true);
+  d = cgraph_degree_one(g, 2, CGRAPH_IN, true);
   TEST_ONE(d, 5, "g5. Test one - in degree");
-  cgraph_degree_one(g, &d, 2, CGRAPH_ALL, true);
+  d = cgraph_degree_one(g, 2, CGRAPH_ALL, true);
   TEST_ONE(d, 5, "g5. Test one - in+out degree");
 
   cgraph_degree_all(g, &degree, CGRAPH_OUT, false);

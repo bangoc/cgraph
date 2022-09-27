@@ -32,8 +32,7 @@ int cgraph_degree_all(const cgraph_t graph,
                       cgraph_neimode_t mode,
                       bool loops);
 
-int cgraph_degree_one(const cgraph_t graph,
-                      CGRAPH_INTEGER *res,
+CGRAPH_INTEGER cgraph_degree_one(const cgraph_t graph,
                       const CGRAPH_INTEGER node,
                       cgraph_neimode_t mode,
                       bool loops);

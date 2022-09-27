@@ -139,11 +139,13 @@ int cgraph_add_edges(cgraph_t graph, atype(CGRAPH_INTEGER) *edges) {
     bool directed = cgraph_is_directed(graph);
 
     if (arr_size(edges) % 2 != 0) {
-        CGRAPH_ERROR(
-          "Lỗi độ dài kích thước vec-tơ cạnh (lẻ)", CGRAPH_FAILURE);
+      CGRAPH_ERROR(
+        "Lỗi độ dài kích thước vec-tơ cạnh (lẻ)", CGRAPH_FAILURE);
+      return CGRAPH_FAILURE;
     }
     if (!arr_irange(edges, 0, cgraph_vcount(graph) - 1)) {
-        CGRAPH_ERROR("Chỉ số đỉnh nằm ngoài khoảng", CGRAPH_FAILURE);
+      CGRAPH_ERROR("Chỉ số đỉnh nằm ngoài khoảng", CGRAPH_FAILURE);
+      return CGRAPH_FAILURE;
     }
 
     arr_make(newoi, 0, CGRAPH_INTEGER);
@@ -244,6 +246,7 @@ int cgraph_add_vertices(cgraph_t graph, CGRAPH_INTEGER nv) {
 
   if (nv < 0) {
     CGRAPH_ERROR("Không thể thêm số lượng đỉnh âm", CGRAPH_FAILURE);
+    return CGRAPH_FAILURE;
   }
 
   arr_resize(graph->os, graph->n + nv + 1);
@@ -366,10 +369,12 @@ int cgraph_incident(const cgraph_t graph,
   const CGRAPH_INTEGER node = vid;
   if (node < 0 || node > cgraph_vcount(graph) - 1) {
     CGRAPH_ERROR("Không thể truy cập các láng giềng", CGRAPH_FAILURE);
+    return CGRAPH_FAILURE;
   }
   if (mode != CGRAPH_OUT && mode != CGRAPH_IN &&
       mode != CGRAPH_ALL) {
     CGRAPH_ERROR("Không thể truy cập các láng giềng", CGRAPH_FAILURE);
+    return CGRAPH_FAILURE;
   }
 
   if (! graph->directed) {
@@ -423,17 +428,18 @@ int cgraph_degree_all(const cgraph_t graph,
   return 0;
 }
 
-int cgraph_degree_one(const cgraph_t graph,
-                      CGRAPH_INTEGER *res,
+CGRAPH_INTEGER cgraph_degree_one(const cgraph_t graph,
                       const CGRAPH_INTEGER node,
                       cgraph_neimode_t mode,
                       bool loops) {
   if (node < 0 || node > cgraph_vcount(graph) - 1) {
-    CGRAPH_ERROR("Không thể lấy bậc", CGRAPH_FAILURE);
+    CGRAPH_ERROR("Chỉ số nút ngoài khoảng", CGRAPH_FAILURE);
+    return -1;
   }
   if (mode != CGRAPH_OUT && mode != CGRAPH_IN &&
       mode != CGRAPH_ALL) {
     CGRAPH_ERROR("Không thể lấy bậc", CGRAPH_FAILURE);
+    return -1;
   }
   if (!cgraph_is_directed(graph)) {
     mode = CGRAPH_ALL;
@@ -467,8 +473,7 @@ int cgraph_degree_one(const cgraph_t graph,
       }
     }
   }
-  *res = d;
-  return 0;
+  return d;
 }
 
 /**
@@ -727,12 +732,14 @@ int cgraph_disconnect_vertices(cgraph_t graph,
     if (i < 0 || i >= no_of_vertices) {
       FREE_MEMORY();
       CGRAPH_ERROR("Đỉnh không hợp lệ.", CGRAPH_FAILURE);
+      return CGRAPH_FAILURE;
     }
     if (!vmark[vertices[i]]) {
       vmark[vertices[i]] = 1;
       if (cgraph_incident(graph, &tmp, vertices[i], mode) != CGRAPH_SUCCESS) {
         FREE_MEMORY();
         CGRAPH_ERROR("Lỗi lấy danh sách cạnh", CGRAPH_FAILURE);
+        return CGRAPH_FAILURE;
       }
       // Đã lấy danh sách cạnh
       for (j = 0; j < arr_size(tmp); ++j) {
