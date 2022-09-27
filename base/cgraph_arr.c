@@ -3,19 +3,15 @@
 #include "base/cgraph_arr.h"
 
 CGRAPH_INTEGER arr_imax(atype(CGRAPH_INTEGER) *a) {
-  CGRAPH_INTEGER max = a[0];
-  for (long i = 1; i < arr_size(a); ++i) {
-    if (a[i] > max) {
-      max = a[i];
-    }
-  }
+  CGRAPH_INTEGER max;
+  arr_assign_max(max, a);
   return max;
 }
 
 int arr_irange(atype(CGRAPH_INTEGER) *a,
                CGRAPH_INTEGER low, CGRAPH_INTEGER high) {
-  for (long i = 0; i < arr_size(a); ++i) {
-    if (a[i] < low || a[i] > high) {
+  arr_traverse(cur, a) {
+    if (*cur < low || *cur > high) {
       return 0;
     }
   }
