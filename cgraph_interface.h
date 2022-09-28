@@ -41,9 +41,8 @@ struct edge {
   CGRAPH_INTEGER to;
 };
 struct edge cgraph_edge(const cgraph_t graph, CGRAPH_INTEGER eid);
-int cgraph_get_eid(const cgraph_t graph, CGRAPH_INTEGER *eid,
-                   CGRAPH_INTEGER pfrom, CGRAPH_INTEGER pto,
-                   bool directed);
+CGRAPH_INTEGER cgraph_get_eid(const cgraph_t graph,
+                   CGRAPH_INTEGER pfrom, CGRAPH_INTEGER pto, bool directed);
 
 #ifdef __cplusplus
 }

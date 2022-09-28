@@ -570,35 +570,35 @@ struct edge cgraph_edge(const cgraph_t graph, CGRAPH_INTEGER eid) {
         FIND_DIRECTED_EDGE(graph,xfrom1,xto1,eid);      \
     } while (0)
 
-int cgraph_get_eid(const cgraph_t graph, CGRAPH_INTEGER *eid,
-                   CGRAPH_INTEGER pfrom, CGRAPH_INTEGER pto,
-                   bool directed) {
+CGRAPH_INTEGER cgraph_get_eid(const cgraph_t graph,
+                   CGRAPH_INTEGER pfrom, CGRAPH_INTEGER pto, bool directed) {
+  cgraph_err_reset();
+  CGRAPH_INTEGER from = pfrom, to = pto;
+  CGRAPH_INTEGER nov = cgraph_vcount(graph);
 
-    CGRAPH_INTEGER from = pfrom, to = pto;
-    CGRAPH_INTEGER nov = cgraph_vcount(graph);
+  if (from < 0 || to < 0 || from > nov - 1 || to > nov - 1) {
+    CGRAPH_ERROR("Không thể lấy mã cạnh, chỉ số đỉnh ngoài khoảng", CGRAPH_FAILURE);
+    return -1;
+  }
 
-    if (from < 0 || to < 0 || from > nov - 1 || to > nov - 1) {
-      CGRAPH_WARNING("Không thể lấy mã cạnh, lỗi dữ liệu vào");
+  CGRAPH_INTEGER eid = -1;
+  if (cgraph_is_directed(graph)) {
+
+    /* Đồ thị có hướng */
+    FIND_DIRECTED_EDGE(graph, from, to, &eid);
+    if (!directed && eid < 0) {
+      FIND_DIRECTED_EDGE(graph, to, from, &eid);
     }
+  } else {
+    /* Đồ thị vô hướng chỉ có một chế độ */
+    FIND_UNDIRECTED_EDGE(graph, from, to, &eid);
+  }
 
-    *eid = -1;
-    if (cgraph_is_directed(graph)) {
+  if (eid < 0) {
+    CGRAPH_WARNING("Không thể lấy mã cạnh, không tìm thấy cạnh");
+  }
 
-      /* Đồ thị có hướng */
-      FIND_DIRECTED_EDGE(graph, from, to, eid);
-      if (!directed && *eid < 0) {
-        FIND_DIRECTED_EDGE(graph, to, from, eid);
-      }
-    } else {
-      /* Đồ thị vô hướng chỉ có một chế độ */
-      FIND_UNDIRECTED_EDGE(graph, from, to, eid);
-    }
-
-    if (*eid < 0) {
-      CGRAPH_WARNING("Không thể lấy mã cạnh, không tìm thấy cạnh");
-    }
-
-    return 0;
+  return eid;
 }
 
 
