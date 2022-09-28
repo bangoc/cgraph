@@ -26,18 +26,6 @@ atype(CGRAPH_INTEGER) *arr_ifrom_array(CGRAPH_INTEGER *a, CGRAPH_INTEGER n) {
   return tmp;
 }
 
-atype(CGRAPH_INTEGER) **arr_icreate_ref() {
-  atype(CGRAPH_INTEGER) **vref = malloc(sizeof(atype(CGRAPH_INTEGER) *));
-  *vref = arr_create(0, CGRAPH_INTEGER);
-  return vref;
-}
-
-void gtype_free_iarr_ref(gtype v) {
-  atype(CGRAPH_INTEGER) **vref = (atype(CGRAPH_INTEGER) **)(v.v);
-  arr_free(*vref);
-  free(vref);
-}
-
 static atype(CGRAPH_INTEGER) *_v;
 static atype(CGRAPH_INTEGER) *_v2;
 static int ref_cmp(const void *o1, const void *o2) {
@@ -62,4 +50,8 @@ int arr_iorder(atype(CGRAPH_INTEGER) *v,
   }
   qsort(res, n, sizeof(CGRAPH_INTEGER), ref_cmp);
   return 0;
+}
+
+void gtype_arr_free(gtype v) {
+  arr_free(v.v);
 }

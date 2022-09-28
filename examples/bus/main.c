@@ -14,7 +14,7 @@ typedef struct bus_stop {
 
 hmap_t stop_id = NULL;
 gvec_t id_stop = NULL;
-gvec_t stop_buses = NULL;
+atype(atype(CGRAPH_INTEGER) *) *stop_buses = NULL;
 hmap_t bus_id = NULL;
 gvec_t id_bus = NULL;
 
@@ -28,7 +28,7 @@ long k_cost_change_bus = 1,
 void init_global() {
   stop_id = hmap_create(gtype_hash_s, gtype_cmp_s, NULL, NULL);
   id_stop = gvec_create(0, gtype_free_s);
-  stop_buses = gvec_create(0, gtype_free_iarr_ref);
+  stop_buses = arr_create(0, atype(CGRAPH_INTEGER) *);
   bus_id = hmap_create(gtype_hash_s, gtype_cmp_s, NULL, NULL);
   id_bus = gvec_create(5, gtype_free_s);
   nodes = gvec_create(5, gtype_free_v);
@@ -42,7 +42,10 @@ void free_global() {
   hmap_free(bus_id);
   gvec_free(id_bus);
   gvec_free(nodes);
-  gvec_free(stop_buses);
+  for (long i = 0; i < arr_size(stop_buses); ++i) {
+    arr_free(stop_buses[i]);
+  }
+  arr_free(stop_buses);
   arr_free(edges);
   arr_free(weights);
 }
@@ -90,10 +93,10 @@ void parse_input(char *fname) {
         arr_append(weights, k_cost_nex_stop);
       }
       first = false;
-      if (id2 >= gvec_size(stop_buses)) {
-        gvec_append(stop_buses, gtype_v(arr_icreate_ref()));
+      if (id2 == arr_size(stop_buses)) {
+        arr_append(stop_buses, arr_create(0, CGRAPH_INTEGER));
       }
-      arr_append(arr_iptr_at(stop_buses, id2), gvec_size(nodes) - 1);
+      arr_append(stop_buses[id2], gvec_size(nodes) - 1);
       stop = strtok(NULL, delims);
     }
   }
@@ -102,8 +105,8 @@ void parse_input(char *fname) {
 }
 
 void bus_change() {
-  for (int i = 0; i < gvec_size(stop_buses); ++i) {
-    atype(CGRAPH_INTEGER) *v = *((atype(CGRAPH_INTEGER) **)(gvec_elem(stop_buses, i).v));
+  for (int i = 0; i < arr_size(stop_buses); ++i) {
+    atype(CGRAPH_INTEGER) *v = stop_buses[i];
     long sz = gvec_size(nodes);
     for (int j = 0; j < arr_size(v); ++j) {
       arr_append(edges, sz + 2 * i);

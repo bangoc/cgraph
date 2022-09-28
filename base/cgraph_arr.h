@@ -26,12 +26,6 @@ atype(CGRAPH_INTEGER) *arr_ifrom_array(CGRAPH_INTEGER *a, CGRAPH_INTEGER n);
     } \
   } while (0)
 
-atype(CGRAPH_INTEGER) **arr_icreate_ref();
-void gtype_free_iarr_ref(gtype v);
-
-#define arr_iptr_at(vec, i) \
-  (*((atype(CGRAPH_INTEGER) **)(gvec_elem(vec, i).v)))
-
 int arr_iorder(atype(CGRAPH_INTEGER) *v,
                atype(CGRAPH_INTEGER) *v2,
                atype(CGRAPH_INTEGER) *res);
@@ -42,4 +36,6 @@ int arr_iorder(atype(CGRAPH_INTEGER) *v,
     (a) = (b); \
     (b) = _tmp; \
   } while (0)
+
+void gtype_arr_free(gtype v);
 #endif  // BASE_CGRAPH_ARR_H_
