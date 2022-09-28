@@ -11,9 +11,10 @@ typedef enum {
 
 extern cgraph_error_t cgraph_last_errno;
 
-void cgraph_reset_last_errno();
-
-bool cgraph_last_op_success();
+#define cgraph_err_reset() cgraph_last_errno = CGRAPH_SUCCESS
+#define cgraph_err_get() cgraph_last_errno
+#define cgraph_err_set(errno) cgraph_last_errno = errno
+#define cgraph_err_is_success() (cgraph_last_errno == CGRAPH_SUCCESS)
 
 typedef void cgraph_error_handler_t(
                   const char * reason,
@@ -31,6 +32,7 @@ const char* cgraph_strerror(const cgraph_error_t cgraph_errno);
 #define CGRAPH_ERROR(error_message, cgraph_errno) \
     do { \
         cgraph_error(error_message, __FILE__, __LINE__, cgraph_errno) ; \
+        cgraph_err_set(cgraph_errno); \
     } while (0)
 
 #define CGRAPH_CHECK(a) do { \

@@ -19,14 +19,6 @@ void cgraph_warning_print(const char * reason,
   printf("%s:%d:-%s\n", file, line, reason);
 }
 
-void cgraph_reset_last_errno() {
-  cgraph_last_errno = CGRAPH_SUCCESS;
-}
-
-bool cgraph_last_op_success() {
-  return (cgraph_last_errno == CGRAPH_SUCCESS);
-}
-
 const char* cgraph_strerror(const cgraph_error_t cgraph_errno) {
   static_assert(sizeof(cgraph_error_strings) / sizeof(char *) == CGRAPH_ERROR_NO_COUNT,
     "Số lượng thông báo lỗi khác số lượng mã lỗi");

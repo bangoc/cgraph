@@ -432,6 +432,7 @@ CGRAPH_INTEGER cgraph_degree_one(const cgraph_t graph,
                       const CGRAPH_INTEGER node,
                       cgraph_neimode_t mode,
                       bool loops) {
+  cgraph_err_reset();
   if (node < 0 || node > cgraph_vcount(graph) - 1) {
     CGRAPH_ERROR("Chỉ số nút ngoài khoảng", CGRAPH_FAILURE);
     return -1;
