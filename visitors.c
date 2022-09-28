@@ -6,17 +6,12 @@
 #include "cgraph_visitor.h"
 #include "cgen/all.h"
 
-int cgraph_bfs(const cgraph_t graph,
+struct bfs *cgraph_bfs(const cgraph_t graph,
                CGRAPH_INTEGER root,
                cgraph_neimode_t mode,
                bool unreachable,
-               atype(CGRAPH_INTEGER) *restricted,
-               atype(CGRAPH_INTEGER) **order,
-               atype(CGRAPH_INTEGER) **rank,
-               atype(CGRAPH_INTEGER) **father,
-               atype(CGRAPH_INTEGER) **pred,
-               atype(CGRAPH_INTEGER) **succ,
-               atype(CGRAPH_INTEGER) **dist) {
+               atype(CGRAPH_INTEGER) *restricted) {
+  cgraph_err_reset();
   CGRAPH_INTEGER no_of_nodes = cgraph_vcount(graph);
   CGRAPH_INTEGER actroot = root;
 
@@ -24,17 +19,20 @@ int cgraph_bfs(const cgraph_t graph,
   CGRAPH_INTEGER pred_vec = -1;
 
   if (root < 0 || root >= no_of_nodes) {
-    CGRAPH_ERROR("Đỉnh nguồn không hợp lệ đối với BFS", CGRAPH_FAILURE);
+    CGRAPH_ERROR("Đỉnh nguồn nằm ngoài khoảng", CGRAPH_FAILURE);
+    return NULL;
   }
 
   if (restricted) {
     if (!arr_irange(restricted, 0, no_of_nodes - 1)) {
-      CGRAPH_ERROR("Mã đỉnh không hợp lệ trong tập restricted", CGRAPH_FAILURE);
+      CGRAPH_ERROR("Có đỉnh không hợp lệ trong tập restricted", CGRAPH_FAILURE);
+      return NULL;
     }
   }
 
   if (mode != CGRAPH_OUT && mode != CGRAPH_IN && mode != CGRAPH_ALL) {
-    CGRAPH_ERROR("Lỗi tham số chế độ", CGRAPH_FAILURE);
+    CGRAPH_ERROR("Tham số mode không hợp lệ", CGRAPH_FAILURE);
+    return NULL;
   }
 
   struct gsllist *q = gsl_create_list(NULL);
@@ -45,9 +43,9 @@ int cgraph_bfs(const cgraph_t graph,
 
   bool *added = (bool*)calloc(no_of_nodes, sizeof(bool));
 
-/* Mark the vertices that are not in the restricted set, as already
-  found. Special care must be taken for vertices that are not in
-  the restricted set, but are to be used as 'root' vertices. */
+/* Đánh dấu các đỉnh không có trong tập restricted như đã được tìm thấy.
+   Cần xét riêng trường hợp nút không có trong restricted nhưng được
+   sử dụng như gốc (root). */
   if (restricted) {
     long int i, n = arr_size(restricted);
     for (i = 0; i < no_of_nodes; ++i) {
@@ -58,22 +56,7 @@ int cgraph_bfs(const cgraph_t graph,
     }
   }
 
-  /* Resize result vectors, and fill them with IGRAPH_NAN */
-
-#define VINIT(vref) \
-  if (vref) {     \
-    arr_resize((*vref), no_of_nodes);   \
-    arr_ifill((*vref), CGRAPH_NAN); \
-  }
-
-VINIT(order);
-VINIT(rank);
-VINIT(father);
-VINIT(pred);
-VINIT(succ);
-VINIT(dist);
-
-#undef VINIT
+  make_bfs(res, no_of_nodes);
 
   int rootpos = 0;
   while (1) {
@@ -99,10 +82,7 @@ VINIT(dist);
     que_enq(q, gtype_l(actroot));
     que_enq(q, gtype_l(0));
     added[actroot] = true;
-    if (father) {
-      (*father)[actroot] = -1;
-    }
-
+    res->father[actroot] = -1;
     pred_vec = -1;
 
     while (!que_is_empty(q)) {
@@ -115,18 +95,10 @@ VINIT(dist);
       atype(CGRAPH_INTEGER) *neis = cgraph_neighbors(graph, actvect, mode);
       long int i, n = arr_size(neis);
 
-      if (pred) {
-        (*pred)[actvect] = pred_vec;
-      }
-      if (rank) {
-        (*rank) [actvect] = act_rank;
-      }
-      if (order) {
-        (*order)[act_rank++] = actvect;
-      }
-      if (dist) {
-        (*dist)[actvect] = actdist;
-      }
+      res->pred[actvect] = pred_vec;
+      res->rank[actvect] = act_rank;
+      res->order[act_rank++] = actvect;
+      res->dist[actvect] = actdist;
 
       for (i = 0; i < n; i++) {
         CGRAPH_INTEGER nei = neis[i];
@@ -134,9 +106,7 @@ VINIT(dist);
           added[nei] = true;
           que_enq(q, gtype_l(nei));
           que_enq(q, gtype_l(actdist + 1));
-          if (father) {
-            (*father)[nei] = actvect;
-          }
+          res->father[nei] = actvect;
         }
       }
 
@@ -146,35 +116,14 @@ VINIT(dist);
         succ_vec = que_peek(q).l;
       }
 
-      if (succ) {
-        (*succ)[actvect] = succ_vec;
-      }
+      res->succ[actvect] = succ_vec;
       pred_vec = actvect;
       arr_free(neis);
     } /* while q !empty */
   } /* while (1) */
   free(added);
   gsl_free(q);
-  return 0;
-}
-
-int cgraph_simple_bfs(const cgraph_t graph,
-               CGRAPH_INTEGER root,
-               cgraph_neimode_t mode,
-               bool unreachable,
-               atype(CGRAPH_INTEGER) **father,
-               atype(CGRAPH_INTEGER) **dist) {
-  return cgraph_bfs(graph,
-      root,
-      mode,
-      unreachable,
-      0,
-      0,
-      0,
-      father,
-      0,
-      0,
-      dist);
+  return res;
 }
 
 //igraph_dfs

@@ -69,7 +69,6 @@ if(${BUILD_TESTING})
   add_test(NAME CgraphBfs COMMAND cgraph_bfs_ut)
   add_test(NAME CgraphDegree COMMAND cgraph_degree_ut)
   add_test(NAME CgraphIsDag COMMAND cgraph_is_dag_ut)
-  add_test(NAME CgraphSimpleBfs COMMAND cgraph_simple_bfs_ut)
   add_test(NAME CgraphDfs COMMAND cgraph_dfs_ut)
   add_test(NAME CgraphTopologicalSorting COMMAND cgraph_topological_sorting_ut)
   add_test(NAME CgraphSingleShortestPathDijkstra COMMAND

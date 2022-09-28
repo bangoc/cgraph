@@ -118,4 +118,45 @@ struct paths {
   arr_free((name)->reached); \
   free(name)
 
+/**
+ * Cấu trúc được trả về bởi cgraph_bfs
+ */
+struct bfs {
+  atype(CGRAPH_INTEGER) *order;
+  atype(CGRAPH_INTEGER) *rank;
+  atype(CGRAPH_INTEGER) *father;
+  atype(CGRAPH_INTEGER) *pred;
+  atype(CGRAPH_INTEGER) *succ;
+  atype(CGRAPH_INTEGER) *dist;
+};
+
+#define make_bfs(name, no_of_nodes) \
+  struct bfs *name = malloc(sizeof(struct bfs)); \
+  name->order = arr_create(no_of_nodes, CGRAPH_INTEGER); \
+  name->rank = arr_create(no_of_nodes, CGRAPH_INTEGER); \
+  name->father = arr_create(no_of_nodes, CGRAPH_INTEGER); \
+  name->pred = arr_create(no_of_nodes, CGRAPH_INTEGER); \
+  name->succ = arr_create(no_of_nodes, CGRAPH_INTEGER); \
+  name->dist = arr_create(no_of_nodes, CGRAPH_INTEGER); \
+  arr_fill(name->order, CGRAPH_NAN); \
+  arr_fill(name->rank, CGRAPH_NAN); \
+  arr_fill(name->father, CGRAPH_NAN); \
+  arr_fill(name->pred, CGRAPH_NAN); \
+  arr_fill(name->succ, CGRAPH_NAN); \
+  arr_fill(name->dist, CGRAPH_NAN)
+
+#define free_bfs(name) \
+  do { \
+    if (!(name)) { \
+      break; \
+    } \
+    arr_free((name)->order); \
+    arr_free((name)->rank); \
+    arr_free((name)->father); \
+    arr_free((name)->pred); \
+    arr_free((name)->succ); \
+    arr_free((name)->dist); \
+    free(name); \
+  } while (0)
+
 #endif  // BASE_CGRAPH_DATATYPE_H_
