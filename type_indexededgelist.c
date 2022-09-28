@@ -483,11 +483,7 @@ CGRAPH_INTEGER cgraph_degree_one(const cgraph_t graph,
  *
  * \param graph Đối tượng đồ thị.
  * \param eid Chỉ số của cạnh.
- * \param from Con trỏ tới một biến CGRAPH_INTEGER. Đỉnh nguồn của
- * cạnh sẽ được lưu ở đây.
- * \param to Con trỏ tới một biến CGRAPH_INTEGER. Đỉnh đích của cạnh
- * sẽ được lưu ở đây.
- * \return Mã lỗi. Triển khai hiện tại luôn trả về mã thành công.
+ * \return 1 đối tượng struct edge chứa cặp đỉnh from và to.
  * Đối với đồ thị vô hướng, trả về from <= to.
  * \sa \ref cgraph_get_eid() cho thao tác ngược lại;
  *     \ref CGRAPH_TO(), \ref CGRAPH_FROM() và \ref CGRAPH_OTHER()
@@ -495,18 +491,18 @@ CGRAPH_INTEGER cgraph_degree_one(const cgraph_t graph,
  *
  * Độ phức tạp thời gian: O(1).
  */
+struct edge cgraph_edge(const cgraph_t graph, CGRAPH_INTEGER eid) {
+  cgraph_err_reset();
+  struct edge e;
+  if (cgraph_is_directed(graph)) {
+    e.from = (CGRAPH_INTEGER) (graph->from)[eid];
+    e.to   = (CGRAPH_INTEGER) (graph->to  )[eid];
+  } else {
+    e.from = (CGRAPH_INTEGER) (graph->to  )[eid];
+    e.to   = (CGRAPH_INTEGER) (graph->from)[eid];
+  }
 
-int cgraph_edge(const cgraph_t graph, CGRAPH_INTEGER eid,
-               CGRAPH_INTEGER *from, CGRAPH_INTEGER *to) {
-    if (cgraph_is_directed(graph)) {
-        *from = (CGRAPH_INTEGER) (graph->from)[eid];
-        *to   = (CGRAPH_INTEGER) (graph->to  )[eid];
-    } else {
-        *from = (CGRAPH_INTEGER) (graph->to  )[eid];
-        *to   = (CGRAPH_INTEGER) (graph->from)[eid];
-    }
-
-    return 0;
+  return e;
 }
 
 /**

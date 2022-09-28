@@ -36,8 +36,11 @@ CGRAPH_INTEGER cgraph_degree_one(const cgraph_t graph,
                       const CGRAPH_INTEGER node,
                       cgraph_neimode_t mode,
                       bool loops);
-int cgraph_edge(const cgraph_t graph, CGRAPH_INTEGER eid,
-               CGRAPH_INTEGER *from, CGRAPH_INTEGER *to);
+struct edge {
+  CGRAPH_INTEGER from;
+  CGRAPH_INTEGER to;
+};
+struct edge cgraph_edge(const cgraph_t graph, CGRAPH_INTEGER eid);
 int cgraph_get_eid(const cgraph_t graph, CGRAPH_INTEGER *eid,
                    CGRAPH_INTEGER pfrom, CGRAPH_INTEGER pto,
                    bool directed);

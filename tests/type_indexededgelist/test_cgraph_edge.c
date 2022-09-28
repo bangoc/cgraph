@@ -15,11 +15,11 @@ int main() {
                           3, 5,
                           3, 1,
                           1, 4}, 18);
-  CGRAPH_INTEGER from, to;
+  struct edge e;
   bool any = false;
   for (int eid = 0; eid < cgraph_ecount(g); ++eid) {
-    cgraph_edge(g, eid, &from, &to);
-    if (from != edges[2 * eid] || to != edges[2 * eid + 1]) {
+    e = cgraph_edge(g, eid);
+    if (e.from != edges[2 * eid] || e.to != edges[2 * eid + 1]) {
       UT_MSG_FAILED("Case 1. Edge from -> to");
       any = true;
       break;
@@ -40,10 +40,10 @@ int main() {
                             3, 5,
                             1, 4}, 16);
   for (int eid = 0; eid < cgraph_ecount(g); ++eid) {
-    cgraph_edge(g, eid, &from, &to);
-    if (from != edges[2 * eid] || to != edges[2 * eid + 1]) {
+    e = cgraph_edge(g, eid);
+    if (e.from != edges[2 * eid] || e.to != edges[2 * eid + 1]) {
       UT_MSG_FAILED("Case 2. Undirected from -- to");
-      fprintf(stderr, "%d %d vs %d %d\n", from, to, edges[2 * eid], edges[2 * eid + 1]);
+      fprintf(stderr, "%d %d vs %d %d\n", e.from, e.to, edges[2 * eid], edges[2 * eid + 1]);
       any = true;
       break;
     }
