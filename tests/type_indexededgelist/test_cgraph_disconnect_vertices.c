@@ -137,5 +137,6 @@ int main() {
   arr_free(v);
   arr_free(edges);
   cgraph_destroy(&g);
+  UT_MSG_OK("Test disconnect vertices");
   return 0;
 }

@@ -274,7 +274,6 @@ int cgraph_get_shortest_paths(const cgraph_t graph,
                  CGRAPH_FAILURE);
   }
   struct gsllist *q = gsl_create_list(NULL);
-  arr_make(tmp, 0, CGRAPH_INTEGER);
 
   /* Đánh dấu các đỉnh cần đi tới */
   to_reach = arr_size(to);
@@ -317,7 +316,7 @@ int cgraph_get_shortest_paths(const cgraph_t graph,
     // Các giá trị trong hàng đợi là mã đỉnh + 1
     --act;
 
-    CGRAPH_CHECK(cgraph_incident(graph, &tmp, act, mode));
+    atype(CGRAPH_INTEGER) *tmp = cgraph_incident(graph, act, mode);
     for (int j = 0; j < arr_size(tmp); j++) {
       CGRAPH_INTEGER edge = tmp[j];
       CGRAPH_INTEGER neighbor = CGRAPH_OTHER(graph, edge, act);
@@ -329,6 +328,7 @@ int cgraph_get_shortest_paths(const cgraph_t graph,
       father[neighbor] = edge + 2;
       que_enq(q, gtype_l(neighbor + 1));
     }
+    arr_free(tmp);
   }
 
   if (reached < to_reach) {
@@ -417,7 +417,6 @@ int cgraph_get_shortest_paths(const cgraph_t graph,
 
   free(father);
   gsl_free(q);
-  arr_free(tmp);
 
   return 0;
 }
@@ -577,7 +576,7 @@ int cgraph_get_shortest_paths_dijkstra(const cgraph_t graph,
   parents[from] = 0;
   p2w_push_with_index(q, from, gtype_d(0.0));
 
-  arr_make(neis, 0, CGRAPH_INTEGER);
+  atype(CGRAPH_INTEGER) *neis;
   while (!p2w_is_empty(q) && to_reach > 0) {
     CGRAPH_INTEGER nlen, minnei = p2w_max_index(q);
     CGRAPH_REAL mindist = -p2w_delete_max(q).d;
@@ -588,7 +587,7 @@ int cgraph_get_shortest_paths_dijkstra(const cgraph_t graph,
     }
 
     // Cập nhật đường đi ngắn nhất cho các láng giềng của 'minnei'
-    cgraph_incident(graph, &neis, minnei, mode);
+    neis = cgraph_incident(graph, minnei, mode);
     nlen = arr_size(neis);
     for (CGRAPH_INTEGER i = 0; i < nlen; i++) {
       CGRAPH_INTEGER edge = neis[i];

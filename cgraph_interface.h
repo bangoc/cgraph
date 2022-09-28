@@ -22,10 +22,8 @@ int cgraph_neighbors(const cgraph_t graph,
                      atype(CGRAPH_INTEGER) **neis,
                      CGRAPH_INTEGER vid,
                      cgraph_neimode_t mode);
-int cgraph_incident(const cgraph_t graph,
-                    atype(CGRAPH_INTEGER) **eids,
-                    CGRAPH_INTEGER vid,
-                    cgraph_neimode_t mode);
+atype(CGRAPH_INTEGER) *cgraph_incident(const cgraph_t graph,
+                    CGRAPH_INTEGER vid, cgraph_neimode_t mode);
 
 atype(CGRAPH_INTEGER) *cgraph_degree_all(const cgraph_t graph,
                       cgraph_neimode_t mode, bool loops);

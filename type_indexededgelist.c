@@ -362,40 +362,37 @@ int cgraph_neighbors(const cgraph_t graph,
   return CGRAPH_SUCCESS;
 }
 
-int cgraph_incident(const cgraph_t graph,
-                    atype(CGRAPH_INTEGER) **eids,
-                    CGRAPH_INTEGER vid,
-                    cgraph_neimode_t mode) {
+atype(CGRAPH_INTEGER) *cgraph_incident(const cgraph_t graph,
+    CGRAPH_INTEGER vid, cgraph_neimode_t mode) {
+  cgraph_err_reset();
   const CGRAPH_INTEGER node = vid;
   if (node < 0 || node > cgraph_vcount(graph) - 1) {
-    CGRAPH_ERROR("Không thể truy cập các láng giềng", CGRAPH_FAILURE);
-    return CGRAPH_FAILURE;
+    CGRAPH_ERROR("Tham số đỉnh ngoài khoảng", CGRAPH_FAILURE);
+    return NULL;
   }
-  if (mode != CGRAPH_OUT && mode != CGRAPH_IN &&
-      mode != CGRAPH_ALL) {
-    CGRAPH_ERROR("Không thể truy cập các láng giềng", CGRAPH_FAILURE);
-    return CGRAPH_FAILURE;
+  if (mode != CGRAPH_OUT && mode != CGRAPH_IN && mode != CGRAPH_ALL) {
+    CGRAPH_ERROR("Sai tham số mode", CGRAPH_FAILURE);
+    return NULL;
   }
 
-  if (! graph->directed) {
+  if (!graph->directed) {
     mode = CGRAPH_ALL;
   }
 
-  arr_resize(*eids, 0);
-
+  arr_make(eids, 0, CGRAPH_INTEGER);
   if (mode & CGRAPH_OUT) {
     CGRAPH_INTEGER j = (graph->os)[node + 1];
     for (CGRAPH_INTEGER i = (graph->os)[node]; i < j; i++) {
-      arr_append(*eids, (graph->oi)[i]);
+      arr_append(eids, (graph->oi)[i]);
     }
   }
   if (mode & CGRAPH_IN) {
     CGRAPH_INTEGER j = (graph->is)[node + 1];
     for (CGRAPH_INTEGER i = (graph->is)[node]; i < j; i++) {
-      arr_append(*eids, (graph->ii)[i]);
+      arr_append(eids, (graph->ii)[i]);
     }
   }
-  return 0;
+  return eids;
 }
 
 atype(CGRAPH_INTEGER) *cgraph_degree_all(const cgraph_t graph,
@@ -714,13 +711,11 @@ int cgraph_disconnect_vertices(cgraph_t graph,
   char *vmark = calloc(no_of_vertices, sizeof(char)),
        *emark = calloc(no_of_edges, sizeof(char));
   CGRAPH_INTEGER i, j;
-  arr_make(tmp, 0, CGRAPH_INTEGER);
   arr_make(eid, 0, CGRAPH_INTEGER);
 
 #define FREE_MEMORY() \
   free(vmark); \
   free(emark); \
-  arr_free(tmp); \
   arr_free(eid)
 
   for (i = 0; i < arr_size(vertices); ++i) {
@@ -731,7 +726,8 @@ int cgraph_disconnect_vertices(cgraph_t graph,
     }
     if (!vmark[vertices[i]]) {
       vmark[vertices[i]] = 1;
-      if (cgraph_incident(graph, &tmp, vertices[i], mode) != CGRAPH_SUCCESS) {
+      atype(CGRAPH_INTEGER) *tmp = cgraph_incident(graph, vertices[i], mode);
+      if (!cgraph_err_is_success()) {
         FREE_MEMORY();
         CGRAPH_ERROR("Lỗi lấy danh sách cạnh", CGRAPH_FAILURE);
         return CGRAPH_FAILURE;
@@ -743,6 +739,7 @@ int cgraph_disconnect_vertices(cgraph_t graph,
           arr_append(eid, tmp[j]);
         }
       }
+      arr_free(tmp);
     }
   }
 
