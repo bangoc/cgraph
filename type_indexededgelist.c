@@ -116,10 +116,7 @@ static int cgraph_i_create_start(
  * cgraph_add_vertices trước.
  * \param graph Đồ thị mà các cạnh sẽ được thêm vào.
  * \param edges Các cạnh.
- * \return Mã lỗi:
- *    \c CGRAPH_FAILURE: Không thể thêm cạnh do độ dài vec-tơ
- *       edges không hợp lệ, hoặc có đỉnh ngoài phạm vi, v.v..
- *    \c CGRAPH_SUCCESS: Nếu thành công
+ * \return Không trả về giá trị
  *
  *
  * </para><para>
@@ -130,95 +127,96 @@ static int cgraph_i_create_start(
  * \example examples/simple/igraph_add_edges.c
  * TODO: Bổ xung ví dụ cho cgraph
  */
-int cgraph_add_edges(cgraph_t graph, atype(CGRAPH_INTEGER) *edges) {
-    long int no_of_edges = cgraph_ecount(graph);
-    long int edges_to_add = arr_size(edges) / 2;
-    long int i = 0;
-    cgraph_error_handler_t *oldhandler;
-    bool ret1, ret2;
-    bool directed = cgraph_is_directed(graph);
+void cgraph_add_edges(cgraph_t graph, atype(CGRAPH_INTEGER) *edges) {
+  cgraph_err_reset();
+  long int no_of_edges = cgraph_ecount(graph);
+  long int edges_to_add = arr_size(edges) / 2;
+  long int i = 0;
+  cgraph_error_handler_t *oldhandler;
+  bool ret1, ret2;
+  bool directed = cgraph_is_directed(graph);
 
-    if (arr_size(edges) % 2 != 0) {
-      CGRAPH_ERROR(
-        "Lỗi độ dài kích thước vec-tơ cạnh (lẻ)", CGRAPH_FAILURE);
-      return CGRAPH_FAILURE;
+  if (arr_size(edges) % 2 != 0) {
+    CGRAPH_ERROR(
+      "Lỗi độ dài kích thước vec-tơ cạnh (lẻ)", CGRAPH_FAILURE);
+    return;
+  }
+  if (!arr_irange(edges, 0, cgraph_vcount(graph) - 1)) {
+    CGRAPH_ERROR("Chỉ số đỉnh nằm ngoài khoảng", CGRAPH_FAILURE);
+    return;
+  }
+
+  arr_make(newoi, 0, CGRAPH_INTEGER);
+  arr_make(newii, 0, CGRAPH_INTEGER);
+
+  /* from & to */
+  arr_reserve(graph->from, no_of_edges + edges_to_add);
+  arr_reserve(graph->to, no_of_edges + edges_to_add);
+
+  /*
+   * Nếu là đồ thị có hướng thì from - to được xác định theo đúng
+   * thứ tự trong vec-tơ edges;
+   * Nếu ngược lại (trong trường hợp đồ thị vô hướng)
+   *   thì from là giá trị cực đại trong hai đỉnh,
+   *   còn to là giá trị còn lại
+   */
+  while (i < edges_to_add * 2) {
+    if (directed || edges[i] > edges[i + 1]) {
+      arr_append(graph->from, edges[i++]);
+      arr_append(graph->to,   edges[i++]);
+    } else {
+      arr_append(graph->to,   edges[i++]);
+      arr_append(graph->from, edges[i++]);
     }
-    if (!arr_irange(edges, 0, cgraph_vcount(graph) - 1)) {
-      CGRAPH_ERROR("Chỉ số đỉnh nằm ngoài khoảng", CGRAPH_FAILURE);
-      return CGRAPH_FAILURE;
-    }
+  }
 
-    arr_make(newoi, 0, CGRAPH_INTEGER);
-    arr_make(newii, 0, CGRAPH_INTEGER);
+  /* Tạm thời vô hiệu xử lý lỗi */
+  oldhandler =
+    cgraph_set_error_handler(cgraph_error_handler_ignore);
 
-    /* from & to */
-    arr_reserve(graph->from, no_of_edges + edges_to_add);
-    arr_reserve(graph->to, no_of_edges + edges_to_add);
+  /* oi & ii */
+  arr_resize(newoi, no_of_edges + edges_to_add);
+  arr_resize(newii, no_of_edges + edges_to_add);
 
-    /*
-     * Nếu là đồ thị có hướng thì from - to được xác định theo đúng
-     * thứ tự trong vec-tơ edges;
-     * Nếu ngược lại (trong trường hợp đồ thị vô hướng)
-     *   thì from là giá trị cực đại trong hai đỉnh,
-     *   còn to là giá trị còn lại
-     */
-    while (i < edges_to_add * 2) {
-        if (directed || edges[i] > edges[i + 1]) {
-          arr_append(graph->from, edges[i++]);
-          arr_append(graph->to,   edges[i++]);
-        } else {
-          arr_append(graph->to,   edges[i++]);
-          arr_append(graph->from, edges[i++]);
-        }
-    }
+  // TODO: Xử lý lỗi
+  // if (ret1 != 0 || ret2 != 0) {
+  //   // Thu gọn vec-tơ
+  //   cgraph_ivec_setsize(graph->from, no_of_edges);
+  //   cgraph_ivec_setsize(graph->to, no_of_edges);
 
-    /* Tạm thời vô hiệu xử lý lỗi */
-    oldhandler =
-        cgraph_set_error_handler(cgraph_error_handler_ignore);
+  //   // Khôi phục xử lý lỗi
+  //   cgraph_set_error_handler(oldhandler);
 
-    /* oi & ii */
-    arr_resize(newoi, no_of_edges + edges_to_add);
-    arr_resize(newii, no_of_edges + edges_to_add);
+  //   cgraph_ivec_free(&newoi);
+  //   cgraph_ivec_free(&newii);
+  //   CGRAPH_ERROR("Không thể thêm cạnh", CGRAPH_FAILURE);
+  // }
 
-    // TODO: Xử lý lỗi
-    // if (ret1 != 0 || ret2 != 0) {
-    //   // Thu gọn vec-tơ
-    //   cgraph_ivec_setsize(graph->from, no_of_edges);
-    //   cgraph_ivec_setsize(graph->to, no_of_edges);
+  arr_iorder(graph->from, graph->to, newoi);
+  arr_iorder(graph->to, graph->from, newii);
 
-    //   // Khôi phục xử lý lỗi
-    //   cgraph_set_error_handler(oldhandler);
+  // TODO: Khôi phục xử lý lỗi
+  // if (ret1 != 0 || ret2 != 0) {
+  //   cgraph_ivec_setsize(graph->from, no_of_edges);
+  //   cgraph_ivec_setsize(graph->to, no_of_edges);
+  //   cgraph_ivec_free(&newoi);
+  //   cgraph_ivec_free(&newii);
+  //   cgraph_set_error_handler(oldhandler);
+  //   CGRAPH_ERROR("Không thể thêm cạnh", CGRAPH_FAILURE);
+  // }
 
-    //   cgraph_ivec_free(&newoi);
-    //   cgraph_ivec_free(&newii);
-    //   CGRAPH_ERROR("Không thể thêm cạnh", CGRAPH_FAILURE);
-    // }
+  /* os & is, độ dài của nó không thay đổi, thao tác an toàn */
+  cgraph_i_create_start(graph->os, graph->from, newoi, graph->n);
+  cgraph_i_create_start(graph->is, graph->to, newii, graph->n);
 
-    arr_iorder(graph->from, graph->to, newoi);
-    arr_iorder(graph->to, graph->from, newii);
+  /* Tất cả đều đã ổn  */
+  arr_free(graph->oi);
+  arr_free(graph->ii);
+  graph->oi = newoi;
+  graph->ii = newii;
+  cgraph_set_error_handler(oldhandler);
 
-    // TODO: Khôi phục xử lý lỗi
-    // if (ret1 != 0 || ret2 != 0) {
-    //   cgraph_ivec_setsize(graph->from, no_of_edges);
-    //   cgraph_ivec_setsize(graph->to, no_of_edges);
-    //   cgraph_ivec_free(&newoi);
-    //   cgraph_ivec_free(&newii);
-    //   cgraph_set_error_handler(oldhandler);
-    //   CGRAPH_ERROR("Không thể thêm cạnh", CGRAPH_FAILURE);
-    // }
-
-    /* os & is, độ dài của nó không thay đổi, thao tác an toàn */
-    cgraph_i_create_start(graph->os, graph->from, newoi, graph->n);
-    cgraph_i_create_start(graph->is, graph->to, newii, graph->n);
-
-    /* Tất cả đều đã ổn  */
-    arr_free(graph->oi);
-    arr_free(graph->ii);
-    graph->oi = newoi;
-    graph->ii = newii;
-    cgraph_set_error_handler(oldhandler);
-
-    return CGRAPH_SUCCESS;
+  return;
 }
 
 /**
@@ -230,8 +228,7 @@ int cgraph_add_edges(cgraph_t graph, atype(CGRAPH_INTEGER) *edges) {
  *
  * \param graph Đối tượng đồ thị cần được mở rộng.
  * \param nv Số nguyên không âm - là số lượng đỉnh cần được thêm vào
- * \return Mã lỗi:
- *     \c CGRAPH_FAILURE: Số lượng đỉnh mới không hợp lệ.
+ * \return Không trả về giá trị
  *
  * Độ phức tạp: O(|V|) trong đó
  * |V| là
@@ -240,13 +237,14 @@ int cgraph_add_edges(cgraph_t graph, atype(CGRAPH_INTEGER) *edges) {
  * \example examples/simple/igraph_add_vertices.c
  * TODO: Bổ xung ví dụ cho cgraph
  */
-int cgraph_add_vertices(cgraph_t graph, CGRAPH_INTEGER nv) {
+void cgraph_add_vertices(cgraph_t graph, CGRAPH_INTEGER nv) {
+  cgraph_err_reset();
   long int ec = cgraph_ecount(graph);
   long int i;
 
   if (nv < 0) {
     CGRAPH_ERROR("Không thể thêm số lượng đỉnh âm", CGRAPH_FAILURE);
-    return CGRAPH_FAILURE;
+    return;
   }
 
   arr_resize(graph->os, graph->n + nv + 1);
@@ -258,36 +256,6 @@ int cgraph_add_vertices(cgraph_t graph, CGRAPH_INTEGER nv) {
   }
 
   graph->n += nv;
-
-  return CGRAPH_SUCCESS;
-}
-
-/**
- * \ingroup interface
- * \function cgraph_destroy
- * \brief Giải phóng bộ nhớ đã được cấp phát cho một đồ thị.
- *
- * </para><para>
- * Hàm này chỉ được gọi đúng một lần cho một đồ thị.
- *
- * </para><para>
- * Bộ nhớ được cấp phát cho biểu diễn đồ thị phải được hủy trước khi
- * hủy bộ nhớ cho chính cấu trúc đồ thị.
- *
- * \param graph Con trỏ tới đồ thị cần giải phóng.
- *
- * Độ phức tạp: phụ thuộc vào hệ điều hành.
- */
-void cgraph_destroy(cgraph_t *graph) {
-  cgraph_t g = *graph;
-  arr_free(g->from);
-  arr_free(g->to);
-  arr_free(g->oi);
-  arr_free(g->ii);
-  arr_free(g->os);
-  arr_free(g->is);
-  free(g);
-  *graph = NULL;
 }
 
 atype(CGRAPH_INTEGER) *cgraph_neighbors(const cgraph_t graph,
@@ -611,7 +579,7 @@ CGRAPH_INTEGER cgraph_get_eid(const cgraph_t graph,
  * Hàm này giải phóng bộ nhớ được cấp phát cho đồ thị.
  * \param graph Đồ thị được xử lý.
  * \param edges Các cạnh cần xóa.
- * \return Mã lỗi.
+ * \return Không trả về giá trị
  *
  * Độ phức tạp thời gian: O(|V|+|E|) trong đó
  * |V| và |E| tương ứng là số lượng đỉnh và số lượng cạnh trong đồ
@@ -620,66 +588,67 @@ CGRAPH_INTEGER cgraph_get_eid(const cgraph_t graph,
  * \example examples/simple/igraph_delete_edges.c
  * TODO: Bổ xung ví dụ
  */
-int cgraph_delete_edges(cgraph_t graph, atype(CGRAPH_INTEGER) *edges) {
-    CGRAPH_INTEGER no_of_edges = cgraph_ecount(graph);
-    CGRAPH_INTEGER no_of_nodes = cgraph_vcount(graph);
-    CGRAPH_INTEGER edges_to_remove = 0;
-    CGRAPH_INTEGER remaining_edges;
+void cgraph_delete_edges(cgraph_t graph, atype(CGRAPH_INTEGER) *edges) {
+  cgraph_err_reset();
+  CGRAPH_INTEGER no_of_edges = cgraph_ecount(graph);
+  CGRAPH_INTEGER no_of_nodes = cgraph_vcount(graph);
+  CGRAPH_INTEGER edges_to_remove = 0;
+  CGRAPH_INTEGER remaining_edges;
 
-    arr_make(newfrom, 0, CGRAPH_INTEGER);
-    arr_make(newto, 0, CGRAPH_INTEGER);
+  arr_make(newfrom, 0, CGRAPH_INTEGER);
+  arr_make(newto, 0, CGRAPH_INTEGER);
 
-    CGRAPH_INTEGER *mark;
-    CGRAPH_INTEGER i, j;
+  CGRAPH_INTEGER *mark;
+  CGRAPH_INTEGER i, j;
 
-    mark = calloc(no_of_edges, sizeof(int));
-    if (mark == 0) {
-      CGRAPH_ERROR("Không thể cấp phát bộ nhớ", CGRAPH_FAILURE);
+  mark = calloc(no_of_edges, sizeof(int));
+  if (mark == 0) {
+    CGRAPH_ERROR("Không thể cấp phát bộ nhớ", CGRAPH_FAILURE);
+    return;
+  }
+  for (i = 0; i < arr_size(edges); ++i) {
+    CGRAPH_INTEGER eid = edges[i];
+    if (mark[eid] == 0) {
+      edges_to_remove++;
+      mark[eid]++;
     }
-    for (i = 0; i < arr_size(edges); ++i) {
-      CGRAPH_INTEGER eid = edges[i];
-      if (mark[eid] == 0) {
-        edges_to_remove++;
-        mark[eid]++;
-      }
+  }
+  remaining_edges = no_of_edges - edges_to_remove;
+
+  arr_resize(newfrom, remaining_edges);
+  arr_resize(newto, remaining_edges);
+
+  /* Lưu các cạnh không bị xóa vào newfrom và newto */
+  for (i = 0, j = 0; j < remaining_edges; i++) {
+    if (mark[i] == 0) {
+      newfrom[j] = graph->from[i];
+      newto[j] = graph->to[i];
+      j++;
     }
-    remaining_edges = no_of_edges - edges_to_remove;
+  }
 
-    arr_resize(newfrom, remaining_edges);
-    arr_resize(newto, remaining_edges);
+  /* Tạo các chỉ mục, thao tác này có thể cấp phát thêm bộ nhớ */
+  arr_make(newoi, remaining_edges, CGRAPH_INTEGER);
+  arr_make(newii, remaining_edges, CGRAPH_INTEGER);
 
-    /* Lưu các cạnh không bị xóa vào newfrom và newto */
-    for (i = 0, j = 0; j < remaining_edges; i++) {
-      if (mark[i] == 0) {
-        newfrom[j] = graph->from[i];
-        newto[j] = graph->to[i];
-        j++;
-      }
-    }
+  arr_iorder(newfrom, newto, newoi);
+  arr_iorder(newto, newfrom, newii);
 
-    /* Tạo các chỉ mục, thao tác này có thể cấp phát thêm bộ nhớ */
-    arr_make(newoi, remaining_edges, CGRAPH_INTEGER);
-    arr_make(newii, remaining_edges, CGRAPH_INTEGER);
+  /* Ok, chúng ta giải phóng bộ nhớ cho các cấu trúc cũ  */
+  arr_free(graph->from);
+  arr_free(graph->to);
+  arr_free(graph->oi);
+  arr_free(graph->ii);
+  graph->from = newfrom;
+  graph->to = newto;
+  graph->oi = newoi;
+  graph->ii = newii;
 
-    arr_iorder(newfrom, newto, newoi);
-    arr_iorder(newto, newfrom, newii);
+  free(mark);
 
-    /* Ok, chúng ta giải phóng bộ nhớ cho các cấu trúc cũ  */
-    arr_free(graph->from);
-    arr_free(graph->to);
-    arr_free(graph->oi);
-    arr_free(graph->ii);
-    graph->from = newfrom;
-    graph->to = newto;
-    graph->oi = newoi;
-    graph->ii = newii;
-
-    free(mark);
-
-    /* Tạo vec-tơ bắt đầu, không cần thêm bộ nhớ cho thao tác này */
-    cgraph_i_create_start(graph->os, graph->from, graph->oi, no_of_nodes);
-    cgraph_i_create_start(graph->is, graph->to, graph->ii, no_of_nodes);
-    return CGRAPH_SUCCESS;
+  /* Tạo vec-tơ bắt đầu, không cần thêm bộ nhớ cho thao tác này */
+  cgraph_i_create_start(graph->os, graph->from, graph->oi, no_of_nodes);
+  cgraph_i_create_start(graph->is, graph->to, graph->ii, no_of_nodes);
 }
 
 /**
@@ -696,15 +665,15 @@ int cgraph_delete_edges(cgraph_t graph, atype(CGRAPH_INTEGER) *edges) {
  *
  * \param graph Đồ thị cần xử lý.
  * \param vertices Vec-tơ chứa id của các đỉnh cần ngắt kết nối.
- * \return Mã lỗi:
- *         \c CGRAPH_FAILURE: Nếu có đỉnh không hợp lệ.
+ * \return Không trả về giá trị.
  *
  * Độ phức tạp thời gian: O(|V|+|E|),
  * |V| và |E| là số lượng đỉnh và số lượng cạnh trong đồ thị ban đầu.
  *
  */
-int cgraph_disconnect_vertices(cgraph_t graph,
+void cgraph_disconnect_vertices(cgraph_t graph,
       atype(CGRAPH_INTEGER) *vertices, cgraph_neimode_t mode) {
+  cgraph_err_reset();
   CGRAPH_INTEGER no_of_vertices = cgraph_vcount(graph);
   CGRAPH_INTEGER no_of_edges = cgraph_ecount(graph);
   char *vmark = calloc(no_of_vertices, sizeof(char)),
@@ -721,7 +690,7 @@ int cgraph_disconnect_vertices(cgraph_t graph,
     if (i < 0 || i >= no_of_vertices) {
       FREE_MEMORY();
       CGRAPH_ERROR("Đỉnh không hợp lệ.", CGRAPH_FAILURE);
-      return CGRAPH_FAILURE;
+      return;
     }
     if (!vmark[vertices[i]]) {
       vmark[vertices[i]] = 1;
@@ -729,7 +698,7 @@ int cgraph_disconnect_vertices(cgraph_t graph,
       if (!cgraph_err_is_success()) {
         FREE_MEMORY();
         CGRAPH_ERROR("Lỗi lấy danh sách cạnh", CGRAPH_FAILURE);
-        return CGRAPH_FAILURE;
+        return;
       }
       // Đã lấy danh sách cạnh
       for (j = 0; j < arr_size(tmp); ++j) {
@@ -742,13 +711,10 @@ int cgraph_disconnect_vertices(cgraph_t graph,
     }
   }
 
-  int ret = CGRAPH_SUCCESS;
   if (arr_size(eid) > 0) {
-    ret = cgraph_delete_edges(graph, eid);
+    cgraph_delete_edges(graph, eid);
   }
   FREE_MEMORY();
 
 #undef FREE_MEMORY
-
-  return ret;
 }

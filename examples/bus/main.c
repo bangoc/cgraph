@@ -168,6 +168,6 @@ int main(int argc, char *argv[]) {
   free_global();
   free(beg);
   free(end);
-  cgraph_destroy(&g);
+  cgraph_destroy(g);
   return 0;
 }

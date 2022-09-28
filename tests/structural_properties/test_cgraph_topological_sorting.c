@@ -61,7 +61,7 @@ int main() {
     any = true;
   }
   arr_free(res);
-  cgraph_destroy(&g);
+  cgraph_destroy(g);
   if (any) {
     return 1;
   }

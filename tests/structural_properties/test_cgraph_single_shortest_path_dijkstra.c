@@ -123,7 +123,7 @@ int main() {
   /* A little bit silly because it's a useless processing */
   cgraph_get_shortest_path_dijkstra(g, NULL, NULL, 3, 0, weights, CGRAPH_OUT);
 
-  cgraph_destroy(&g);
+  cgraph_destroy(g);
   arr_free(epath);
   arr_free(vpath);
   arr_free(weights);

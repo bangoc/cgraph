@@ -37,7 +37,8 @@ int main() {
   // Thêm cạnh ngoài phạm vi
   atype(CGRAPH_INTEGER) *edges3 = arr_ifrom_array(
           (CGRAPH_INTEGER[]) {5, 6}, 2);
-  CHECK_MSG(cgraph_add_edges(g, edges3) == CGRAPH_FAILURE, "Trả về mã lỗi");
+  cgraph_add_edges(g, edges3);
+  CHECK_MSG(cgraph_err_get() == CGRAPH_FAILURE, "Phát sinh lỗi");
 
   // Đồ thị không thay đổi
   CHECK_MSG(arr_iequal(g->from, (CGRAPH_INTEGER []){0, 0, 1, 1, 2}, 5), "g->from 2");
@@ -67,6 +68,6 @@ int main() {
   arr_free(edges);
   arr_free(edges2);
   arr_free(edges3);
-  cgraph_destroy(&g);
+  cgraph_destroy(g);
   return 0;
 }

@@ -40,6 +40,6 @@ int main() {
   }
   arr_free(edges);
   arr_free(order);
-  cgraph_destroy(&g);
+  cgraph_destroy(g);
   return 0;
 }

@@ -25,7 +25,7 @@ int main() {
       break;
     }
   }
-  cgraph_destroy(&g);
+  cgraph_destroy(g);
   arr_free(edges);
   g = test_create_g4();
 

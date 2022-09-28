@@ -12,7 +12,7 @@ int main() {
     failed = true;
   }
 
-  cgraph_destroy(&g);
+  cgraph_destroy(g);
   g = test_create_g2();
   ret = cgraph_is_dag(g);
   if (ret != false) {
@@ -20,7 +20,7 @@ int main() {
     failed = true;
   }
 
-  cgraph_destroy(&g);
+  cgraph_destroy(g);
   g = test_create_g3();
   ret = cgraph_is_dag(g);
   if (ret != true) {
@@ -28,7 +28,7 @@ int main() {
     failed = true;
   }
 
-  cgraph_destroy(&g);
+  cgraph_destroy(g);
   g = test_create_g4();
   ret = cgraph_is_dag(g);
   if (ret != false) {
@@ -36,7 +36,7 @@ int main() {
     failed = true;
   }
 
-  cgraph_destroy(&g);
+  cgraph_destroy(g);
   g = test_create_g5(g);
   ret = cgraph_is_dag(g);
   if (ret != false) {

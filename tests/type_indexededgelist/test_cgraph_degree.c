@@ -61,7 +61,7 @@ int main() {
   TEST_ALL(degree, ((CGRAPH_INTEGER[]){3, 5, 5, 4, 2, 1}), 6, "g2. All in+out degree (with loop)");
   arr_free(degree);
 
-  cgraph_destroy(&g);
+  cgraph_destroy(g);
 
   // Test undirected graph with loop
   g = test_create_g5();
@@ -105,7 +105,7 @@ int main() {
   TEST_ALL(degree, ((CGRAPH_INTEGER[]){3, 4, 5, 3, 2, 1}), 6, "g5. All in+out degree (with loop)");
   arr_free(degree);
 
-  cgraph_destroy(&g);
+  cgraph_destroy(g);
 #undef TEST_ALL
 #undef TEST_ONE
   if (failed) {

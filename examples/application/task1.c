@@ -38,7 +38,7 @@ int main() {
     }
   }
   fclose(out);
-  cgraph_destroy(&g);
+  cgraph_destroy(g);
   arr_free(edges);
   arr_free(order);
   s2w_free(conv);

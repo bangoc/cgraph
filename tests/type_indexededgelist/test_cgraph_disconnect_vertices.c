@@ -93,8 +93,8 @@ int main() {
   arr_resize(v, 0);
   arr_append(v, 2);
   arr_append(v, 7);  // Đỉnh không hợp lệ
-  CHECK_MSG(cgraph_disconnect_vertices(g, v, CGRAPH_ALL) == CGRAPH_FAILURE,
-              "Lỗi ngắt kết nối đỉnh không hợp lệ");
+  cgraph_disconnect_vertices(g, v, CGRAPH_ALL);
+  CHECK_MSG(cgraph_err_get() == CGRAPH_FAILURE, "Lỗi ngắt kết nối đỉnh không hợp lệ");
   // Cấu trúc đồ thị được giữ nguyên không thay đổi
   CHECK_MSG(cgraph_ecount(g) == 1, "Số lượng cạnh còn lại bằng 1");
   CHECK_MSG(cgraph_vcount(g) == 7, "Số lượng đỉnh không thay đổi bằng 7");
@@ -136,7 +136,7 @@ int main() {
 
   arr_free(v);
   arr_free(edges);
-  cgraph_destroy(&g);
+  cgraph_destroy(g);
   UT_MSG_OK("Test disconnect vertices");
   return 0;
 }

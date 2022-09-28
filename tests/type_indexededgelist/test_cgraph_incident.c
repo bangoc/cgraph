@@ -28,6 +28,6 @@ int main() {
   arr_free(v);
 
   UT_MSG_OK("Test neightbors");
-  cgraph_destroy(&g);
+  cgraph_destroy(g);
   return 0;
 }

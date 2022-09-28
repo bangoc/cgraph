@@ -64,7 +64,7 @@ int main() {
   TEST(order_out, ((CGRAPH_INTEGER[]){4, 2, 5, 3, 1, 0}), 6, "Case 4. order_out");
   TEST(father, ((CGRAPH_INTEGER[]){-1, -1, 1, 1, 2, 3}), 6, "Case 4. father");
   TEST(dist, ((CGRAPH_INTEGER[]){0, 0, 1, 1, 2, 2}), 6, "Case 4. dist");
-  cgraph_destroy(&g);
+  cgraph_destroy(g);
   arr_free(order);
   arr_free(order_out);
   arr_free(father);

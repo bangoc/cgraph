@@ -57,6 +57,6 @@ int main() {
   arr_free(edges);
   arr_free(v1);
   arr_free(v2);
-  cgraph_destroy(&g);
+  cgraph_destroy(g);
   return 0;
 }

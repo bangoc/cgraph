@@ -19,7 +19,7 @@ int main() {
                     }, 28);
   cgraph_t g = cgraph_create(edges, 0, true);
   cgraph_print(g);
-  cgraph_destroy(&g);
+  cgraph_destroy(g);
   arr_free(edges);
   return 0;
 }

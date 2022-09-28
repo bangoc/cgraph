@@ -53,7 +53,8 @@ cgraph_t cgraph_create_empty(CGRAPH_INTEGER n, bool directed) {
   arr_append(graph->is, 0);
 
   /* thêm các đỉnh */
-  if (cgraph_add_vertices(graph, n) != CGRAPH_SUCCESS) {
+  cgraph_add_vertices(graph, n);
+  if (!cgraph_err_is_success()) {
     return NULL;
   }
 
@@ -63,15 +64,16 @@ cgraph_t cgraph_create_empty(CGRAPH_INTEGER n, bool directed) {
 cgraph_t cgraph_create(atype(CGRAPH_INTEGER) *edges,
           CGRAPH_INTEGER n,
           bool directed) {
+  cgraph_err_reset();
   bool has_edges = arr_size(edges) > 0;
   CGRAPH_INTEGER max = has_edges ? arr_imax(edges) + 1 : 0;
 
   if (arr_size(edges) % 2 != 0) {
-    CGRAPH_WARNING("Vec-tơ cạnh không hợp lệ (độ dài lẻ)");
+    CGRAPH_ERROR("Vec-tơ cạnh không hợp lệ (độ dài lẻ)", CGRAPH_FAILURE);
     return NULL;
   }
   if (has_edges && !arr_irange(edges, 0, max - 1)) {
-    CGRAPH_WARNING("Chỉ số đỉnh không hợp lệ (giá trị nằm ngoài khoảng)");
+    CGRAPH_ERROR("Chỉ số đỉnh không hợp lệ (giá trị nằm ngoài khoảng)", CGRAPH_FAILURE);
     return NULL;
   }
 
@@ -80,13 +82,15 @@ cgraph_t cgraph_create(atype(CGRAPH_INTEGER) *edges,
   if (has_edges) {
     CGRAPH_INTEGER vc = cgraph_vcount(graph);
     if (vc < max) {
-      if (cgraph_add_vertices(graph, (CGRAPH_INTEGER) (max - vc)) != CGRAPH_SUCCESS) {
-        CGRAPH_WARNING("Lỗi thêm đỉnh.");
+      cgraph_add_vertices(graph, (CGRAPH_INTEGER) (max - vc));
+      if (!cgraph_err_is_success()) {
+        CGRAPH_ERROR("Lỗi thêm đỉnh.", CGRAPH_FAILURE);
         return NULL;
       }
     }
-    if (cgraph_add_edges(graph, edges) != CGRAPH_SUCCESS) {
-      CGRAPH_WARNING("Lỗi thêm cạnh.");
+    cgraph_add_edges(graph, edges);
+    if (!cgraph_err_is_success()) {
+      CGRAPH_ERROR("Lỗi thêm cạnh.", CGRAPH_FAILURE);
       return NULL;
     }
   }

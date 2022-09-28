@@ -112,7 +112,7 @@ int main() {
   arr_free(inbound_edges);
   arr_free(weights);
   arr_free(to);
-  cgraph_destroy(&g);
+  cgraph_destroy(g);
   if (any) {
     return 1;
   }

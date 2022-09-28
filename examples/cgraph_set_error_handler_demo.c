@@ -17,6 +17,6 @@ int main() {
   //Gọi hàm cgraph_topological_sorting với lỗi tiền điều kiện: đồ thị vô hướng
   cgraph_topological_sorting(g, NULL, CGRAPH_ALL);
   arr_free(edges);
-  cgraph_destroy(&g);
+  cgraph_destroy(g);
   return 0;
 }

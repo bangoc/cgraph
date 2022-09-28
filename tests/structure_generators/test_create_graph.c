@@ -36,7 +36,7 @@ int main() {
   TEST_VEC(g->ii,    ((CGRAPH_INTEGER[]){0, 7, 5, 2, 1, 3, 8, 4, 6}), 9, "g1.ii");
   TEST_VEC(g->os,    ((CGRAPH_INTEGER[]){0, 3, 6, 7, 9, 9, 9}), 7, "g1.os");
   TEST_VEC(g->is,    ((CGRAPH_INTEGER[]){0, 0, 2, 4, 6, 8, 9}), 7, "g1.is");
-  cgraph_destroy(&g);
+  cgraph_destroy(g);
 
   g = test_create_g2();
   TEST_VEC(g->from,  ((CGRAPH_INTEGER[]){0, 0, 1, 1, 2, 0, 3, 3, 1, 2}), 10, "g2.from");
@@ -45,7 +45,7 @@ int main() {
   TEST_VEC(g->ii,    ((CGRAPH_INTEGER[]){0, 7, 5, 2, 9, 1, 3, 8, 4, 6}), 10, "g2.ii");
   TEST_VEC(g->os,    ((CGRAPH_INTEGER[]){0, 3, 6, 8, 10, 10, 10}), 7, "g2.os");
   TEST_VEC(g->is,    ((CGRAPH_INTEGER[]){0, 0, 2, 5, 7, 9, 10}), 7, "g2.is");
-  cgraph_destroy(&g);
+  cgraph_destroy(g);
 
   g = test_create_g3();
   TEST_VEC(g->from,  ((CGRAPH_INTEGER[]){0, 0, 1, 1, 2, 0, 3, 1}), 8, "g3.from");
@@ -54,7 +54,7 @@ int main() {
   TEST_VEC(g->ii,    ((CGRAPH_INTEGER[]){0, 5, 2, 1, 3, 7, 4, 6}), 8, "g3.ii");
   TEST_VEC(g->os,    ((CGRAPH_INTEGER[]){0, 3, 6, 7, 8, 8, 8}), 7, "g3.os");
   TEST_VEC(g->is,    ((CGRAPH_INTEGER[]){0, 0, 1, 3, 5, 7, 8}), 7, "g3.is");
-  cgraph_destroy(&g);
+  cgraph_destroy(g);
 
   g = test_create_g4();
   TEST_GENERAL(g, 6, 8, false, "g4");
@@ -64,7 +64,7 @@ int main() {
   TEST_VEC(g->ii,    ((CGRAPH_INTEGER[]){0, 5, 1, 2, 3, 7, 4, 6}), 8, "g4.ii");
   TEST_VEC(g->os,    ((CGRAPH_INTEGER[]){0, 0, 1, 3, 5, 7, 8}), 7, "g4.os");
   TEST_VEC(g->is,    ((CGRAPH_INTEGER[]){0, 3, 6, 7, 8, 8, 8}), 7, "g4.is");
-  cgraph_destroy(&g);
+  cgraph_destroy(g);
 
   g = test_create_g5();
   TEST_GENERAL(g, 6, 9, false, "g5");
@@ -74,7 +74,7 @@ int main() {
   TEST_VEC(g->ii,    ((CGRAPH_INTEGER[]){0, 5, 1, 2, 3, 7, 8, 4, 6}), 9, "g4.ii");
   TEST_VEC(g->os,    ((CGRAPH_INTEGER[]){0, 0, 1, 4, 6, 8, 9}), 7, "g4.os");
   TEST_VEC(g->is,    ((CGRAPH_INTEGER[]){0, 3, 6, 8, 9, 9, 9}), 7, "g4.is");
-  cgraph_destroy(&g);
+  cgraph_destroy(g);
 
 #undef TEST_VEC
 #undef TEST_GENERAL

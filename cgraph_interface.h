@@ -9,12 +9,11 @@
 extern "C"{
 #endif
 
-int cgraph_add_vertices(cgraph_t graph, CGRAPH_INTEGER nv);
-int cgraph_delete_edges(cgraph_t graph, atype(CGRAPH_INTEGER) *edges);
-int cgraph_disconnect_vertices(cgraph_t graph,
+void cgraph_add_vertices(cgraph_t graph, CGRAPH_INTEGER nv);
+void cgraph_delete_edges(cgraph_t graph, atype(CGRAPH_INTEGER) *edges);
+void cgraph_disconnect_vertices(cgraph_t graph,
       atype(CGRAPH_INTEGER) *vertices, cgraph_neimode_t mode);
-void cgraph_destroy(cgraph_t *graph);
-int cgraph_add_edges(cgraph_t graph, atype(CGRAPH_INTEGER) *edges);
+void cgraph_add_edges(cgraph_t graph, atype(CGRAPH_INTEGER) *edges);
 CGRAPH_INTEGER cgraph_vcount(const cgraph_t graph);
 CGRAPH_INTEGER cgraph_ecount(const cgraph_t graph);
 bool cgraph_is_directed(const cgraph_t graph);
@@ -88,5 +87,33 @@ CGRAPH_INTEGER cgraph_get_eid(const cgraph_t graph,
  */
 #define CGRAPH_OTHER(graph,eid,vid) \
     ((CGRAPH_INTEGER)(CGRAPH_TO(graph,(eid))==(vid) ? CGRAPH_FROM((graph),(eid)) : CGRAPH_TO((graph),(eid))))
+
+/**
+ * \ingroup interface
+ * \function cgraph_destroy
+ * \brief Giải phóng bộ nhớ đã được cấp phát cho một đồ thị.
+ *
+ * </para><para>
+ * Hàm này chỉ được gọi đúng một lần cho một đồ thị.
+ *
+ * </para><para>
+ * Bộ nhớ được cấp phát cho biểu diễn đồ thị phải được hủy trước khi
+ * hủy bộ nhớ cho chính cấu trúc đồ thị.
+ *
+ * @param g Con trỏ tới đồ thị cần giải phóng.
+ * @return Không trả về giá trị
+ *
+ * Độ phức tạp: phụ thuộc vào hệ điều hành.
+ */
+#define cgraph_destroy(g) \
+  do { \
+    arr_free(g->from); \
+    arr_free(g->to); \
+    arr_free(g->oi); \
+    arr_free(g->ii); \
+    arr_free(g->os); \
+    arr_free(g->is); \
+    free(g); \
+  } while (0)
 
 #endif  // CGRAPH_INTERFACE_H_

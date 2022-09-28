@@ -46,7 +46,7 @@ bool t1() {
   arr_free(predecessors);
   arr_free(inbound_edges);
   arr_free(to);
-  cgraph_destroy(&g);
+  cgraph_destroy(g);
   return any;
 }
 
@@ -85,7 +85,7 @@ bool t2() {
   arr_free(predecessors);
   arr_free(inbound_edges);
   arr_free(to);
-  cgraph_destroy(&g);
+  cgraph_destroy(g);
   return any;
 }
 
