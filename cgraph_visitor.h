@@ -15,14 +15,10 @@ struct bfs *cgraph_bfs(const cgraph_t graph,
                bool unreachable,
                atype(CGRAPH_INTEGER) *restricted);
 
-int cgraph_dfs(const cgraph_t graph,
+struct dfs *cgraph_dfs(const cgraph_t graph,
                CGRAPH_INTEGER root,
                cgraph_neimode_t mode,
-               bool unreachable,
-               atype(CGRAPH_INTEGER) **order,
-               atype(CGRAPH_INTEGER) **order_out,
-               atype(CGRAPH_INTEGER) **father,
-               atype(CGRAPH_INTEGER) **dist);
+               bool unreachable);
 
 #ifdef __cplusplus
 }

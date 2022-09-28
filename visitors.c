@@ -165,62 +165,43 @@ struct bfs *cgraph_bfs(const cgraph_t graph,
  *        function of type \ref igraph_dfshandler_t. This function
  *        will be called, whenever the subtree of a vertex is completed.
  * \param extra Extra argument to pass to the callback function(s).
- * \return Error code.
+ * \return Trả về con trỏ tới cấu trúc dfs chứa các kết quả tìm đường.
  *
  * Time complexity: O(|V|+|E|), linear in the number of vertices and
  * edges.
  */
-int cgraph_dfs(const cgraph_t graph,
+struct dfs *cgraph_dfs(const cgraph_t graph,
                CGRAPH_INTEGER root,
                cgraph_neimode_t mode,
-               bool unreachable,
-               atype(CGRAPH_INTEGER) **order,
-               atype(CGRAPH_INTEGER) **order_out,
-               atype(CGRAPH_INTEGER) **father,
-               atype(CGRAPH_INTEGER) **dist) {
+               bool unreachable) {
+  cgraph_err_reset();
   CGRAPH_INTEGER no_of_nodes = cgraph_vcount(graph);
   struct gsllist *stack = gsl_create_list(NULL);
   bool *added = (bool*)calloc(no_of_nodes, sizeof(bool));
-  CGRAPH_INTEGER actroot, act_rank = 0, rank_out = 0, act_dist = 0;
+  CGRAPH_INTEGER actroot, act_rank = 0,
+                 rank_out = 0, act_dist = 0;
 
   if (root < 0 || root >= no_of_nodes) {
-    CGRAPH_ERROR("Lỗi đỉnh nguồn cho DFS", CGRAPH_FAILURE);
+    CGRAPH_ERROR("Đỉnh nguồn nằm ngoài khoảng", CGRAPH_FAILURE);
+    return NULL;
   }
 
-  if (mode != CGRAPH_OUT && mode != CGRAPH_IN && mode != CGRAPH_ALL) {
-    CGRAPH_ERROR("Lỗi tham số chế độ", CGRAPH_FAILURE);
+  if (mode != CGRAPH_OUT && mode != CGRAPH_IN &&
+      mode != CGRAPH_ALL) {
+    CGRAPH_ERROR("Tham số mode không hợp lệ", CGRAPH_FAILURE);
+    return NULL;
   }
 
   if (!cgraph_is_directed(graph)) {
     mode = CGRAPH_ALL;
   }
 
-/* Resize result vectors and fill them with IGRAPH_NAN */
-
-#define VINIT(vref) \
-  if (vref) {            \
-    arr_resize((*vref), no_of_nodes);       \
-    arr_ifill((*vref), CGRAPH_NAN);  \
-  }
-
-  VINIT(order);
-  VINIT(order_out);
-  VINIT(father);
-  VINIT(dist);
-
-#undef VINIT
-
   stk_push(stack, gtype_l(root));
   added[root] = true;
-  if (father) {
-    (*father)[root] = -1;
-  }
-  if (order) {
-    (*order)[act_rank++] = root;
-  }
-  if (dist) {
-    (*dist)[root] = 0;
-  }
+  make_dfs(res, no_of_nodes);
+  res->father[root] = -1;
+  res->order[act_rank++] = root;
+  res->dist[root] = 0;
 
   arr_make(nptr, no_of_nodes, CGRAPH_INTEGER);
   atype(CGRAPH_INTEGER) **neis_cache =
@@ -239,15 +220,9 @@ int cgraph_dfs(const cgraph_t graph,
       }
       stk_push(stack, gtype_l(actroot));
       added[actroot] = true;
-      if (father) {
-        (*father)[actroot] = -1;
-      }
-      if (order) {
-        (*order)[act_rank++] = actroot;
-      }
-      if (dist) {
-        (*dist)[actroot] = 0;
-      }
+      res->father[actroot] = -1;
+      res->order[act_rank++] = actroot;
+      res->dist[actroot] = 0;
     }
 
     arr_ifill(nptr, 0);
@@ -261,8 +236,7 @@ int cgraph_dfs(const cgraph_t graph,
 
       /* Search for a neighbor that was not yet visited */
       bool any = 0;
-      CGRAPH_INTEGER nei,
-                     *ptr = nptr + actvect;
+      CGRAPH_INTEGER nei, *ptr = nptr + actvect;
       while (!any && (*ptr) < n) {
         nei = neis[*ptr];
         any = !(added[nei]);
@@ -272,22 +246,14 @@ int cgraph_dfs(const cgraph_t graph,
         /* There is such a neighbor, add it */
         stk_push(stack, gtype_l(nei));
         added[nei] = true;
-        if (father) {
-          (*father)[nei] = actvect;
-        }
-        if (order) {
-          (*order)[act_rank++] = nei;
-        }
+        res->father[nei] = actvect;
+        res->order[act_rank++] = nei;
         act_dist++;
-        if (dist) {
-          (*dist)[nei] = act_dist;
-        }
+        res->dist[nei] = act_dist;
       } else {
         /* There is no such neighbor, finished with the subtree */
         stk_pop(stack);
-        if (order_out) {
-          (*order_out)[rank_out++] = actvect;
-        }
+        res->order_out[rank_out++] = actvect;
         act_dist--;
       }
     }
@@ -301,5 +267,5 @@ int cgraph_dfs(const cgraph_t graph,
   arr_free(nptr);
   gsl_free(stack);
   free(added);
-  return 0;
+  return res;
 }

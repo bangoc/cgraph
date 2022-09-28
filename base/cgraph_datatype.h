@@ -159,4 +159,39 @@ struct bfs {
     free(name); \
   } while (0)
 
+
+/**
+ * Cấu trúc trả về của cgraph_dfs
+ */
+struct dfs {
+  atype(CGRAPH_INTEGER) *order;
+  atype(CGRAPH_INTEGER) *order_out;
+  atype(CGRAPH_INTEGER) *father;
+  atype(CGRAPH_INTEGER) *dist;
+};
+
+#define make_dfs(name, no_of_nodes) \
+  struct dfs *name = malloc(sizeof(struct dfs)); \
+  name->order = arr_create(no_of_nodes, CGRAPH_INTEGER); \
+  name->order_out = arr_create(no_of_nodes, CGRAPH_INTEGER); \
+  name->father = arr_create(no_of_nodes, CGRAPH_INTEGER); \
+  name->dist = arr_create(no_of_nodes, CGRAPH_INTEGER); \
+  arr_fill(name->order, CGRAPH_NAN); \
+  arr_fill(name->order_out, CGRAPH_NAN); \
+  arr_fill(name->father, CGRAPH_NAN); \
+  arr_fill(name->dist, CGRAPH_NAN)
+
+#define free_dfs(obj) \
+  do { \
+    if (!obj) { \
+      break; \
+    } \
+    arr_free(obj->order); \
+    arr_free(obj->order_out); \
+    arr_free(obj->father); \
+    arr_free(obj->dist); \
+    free(obj); \
+  } while (0)
+
+
 #endif  // BASE_CGRAPH_DATATYPE_H_
