@@ -76,7 +76,6 @@ VINIT(dist);
 #undef VINIT
 
   int rootpos = 0;
-  arr_make(neis, 0, CGRAPH_INTEGER);
   while (1) {
     if (rootpos == 0) {
       actroot = root;
@@ -113,7 +112,7 @@ VINIT(dist);
       que_deq(q);
       CGRAPH_INTEGER succ_vec;
 
-      cgraph_neighbors(graph, &neis, actvect, mode);
+      atype(CGRAPH_INTEGER) *neis = cgraph_neighbors(graph, actvect, mode);
       long int i, n = arr_size(neis);
 
       if (pred) {
@@ -151,11 +150,10 @@ VINIT(dist);
         (*succ)[actvect] = succ_vec;
       }
       pred_vec = actvect;
-
+      arr_free(neis);
     } /* while q !empty */
   } /* while (1) */
   free(added);
-  arr_free(neis);
   gsl_free(q);
   return 0;
 }
@@ -307,8 +305,7 @@ int cgraph_dfs(const cgraph_t graph,
     while (!stk_is_empty(stack)) {
       CGRAPH_INTEGER actvect = stk_top(stack).l;
       if (!neis_cache[actvect]) {
-        neis_cache[actvect] = arr_create(0, CGRAPH_INTEGER);
-        cgraph_neighbors(graph, neis_cache + actvect, actvect, mode);
+        neis_cache[actvect] = cgraph_neighbors(graph, actvect, mode);
       }
       neis = neis_cache[actvect];
       CGRAPH_INTEGER n = arr_size(neis);

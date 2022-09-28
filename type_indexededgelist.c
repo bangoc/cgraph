@@ -290,37 +290,36 @@ void cgraph_destroy(cgraph_t *graph) {
   *graph = NULL;
 }
 
-int cgraph_neighbors(const cgraph_t graph,
-                     atype(CGRAPH_INTEGER) **neis,
-                     CGRAPH_INTEGER vid,
-                     cgraph_neimode_t mode) {
+atype(CGRAPH_INTEGER) *cgraph_neighbors(const cgraph_t graph,
+     CGRAPH_INTEGER vid, cgraph_neimode_t mode) {
+  cgraph_err_reset();
   const CGRAPH_INTEGER node = vid;
 
   if (node < 0 || node > cgraph_vcount(graph) - 1) {
-    CGRAPH_ERROR("Không thể truy cập các láng giềng", CGRAPH_FAILURE);
+    CGRAPH_ERROR("Chỉ số đỉnh nằm ngoài khoảng", CGRAPH_FAILURE);
+    return NULL;
   }
-  if (mode != CGRAPH_OUT && mode != CGRAPH_IN &&
-      mode != CGRAPH_ALL) {
-    CGRAPH_ERROR("Không thể truy cập các láng giềng", CGRAPH_FAILURE);
+  if (mode != CGRAPH_OUT && mode != CGRAPH_IN && mode != CGRAPH_ALL) {
+    CGRAPH_ERROR("Tham số mode không hợp lệ", CGRAPH_FAILURE);
+  return NULL;
   }
 
-  if (! graph->directed) {
+  if (!graph->directed) {
       mode = CGRAPH_ALL;
   }
 
-  arr_resize(*neis, 0);
-
+  arr_make(neis, 0, CGRAPH_INTEGER);
   if (!cgraph_is_directed(graph) || mode != CGRAPH_ALL) {
     if (mode & CGRAPH_OUT) {
       CGRAPH_INTEGER j = (graph->os)[node + 1];
       for (CGRAPH_INTEGER i = (graph->os)[node]; i < j; i++) {
-        arr_append(*neis, (graph->to)[ (graph->oi)[i] ]);
+        arr_append(neis, (graph->to)[ (graph->oi)[i] ]);
       }
     }
     if (mode & CGRAPH_IN) {
       CGRAPH_INTEGER j = (graph->is)[node + 1];
       for (CGRAPH_INTEGER i = (graph->is)[node]; i < j; i++) {
-        arr_append(*neis, (graph->from)[ (graph->ii)[i] ]);
+        arr_append(neis, (graph->from)[ (graph->ii)[i] ]);
       }
     }
   } else {
@@ -335,31 +334,31 @@ int cgraph_neighbors(const cgraph_t graph,
       CGRAPH_INTEGER n1 = (graph->to)[ (graph->oi)[i1] ];
       CGRAPH_INTEGER n2 = (graph->from)[ (graph->ii)[i2] ];
       if (n1 < n2) {
-        arr_append(*neis, n1);
+        arr_append(neis, n1);
         i1++;
       } else if (n1 > n2) {
-        arr_append(*neis, n2);
+        arr_append(neis, n2);
         i2++;
       } else {
-        arr_append(*neis, n1);
-        arr_append(*neis, n2);
+        arr_append(neis, n1);
+        arr_append(neis, n2);
         i1++;
         i2++;
       }
     }
     while (i1 < j1) {
       CGRAPH_INTEGER n1 = (graph->to)[ (graph->oi)[i1] ];
-      arr_append(*neis, n1);
+      arr_append(neis, n1);
       i1++;
     }
     while (i2 < j2) {
       CGRAPH_INTEGER n2 = (graph->from)[ (graph->ii)[i2] ];
-      arr_append(*neis, n2);
+      arr_append(neis, n2);
       i2++;
     }
   }
 
-  return CGRAPH_SUCCESS;
+  return neis;
 }
 
 atype(CGRAPH_INTEGER) *cgraph_incident(const cgraph_t graph,

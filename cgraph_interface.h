@@ -18,8 +18,7 @@ int cgraph_add_edges(cgraph_t graph, atype(CGRAPH_INTEGER) *edges);
 CGRAPH_INTEGER cgraph_vcount(const cgraph_t graph);
 CGRAPH_INTEGER cgraph_ecount(const cgraph_t graph);
 bool cgraph_is_directed(const cgraph_t graph);
-int cgraph_neighbors(const cgraph_t graph,
-                     atype(CGRAPH_INTEGER) **neis,
+atype(CGRAPH_INTEGER) *cgraph_neighbors(const cgraph_t graph,
                      CGRAPH_INTEGER vid,
                      cgraph_neimode_t mode);
 atype(CGRAPH_INTEGER) *cgraph_incident(const cgraph_t graph,

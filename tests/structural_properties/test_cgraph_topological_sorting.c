@@ -15,7 +15,6 @@ bool is_valid_topological_order(cgraph_t g,
     deg_mode = CGRAPH_IN;
   }
   CGRAPH_INTEGER no_of_nodes = cgraph_vcount(g);
-  arr_make(neis, 0, CGRAPH_INTEGER);
   atype(CGRAPH_INTEGER) *degrees = cgraph_degree_all(g, deg_mode, true);
 
   CGRAPH_INTEGER sz = arr_size(v);
@@ -28,15 +27,15 @@ bool is_valid_topological_order(cgraph_t g,
     }
     removed[ v[i] ] = true;
     CGRAPH_INTEGER node = v[i];
-    cgraph_neighbors(g, &neis, node, mode);
+    atype(CGRAPH_INTEGER) *neis = cgraph_neighbors(g, node, mode);
     for (CGRAPH_INTEGER i = 0; i < arr_size(neis); i++) {
       CGRAPH_INTEGER nei = neis[i];
       degrees[nei]--;
     }
+    arr_free(neis);
   }
   free(removed);
   arr_free(degrees);
-  arr_free(neis);
   if (any) {
     return false;
   }
