@@ -15,117 +15,123 @@ int main() {
   }
   // g1-weighted.png
 
-  arr_make(vpath, 0, CGRAPH_INTEGER);
-  arr_make(epath, 0, CGRAPH_INTEGER);
   bool any = false;
-  if (cgraph_get_shortest_path_dijkstra(
-      g, &vpath, &epath, 0, 5, weights, CGRAPH_OUT) != 0) {
-    UT_MSG_FAILED("Return 0 if reached");
+  struct path *p = cgraph_get_shortest_path_dijkstra(g, 0, 5, weights, CGRAPH_OUT);
+  if (!p->reached) {
+    UT_MSG_FAILED("Can reach 5 from 0");
     any = true;
   }
-  if (!arr_iequal(vpath, (CGRAPH_INTEGER[]){0, 1, 3, 5}, 4)) {
-    arr_iprint(vpath);
+  if (!arr_iequal(p->vertices, (CGRAPH_INTEGER[]){0, 1, 3, 5}, 4)) {
+    arr_iprint(p->vertices);
     UT_MSG_FAILED("Case 1. Test vertices sequence 0-5 (out)");
     any = true;
   }
-  if (!arr_iequal(epath, (CGRAPH_INTEGER[]){0, 3, 6}, 3)) {
-    arr_iprint(epath);
+  if (!arr_iequal(p->edges, (CGRAPH_INTEGER[]){0, 3, 6}, 3)) {
+    arr_iprint(p->edges);
     UT_MSG_FAILED("Case 1. Test edges sequence 0-5 (out)");
     any = true;
   }
+  free_path(p);
 
-  if (cgraph_get_shortest_path_dijkstra(g, &vpath, &epath, 0, 4, weights, CGRAPH_OUT) != 0) {
-    UT_MSG_FAILED("Return 0 if reached");
+  p = cgraph_get_shortest_path_dijkstra(g, 0, 4, weights, CGRAPH_OUT);
+  if (!p->reached) {
+    UT_MSG_FAILED("Can reach 4 from 0");
     any = true;
   }
 
-  if (!arr_iequal(vpath, (CGRAPH_INTEGER[]){0, 1, 4}, 3)) {
-    arr_iprint(vpath);
+  if (!arr_iequal(p->vertices, (CGRAPH_INTEGER[]){0, 1, 4}, 3)) {
+    arr_iprint(p->vertices);
     UT_MSG_FAILED("Case 2. Test vertices sequence 0-4 (out)");
     any = true;
   }
-  if (!arr_iequal(epath, (CGRAPH_INTEGER[]){0, 8}, 2)) {
-    arr_iprint(epath);
+  if (!arr_iequal(p->edges, (CGRAPH_INTEGER[]){0, 8}, 2)) {
+    arr_iprint(p->edges);
     UT_MSG_FAILED("Case 2. Test edges sequence 0-4 (out)");
     any = true;
   }
+  free_path(p);
 
-  if (cgraph_get_shortest_path_dijkstra(g, &vpath, &epath, 2, 3, weights, CGRAPH_IN) != 0) {
-    UT_MSG_FAILED("Return 0 if reached");
+  p = cgraph_get_shortest_path_dijkstra(g, 2, 3, weights, CGRAPH_IN);
+  if (!p->reached) {
+    UT_MSG_FAILED("Can reach 3 from 2");
     any = true;
   }
 
-  if (!arr_iequal(vpath, (CGRAPH_INTEGER[]){2, 1, 3}, 3)) {
-    arr_iprint(vpath);
+  if (!arr_iequal(p->vertices, (CGRAPH_INTEGER[]){2, 1, 3}, 3)) {
+    arr_iprint(p->vertices);
     UT_MSG_FAILED("Case 3. Test vertices sequence 2-3 (in)");
     any = true;
   }
-  if (!arr_iequal(epath, (CGRAPH_INTEGER[]){2, 7}, 2)) {
-    arr_iprint(epath);
+  if (!arr_iequal(p->edges, (CGRAPH_INTEGER[]){2, 7}, 2)) {
+    arr_iprint(p->edges);
     UT_MSG_FAILED("Case 3. Test edges sequence 2-3 (in)");
     any = true;
   }
+  free_path(p);
 
-  if (cgraph_get_shortest_path_dijkstra(g, &vpath, &epath, 4, 5, weights, CGRAPH_ALL) != 0) {
-    UT_MSG_FAILED("Return 0 if reached");
+  p = cgraph_get_shortest_path_dijkstra(g, 4, 5, weights, CGRAPH_ALL);
+  if (!p->reached) {
+    UT_MSG_FAILED("Can reach 5 from 4");
     any = true;
   }
-  if (!arr_iequal(vpath, (CGRAPH_INTEGER[]){4, 1, 3, 5}, 4)) {
-    arr_iprint(vpath);
+  if (!arr_iequal(p->vertices, (CGRAPH_INTEGER[]){4, 1, 3, 5}, 4)) {
+    arr_iprint(p->vertices);
     UT_MSG_FAILED("Case 4. Test vertices sequence 4-5 (all)");
     any = true;
   }
-  if (!arr_iequal(epath, (CGRAPH_INTEGER[]){8, 7, 6}, 3)) {
-    arr_iprint(epath);
+  if (!arr_iequal(p->edges, (CGRAPH_INTEGER[]){8, 7, 6}, 3)) {
+    arr_iprint(p->edges);
     UT_MSG_FAILED("Case 4. Test edges sequence 4-5 (all)");
     any = true;
   }
+  free_path(p);
 
-  if (cgraph_get_shortest_path_dijkstra(g, &vpath, &epath, 3, 0, weights, CGRAPH_OUT) != -1) {
-    UT_MSG_FAILED("Return -1 if not reached");
+  p = cgraph_get_shortest_path_dijkstra(g, 3, 0, weights, CGRAPH_OUT);
+  if (p->reached) {
+    UT_MSG_FAILED("Can't reach 0 from 3");
     any = true;
   }
+  free_path(p);
 
-  if (cgraph_get_shortest_path_dijkstra(g, &vpath, &epath, 3, 3, weights, CGRAPH_OUT) != 0) {
-    UT_MSG_FAILED("Return 0 if reached");
+  p = cgraph_get_shortest_path_dijkstra(g, 3, 3, weights, CGRAPH_OUT);
+  if (!p->reached) {
+    UT_MSG_FAILED("Can reach 3 from 3");
     any = true;
   }
-  if (!arr_iequal(vpath, (CGRAPH_INTEGER[]){3}, 1)) {
-    arr_iprint(vpath);
-    UT_MSG_FAILED("Case 6. vpath contains to if from==to, 3-3 (out)");
+  if (!arr_iequal(p->vertices, (CGRAPH_INTEGER[]){3}, 1)) {
+    arr_iprint(p->vertices);
+    UT_MSG_FAILED("Case 6. p->vertices contains to if from==to, 3-3 (out)");
     any = true;
   }
-  if (arr_size(epath) > 0) {
-    arr_iprint(epath);
-    UT_MSG_FAILED("Case 6. epath empty if from==to, 3-3 (out)");
+  if (arr_size(p->edges) > 0) {
+    arr_iprint(p->edges);
+    UT_MSG_FAILED("Case 6. p->edges empty if from==to, 3-3 (out)");
     any = true;
   }
+  free_path(p);
 
-  if (cgraph_get_shortest_path_dijkstra(g, &vpath, &epath, 0, 5, NULL, CGRAPH_OUT) != 0) {
-    UT_MSG_FAILED("Return 0 if reached");
+  p = cgraph_get_shortest_path_dijkstra(g, 0, 5, NULL, CGRAPH_OUT);
+  if (!p->reached) {
+    UT_MSG_FAILED("Can reach 5 from 0");
     any = true;
   }
-  if (!arr_iequal(vpath, (CGRAPH_INTEGER[]){0, 3, 5}, 3)) {
-    arr_iprint(vpath);
+  if (!arr_iequal(p->vertices, (CGRAPH_INTEGER[]){0, 3, 5}, 3)) {
+    arr_iprint(p->vertices);
     UT_MSG_FAILED("Case 7. No weight 0-5 (out)");
     any = true;
   }
-  if (!arr_iequal(epath, (CGRAPH_INTEGER[]){1, 6}, 2)) {
-    arr_iprint(epath);
+  if (!arr_iequal(p->edges, (CGRAPH_INTEGER[]){1, 6}, 2)) {
+    arr_iprint(p->edges);
     UT_MSG_FAILED("Case 7. No weight 0-5 (out)");
     any = true;
   }
+  free_path(p);
 
   /* crash test in the no path case*/
-  cgraph_get_shortest_path_dijkstra(g, NULL, &epath, 3, 0, weights, CGRAPH_OUT);
-  cgraph_get_shortest_path_dijkstra(g, &vpath, NULL, 3, 0, weights, CGRAPH_OUT);
-
-  /* A little bit silly because it's a useless processing */
-  cgraph_get_shortest_path_dijkstra(g, NULL, NULL, 3, 0, weights, CGRAPH_OUT);
+  p = cgraph_get_shortest_path_dijkstra(g, 3, 0, weights, CGRAPH_OUT);
+  free_path(p);
 
   cgraph_destroy(g);
-  arr_free(epath);
-  arr_free(vpath);
   arr_free(weights);
   if (any) {
     return 1;

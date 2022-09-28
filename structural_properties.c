@@ -221,11 +221,7 @@ int cgraph_topological_sorting(const cgraph_t graph,
  *        vec-tơ. Tiến trình tìm kiếm kết thúc nếu tất cả các đỉnh
  *        trong \c to được tìm thấy.
  *
- * \return Mã lỗi
- *        \clist
- *        \cli CGRAPH_FAILURE nếu phát sinh lỗi trong quá trình tính
- *             toán
- *        \endclist
+ * \return Trả về con trỏ tới đối tượng paths ::struct paths *
  *
  * Độ phức tạp: O(|V|+|E|),
  * |V| Số lượng đỉnh,
@@ -235,14 +231,11 @@ int cgraph_topological_sorting(const cgraph_t graph,
  * không cần các cạnh.
  *
  */
-int cgraph_get_shortest_paths(const cgraph_t graph,
-                              gvec_t vertices,
-                              gvec_t edges,
+struct paths *cgraph_get_shortest_paths(const cgraph_t graph,
                               CGRAPH_INTEGER from,
                               atype(CGRAPH_INTEGER) *to,
-                              cgraph_neimode_t mode,
-                              atype(CGRAPH_INTEGER) **predecessors,
-                              atype(CGRAPH_INTEGER) **inbound_edges) {
+                              cgraph_neimode_t mode) {
+  cgraph_err_reset();
   CGRAPH_INTEGER no_of_nodes = cgraph_vcount(graph);
   CGRAPH_INTEGER *father;
 
@@ -250,26 +243,19 @@ int cgraph_get_shortest_paths(const cgraph_t graph,
   CGRAPH_INTEGER reached = 0;
 
   if (from < 0 || from >= no_of_nodes) {
-    CGRAPH_ERROR("Không thể tìm đường đi ngắn nhất", CGRAPH_FAILURE);
+    CGRAPH_ERROR("Chỉ số đỉnh from không hợp lệ", CGRAPH_FAILURE);
+    return NULL;
   }
-  if (mode != CGRAPH_OUT && mode != CGRAPH_IN &&
-        mode != CGRAPH_ALL) {
-    CGRAPH_ERROR("Tham số chế độ không hợp lệ", CGRAPH_FAILURE);
-  }
-
-  if (vertices && arr_size(to) != gvec_size(vertices)) {
-    CGRAPH_ERROR("Kích thước của `vertices' và `to' phải "
-                 "tương đương", CGRAPH_FAILURE);
-  }
-  if (edges && arr_size(to) != gvec_size(edges)) {
-    CGRAPH_ERROR("Kích thước của `edges' phải bằng kích thước của `to'",
-                 CGRAPH_FAILURE);
+  if (mode != CGRAPH_OUT && mode != CGRAPH_IN && mode != CGRAPH_ALL) {
+    CGRAPH_ERROR("Tham số mode không hợp lệ", CGRAPH_FAILURE);
+    return NULL;
   }
 
+  make_paths(res, arr_size(to), no_of_nodes);
   father = calloc(no_of_nodes, sizeof(CGRAPH_INTEGER));
   if (father == 0) {
-    CGRAPH_ERROR("không thể tìm các đường đi ngắn nhất",
-                 CGRAPH_FAILURE);
+    CGRAPH_ERROR("Lỗi cấp phát bộ nhớ", CGRAPH_FAILURE);
+    return NULL;
   }
   struct gsllist *q = gsl_create_list(NULL);
 
@@ -333,82 +319,54 @@ int cgraph_get_shortest_paths(const cgraph_t graph,
     CGRAPH_WARNING("Không thể đi tới một số đỉnh");
   }
 
-  /* Xuất thông tin `predecessors' nếu cần */
-  if (predecessors) {
-    arr_resize(*predecessors, no_of_nodes);
-
-    for (CGRAPH_INTEGER i = 0; i < no_of_nodes; i++) {
-      if (father[i] <= 0) {
-        /* Chưa đi tới i */
-        (*predecessors)[i] = -1;
-      } else if (father[i] == 1) {
-        /* là đỉnh bắt đầu */
-        (*predecessors)[i] = i;
-      } else {
-        /* Đã đi tới i qua canh có ID = father[i] - 2 */
-        (*predecessors)[i] = CGRAPH_OTHER(graph, father[i] - 2, i);
-      }
+  /* Xuất thông tin `predecessors' */
+  for (CGRAPH_INTEGER i = 0; i < no_of_nodes; i++) {
+    if (father[i] <= 0) {
+      /* Chưa đi tới i */
+      (res->predecessors)[i] = -1;
+    } else if (father[i] == 1) {
+      /* là đỉnh bắt đầu */
+      (res->predecessors)[i] = i;
+    } else {
+      /* Đã đi tới i qua canh có ID = father[i] - 2 */
+      (res->predecessors)[i] = CGRAPH_OTHER(graph, father[i] - 2, i);
     }
   }
 
-  /* Xuất thông tin `inbound_edges' nếu cần */
-  if (inbound_edges) {
-    arr_resize(*inbound_edges, no_of_nodes);
-
-    for (int i = 0; i < no_of_nodes; i++) {
-      if (father[i] <= 1) {
-        /* Chưa đi tới i hoặc i là đỉnh bắt đầu */
-        (*inbound_edges)[i] = -1;
-      } else {
-        /* Đã đi tới i qua canh có ID = father[i] - 2 */
-        (*inbound_edges)[i] = father[i] - 2;
-      }
+  /* Xuất thông tin `inbound_edges' */
+  for (int i = 0; i < no_of_nodes; i++) {
+    if (father[i] <= 1) {
+      /* Chưa đi tới i hoặc i là đỉnh bắt đầu */
+      (res->inbound_edges)[i] = -1;
+    } else {
+      /* Đã đi tới i qua cạnh có ID = father[i] - 2 */
+      (res->inbound_edges)[i] = father[i] - 2;
     }
   }
 
-  /* Xuất thông tin `vertices' và `edges' nếu cần */
-  if (vertices || edges) {
-    for (int i = 0; i < arr_size(to); ++i) {
-      CGRAPH_INTEGER node = to[i];
-      atype(CGRAPH_INTEGER) **vvec = NULL;
-      atype(CGRAPH_INTEGER) **evec = NULL;
-      if (vertices) {
-        vvec = gvec_elem(vertices, i).v;
+  /* Xuất thông tin `vertices' và `edges' */
+  for (int i = 0; i < arr_size(to); ++i) {
+    CGRAPH_INTEGER node = to[i];
+    (res->reached)[i] = (father[node] >= 0);
+    if (father[node] > 0) {
+      CGRAPH_INTEGER act = node;
+      CGRAPH_INTEGER size = 0;
+      CGRAPH_INTEGER edge;
+      while (father[act] > 1) {
+        size++;
+        edge = father[act] - 2;
+        act = CGRAPH_OTHER(graph, edge, act);
       }
-      if (edges) {
-        evec = gvec_elem(edges, i).v;
-      }
-
-      // IGRAPH_ALLOW_INTERRUPTION();
-
-      if (father[node] > 0) {
-        CGRAPH_INTEGER act = node;
-        CGRAPH_INTEGER size = 0;
-        CGRAPH_INTEGER edge;
-        while (father[act] > 1) {
-          size++;
-          edge = father[act] - 2;
-          act = CGRAPH_OTHER(graph, edge, act);
-        }
-        if (vvec) {
-          arr_resize(*vvec, size + 1);
-          (*vvec)[size] = node;
-        }
-        if (evec) {
-          arr_resize(*evec, size);
-        }
-        act = node;
-        while (father[act] > 1) {
-          size--;
-          edge = father[act] - 2;
-          act = CGRAPH_OTHER(graph, edge, act);
-          if (vvec) {
-            (*vvec)[size] = act;
-          }
-          if (evec) {
-            (*evec)[size] = edge;
-          }
-        }
+      arr_resize(res->vertices[i], size + 1);
+      res->vertices[i][size] = node;
+      arr_resize(res->edges[i], size);
+      act = node;
+      while (father[act] > 1) {
+        size--;
+        edge = father[act] - 2;
+        act = CGRAPH_OTHER(graph, edge, act);
+        res->vertices[i][size] = act;
+        res->edges[i][size] = edge;
       }
     }
   }
@@ -416,7 +374,7 @@ int cgraph_get_shortest_paths(const cgraph_t graph,
   free(father);
   gsl_free(q);
 
-  return 0;
+  return res;
 }
 
 /**
@@ -467,11 +425,7 @@ int cgraph_get_shortest_paths(const cgraph_t graph,
  * vị trí tương ứng trong vec-tơ. Lưu ý tiến trình tìm kiếm sẽ dừng
  * lại khi tất cả các đường đi ngắn nhất tới tất cả các đỉnh trong \c
  * to đều đã được tìm thấy.
- * \return Mã lỗi
- *        \clist
- *        \cli CGRAPH_FAILURE
- *             Nếu sảy ra bất kỳ lỗi nào trong quá trình tìm kiếm
- *        \endclist
+ * \return Trả về con trỏ tới đối tượng paths ::struct paths *
  *
  * Độ phức tạp: O(|E|log|E|+|V|), trong đó |V| là số lượng đỉnh và
  * |E| là số lượng cạnh.
@@ -481,15 +435,11 @@ int cgraph_get_shortest_paths(const cgraph_t graph,
  *
  * \example examples/simple/igraph_get_shortest_paths_dijkstra.c
  */
-int cgraph_get_shortest_paths_dijkstra(const cgraph_t graph,
-                          gvec_t vertices,
-                          gvec_t edges,
+struct paths *cgraph_get_shortest_paths_dijkstra(const cgraph_t graph,
                           CGRAPH_INTEGER from,
                           atype(CGRAPH_INTEGER) *to,
                           atype(CGRAPH_REAL) *weights,
-                          cgraph_neimode_t mode,
-                          atype(CGRAPH_INTEGER) **predecessors,
-                          atype(CGRAPH_INTEGER) **inbound_edges) {
+                          cgraph_neimode_t mode) {
     /* Chi tiết triển khai. Đây là triển khai cơ bản cho giải thuật
     Dijkstra với một heap nhị phân. Heap được đánh chỉ mục, nghĩa là,
     nó không chỉ chứa các khoảng cách, mà còn chứa các đỉnh gắn với
@@ -509,55 +459,40 @@ int cgraph_get_shortest_paths_dijkstra(const cgraph_t graph,
        khai này chỉ số cạnh + 1 được lưu, 0 nghĩa là đỉnh không được
        phát hiện.
     */
+  cgraph_err_reset();
   if (!weights) {
-    return cgraph_get_shortest_paths(graph,
-      vertices, edges, from, to, mode, predecessors,
-      inbound_edges);
+    return cgraph_get_shortest_paths(graph, from, to, mode);
   }
 
   CGRAPH_INTEGER no_of_nodes = cgraph_vcount(graph);
   CGRAPH_INTEGER no_of_edges = cgraph_ecount(graph);
-  struct p2ways *q = p2w_create(gtype_cmp_d);
-  arr_make(dists, no_of_nodes, CGRAPH_REAL);
-  CGRAPH_INTEGER *parents;
-  bool *is_target;
-  CGRAPH_INTEGER i, to_reach;
 
   if (arr_size(weights) != no_of_edges) {
-    CGRAPH_ERROR("Độ dài vec-tơ trọng số không khớp",
-                 CGRAPH_FAILURE);
+    CGRAPH_ERROR("Lỗi độ dài vec-tơ trọng số", CGRAPH_FAILURE);
+    return NULL;
   }
-  for (i = 0; i < no_of_edges; ++i) {
+  for (long i = 0; i < no_of_edges; ++i) {
     if (weights[i] < 0) {
-      CGRAPH_ERROR("Các trọng số không được âm", CGRAPH_FAILURE);
+      CGRAPH_ERROR("Lỗi trọng số âm", CGRAPH_FAILURE);
+      return NULL;
     }
   }
+  struct p2ways *q = p2w_create(gtype_cmp_d);
+  arr_make(dists, no_of_nodes, CGRAPH_REAL);
+  CGRAPH_INTEGER i, to_reach;
+  make_paths(res, arr_size(to), no_of_nodes);
+  arr_fill(dists, -1.0);
 
-  if (vertices &&
-    arr_size(to) != gvec_size(vertices)) {
-    CGRAPH_ERROR("Kích thước của `vertices' và `to' phải tương đương",
-                  CGRAPH_FAILURE);
-  }
-  if (edges &&
-    arr_size(to) != gvec_size(edges)) {
-      CGRAPH_ERROR("Kích thước của `edges' và `to' phải tương đương",
-                    CGRAPH_FAILURE);
-  }
-
-  for (i = 0; i < arr_size(dists); ++i) {
-    dists[i] = -1.0;
-  }
-
-  parents = calloc(no_of_nodes, sizeof(CGRAPH_INTEGER));
+  CGRAPH_INTEGER *parents = calloc(no_of_nodes, sizeof(CGRAPH_INTEGER));
   if (parents == 0) {
-    CGRAPH_ERROR("Không thể tính các độ dài ngắn nhất",
-                  CGRAPH_FAILURE);
+    CGRAPH_ERROR("Lỗi cấp phát bộ nhớ", CGRAPH_FAILURE);
+    return NULL;
   }
 
-  is_target = calloc(no_of_nodes, sizeof(bool));
+  bool *is_target = calloc(no_of_nodes, sizeof(bool));
   if (is_target == 0) {
-    CGRAPH_ERROR("Không thể tính các độ dài ngắn nhất",
-                 CGRAPH_FAILURE);
+    CGRAPH_ERROR("Lỗi cấp phát bộ nhớ", CGRAPH_FAILURE);
+    return NULL;
   }
 
   // Đánh dấu các đỉnh cần tới
@@ -574,7 +509,6 @@ int cgraph_get_shortest_paths_dijkstra(const cgraph_t graph,
   parents[from] = 0;
   p2w_push_with_index(q, from, gtype_d(0.0));
 
-  atype(CGRAPH_INTEGER) *neis;
   while (!p2w_is_empty(q) && to_reach > 0) {
     CGRAPH_INTEGER nlen, minnei = p2w_max_index(q);
     CGRAPH_REAL mindist = -p2w_delete_max(q).d;
@@ -585,7 +519,7 @@ int cgraph_get_shortest_paths_dijkstra(const cgraph_t graph,
     }
 
     // Cập nhật đường đi ngắn nhất cho các láng giềng của 'minnei'
-    neis = cgraph_incident(graph, minnei, mode);
+    atype(CGRAPH_INTEGER) *neis = cgraph_incident(graph, minnei, mode);
     nlen = arr_size(neis);
     for (CGRAPH_INTEGER i = 0; i < nlen; i++) {
       CGRAPH_INTEGER edge = neis[i];
@@ -600,93 +534,69 @@ int cgraph_get_shortest_paths_dijkstra(const cgraph_t graph,
           p2w_push_with_index(q, tto, gtype_d(-altdist)));
       }
     }
+    arr_free(neis);
   } /* !igraph_2wheap_empty(q) */
 
   if (to_reach > 0) {
-    CGRAPH_WARNING("Không thể đi tới một số đỉnh");
+    CGRAPH_WARNING("Có đỉnh không thể đi tới");
   }
 
-  // Tạo `predecessors' nếu cần
-  if (predecessors) {
-    arr_resize(*predecessors, no_of_nodes);
-    for (i = 0; i < no_of_nodes; i++) {
-      if (i == from) {
-        /* i là đỉnh bắt đầu */
-        (*predecessors)[i] = i;
-      } else if (parents[i] <= 0) {
-        // Chưa đi tới i
-        (*predecessors)[i] = -1;
-      } else {
-        // Đi tới i qua cạnh với chỉ số = parents[i] - 1
-        (*predecessors)[i] = CGRAPH_OTHER(graph, parents[i] - 1, i);
-      }
+  // Xuất dữ liệu `predecessors'
+  for (i = 0; i < no_of_nodes; i++) {
+    if (i == from) {
+      /* i là đỉnh bắt đầu */
+      res->predecessors[i] = i;
+    } else if (parents[i] <= 0) {
+      // Chưa đi tới i
+      res->predecessors[i] = -1;
+    } else {
+      // Đi tới i qua cạnh với chỉ số = parents[i] - 1
+      res->predecessors[i] = CGRAPH_OTHER(graph, parents[i] - 1, i);
     }
   }
 
-  /* Tạo `inbound_edges' nếu cần */
-  if (inbound_edges) {
-    arr_resize(*inbound_edges, no_of_nodes);
-    for (i = 0; i < no_of_nodes; i++) {
-      if (parents[i] <= 0) {
-        // Chưa đi tới i
-        (*inbound_edges)[i] = -1;
-      } else {
-        // Đi tới i qua cạnh với chỉ số = parents[i] - 1
-        (*inbound_edges)[i] = parents[i] - 1;
-      }
+  // Xuất dữ liệu `inbound_edges'
+  for (i = 0; i < no_of_nodes; i++) {
+    if (parents[i] <= 0) {
+      // Chưa đi tới i
+      res->inbound_edges[i] = -1;
+    } else {
+      // Đi tới i qua cạnh với chỉ số = parents[i] - 1
+      res->inbound_edges[i] = parents[i] - 1;
     }
   }
 
   // Các đường đi ngắn nhất dựa trên các chỉ số đỉnh và/hoặc cạnh
-  if (vertices || edges) {
-    for (CGRAPH_INTEGER i = 0; i < arr_size(to); i++) {
-      CGRAPH_INTEGER node = to[i];
-      CGRAPH_INTEGER size, act, edge;
-      atype(CGRAPH_INTEGER) **vvec = NULL;
-      atype(CGRAPH_INTEGER) **evec = NULL;
-      if (vertices) {
-        vvec = gvec_elem(vertices, i).v;
-      }
-      if (edges) {
-        evec = gvec_elem(edges, i).v;
-      }
-
-      size = 0;
-      act = node;
-      while (parents[act]) {
-        size++;
-        edge = parents[act] - 1;
-        act = CGRAPH_OTHER(graph, edge, act);
-      }
-      if (vvec) {
-        arr_resize(*vvec, size + 1);
-        (*vvec)[size] = node;
-      }
-      if (evec) {
-        arr_resize(*evec, size);
-      }
-      act = node;
-      while (parents[act]) {
-        edge = parents[act] - 1;
-        act = CGRAPH_OTHER(graph, edge, act);
-        size--;
-        if (vvec) {
-          (*vvec)[size] = act;
-        }
-        if (evec) {
-          (*evec)[size] = edge;
-        }
-      }
+  for (CGRAPH_INTEGER i = 0; i < arr_size(to); i++) {
+    CGRAPH_INTEGER node = to[i];
+    CGRAPH_INTEGER size, act, edge;
+    size = 0;
+    act = node;
+    (res->reached)[i] = (parents[node] > 0 || node == from);
+    while (parents[act]) {
+      size++;
+      edge = parents[act] - 1;
+      act = CGRAPH_OTHER(graph, edge, act);
+    }
+    arr_resize(res->vertices[i], size + 1);
+    res->vertices[i][size] = node;
+    arr_resize(res->edges[i], size);
+    act = node;
+    while (parents[act]) {
+      edge = parents[act] - 1;
+      act = CGRAPH_OTHER(graph, edge, act);
+      size--;
+      res->vertices[i][size] = act;
+      res->edges[i][size] = edge;
     }
   }
 
   p2w_free(q);
   arr_free(dists);
-  arr_free(neis);
   free(is_target);
   free(parents);
 
-  return 0;
+  return res;
 }
 
 /**
@@ -717,7 +627,7 @@ int cgraph_get_shortest_paths_dijkstra(const cgraph_t graph,
  * trong đồ thị có hướng. \c CGRAPH_OUT đi theo hướng của cạnh, \c
  * CGRAPH_IN đi theo chiều ngược lại, và \c CGRAPH_ALL bỏ qua hướng
  * của cạnh. Tham số này bị bỏ qua đối với đồ thị vô hướng.
- * \return Mã lỗi.
+ * \return Trả về con trỏ tới đối tượng path ::struct path *
  *
  * Độ phức tạp: O(|E|log|E|+|V|), |V| là số lượng đỉnh,
  * |E| là số lượng cạnh trong đồ thị.
@@ -725,92 +635,57 @@ int cgraph_get_shortest_paths_dijkstra(const cgraph_t graph,
  * \sa \ref cgraph_get_shortest_paths_dijkstra() cho phiên bản với
  * nhiều đỉnh đích hơn.
  **/
-int cgraph_get_shortest_path_dijkstra(const cgraph_t graph,
-        atype(CGRAPH_INTEGER) **vertices,
-        atype(CGRAPH_INTEGER) **edges,
+struct path *cgraph_get_shortest_path_dijkstra(const cgraph_t graph,
         CGRAPH_INTEGER from,
         CGRAPH_INTEGER to,
         atype(CGRAPH_REAL) *weights,
         cgraph_neimode_t mode) {
-  gvec_t pvertices = NULL, pedges = NULL;
-  if (vertices) {
-    pvertices = gvec_create_full(0, 10, gtype_zero, NULL);
-    gvec_append(pvertices, gtype_v(vertices));
-  }
-  if (edges) {
-    pedges = gvec_create_full(0, 10, gtype_zero, NULL);
-    gvec_append(pedges, gtype_v(edges));
-  }
   arr_make(pto, 0, CGRAPH_INTEGER);
   arr_append(pto, to);
-  arr_make(predecessors, 0, CGRAPH_INTEGER);
-  cgraph_get_shortest_paths_dijkstra(graph,
-                          pvertices,
-                          pedges,
-                          from,
-                          pto,
-                          weights,
-                          mode,
-                          &predecessors,
-                          NULL);
-  if (vertices) {
-    *vertices = arr_iptr_at(pvertices, 0);
-    gvec_free(pvertices);
+  struct paths *tmp = cgraph_get_shortest_paths_dijkstra(graph,
+                        from, pto, weights, mode);
+  if (!tmp) {
+    CGRAPH_ERROR("Lỗi tìm đường", CGRAPH_FAILURE);
+    return NULL;
   }
-  if (edges) {
-    *edges = arr_iptr_at(pedges, 0);
-    gvec_free(pedges);
-  }
-  CGRAPH_INTEGER pred = predecessors[to];
+  make_path(res);
+  arr_swap(res->vertices, tmp->vertices[0]);
+  arr_swap(res->edges, tmp->edges[0]);
+  res->reached = tmp->reached[0];
   arr_free(pto);
-  arr_free(predecessors);
-
-  if (pred < 0) {
-    // Không đi tới được đỉnh to
-    return -1;
-  }
-  return 0;
+  free_paths(tmp);
+  return res;
 }
 
 /**
  * \ref igraph_get_shortest_path
+ * Tìm đường đi ngắn nhất từ đỉnh from tới đỉnh to
+ *
+ * @param graph Con trỏ tới đối tượng đồ thị
+ * @param from Chỉ số đỉnh nguồn
+ * @param to Chỉ số đỉnh đích
+ * @mode Chế độ
+ * @return Đường đi theo đỉnh và đường đi theo cạnh trong
+ *   1 đối tượng ::struct path
  **/
-int cgraph_get_shortest_path(const cgraph_t graph,
-        atype(CGRAPH_INTEGER) **vertices,
-        atype(CGRAPH_INTEGER) **edges,
+struct path *cgraph_get_shortest_path(const cgraph_t graph,
         const CGRAPH_INTEGER from,
         const CGRAPH_INTEGER to,
         const cgraph_neimode_t mode) {
-  gvec_t pvertices = NULL, pedges = NULL;
-  if (vertices) {
-    pvertices = gvec_create(10, NULL);
-    gvec_append(pvertices, gtype_v(vertices));
-  }
-  if (edges) {
-    pedges = gvec_create(10, NULL);
-    gvec_append(pedges, gtype_v(edges));
-  }
+  cgraph_err_reset();
   arr_make(pto, 0, CGRAPH_INTEGER);
   arr_append(pto, to);
-  arr_make(predecessors, 0, CGRAPH_INTEGER);
-  cgraph_get_shortest_paths(graph,
-                            pvertices,
-                            pedges,
-                            from,
-                            pto,
-                            mode,
-                            &predecessors,
-                            NULL);
-  if (vertices) {
-    *vertices = arr_iptr_at(pvertices, 0);
-    gvec_free(pvertices);
+  struct paths *tmp =
+      cgraph_get_shortest_paths(graph, from, pto, mode);
+  if (!tmp) {
+    CGRAPH_ERROR("Lỗi tìm đường đi giữa các đỉnh", CGRAPH_FAILURE);
+    return NULL;
   }
-  if (edges) {
-    *edges = arr_iptr_at(pedges, 0);
-    gvec_free(pedges);
-  }
-  CGRAPH_INTEGER pred = predecessors[to];
+  make_path(res);
+  arr_swap(res->vertices, tmp->vertices[0]);
+  arr_swap(res->edges, tmp->edges[0]);
+  res->reached = tmp->reached[0];
   arr_free(pto);
-  arr_free(predecessors);
-  return (pred < 0)? -1: 0;
+  free_paths(tmp);
+  return res;
 }

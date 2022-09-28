@@ -149,21 +149,18 @@ int main(int argc, char *argv[]) {
   } else {
     long from = gvec_size(nodes) + 2 * beg_id->l,
          to = gvec_size(nodes) + 2 * end_id->l + 1;
-    arr_make(vpath, 0, CGRAPH_INTEGER);
-    arr_make(epath, 0, CGRAPH_INTEGER);
-    int ret = cgraph_get_shortest_path_dijkstra(g, &vpath, &epath, from, to, weights, CGRAPH_OUT);
-    if (ret == 0) {
+    struct path *p = cgraph_get_shortest_path_dijkstra(g, from, to, weights, CGRAPH_OUT);
+    if (p->reached) {
       printf("Found path: \n");
-      for (int i = 1; i < arr_size(vpath) - 1; ++i) {
-        long bus = ((bus_stop_t)(gvec_elem(nodes, vpath[i]).v))->bus,
-             stop = ((bus_stop_t)(gvec_elem(nodes, vpath[i]).v))->stop;
+      for (int i = 1; i < arr_size(p->vertices) - 1; ++i) {
+        long bus = ((bus_stop_t)(gvec_elem(nodes, p->vertices[i]).v))->bus,
+             stop = ((bus_stop_t)(gvec_elem(nodes, p->vertices[i]).v))->stop;
         printf("%s(%s)\n", gvec_elem(id_stop, stop).s, gvec_elem(id_bus, bus).s);
       }
     } else {
       printf("Path not found.\n");
     }
-    arr_free(vpath);
-    arr_free(epath);
+    free_path(p);
   }
   free_global();
   free(beg);

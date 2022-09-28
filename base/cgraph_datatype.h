@@ -56,4 +56,58 @@ typedef struct cgraph_s {
     void *attr;
 } *cgraph_t;
 
+/**
+ * Kiểu trả về của hàm tìm đường 1 đích đến
+ */
+struct path {
+  atype(CGRAPH_INTEGER) *vertices;
+  atype(CGRAPH_INTEGER) *edges;
+  int reached;
+};
+
+#define make_path(name) \
+  struct path *name = malloc(sizeof(struct path)); \
+  name->vertices = arr_create(0, CGRAPH_INTEGER); \
+  name->edges = arr_create(0, CGRAPH_INTEGER); \
+  name->reached = 0
+
+#define free_path(name) \
+  arr_free(name->vertices); \
+  arr_free(name->edges); \
+  free(name)
+
+/**
+ * Kiểu trả về của hàm tìm đường đa đích đến.
+ */
+struct paths {
+  atype(atype(CGRAPH_INTEGER) *) *vertices;
+  atype(atype(CGRAPH_INTEGER) *) *edges;
+  atype(int) *reached;
+  atype(CGRAPH_INTEGER) *predecessors;
+  atype(CGRAPH_INTEGER) *inbound_edges;
+};
+#define make_paths(name, nto, no_of_nodes) \
+  struct paths *name = malloc(sizeof(struct paths)); \
+  name->vertices = arr_create(nto, atype(CGRAPH_INTEGER) *); \
+  name->edges = arr_create(nto, atype(CGRAPH_INTEGER) *); \
+  name->reached = arr_create(nto, int); \
+  for (long i = 0; i < nto; ++i) { \
+    name->vertices[i] = arr_create(0, CGRAPH_INTEGER); \
+    name->edges[i] = arr_create(0, CGRAPH_INTEGER); \
+  } \
+  name->predecessors = arr_create(no_of_nodes, CGRAPH_INTEGER); \
+  name->inbound_edges = arr_create(no_of_nodes, CGRAPH_INTEGER)
+
+#define free_paths(name) \
+  for (long i = 0; i < arr_size((name)->vertices); ++i) { \
+    arr_free((name)->vertices[i]); \
+    arr_free((name)->edges[i]); \
+  } \
+  arr_free((name)->vertices); \
+  arr_free((name)->edges); \
+  arr_free((name)->predecessors); \
+  arr_free((name)->inbound_edges); \
+  arr_free((name)->reached); \
+  free(name)
+
 #endif  // BASE_CGRAPH_DATATYPE_H_

@@ -36,4 +36,10 @@ int arr_iorder(atype(CGRAPH_INTEGER) *v,
                atype(CGRAPH_INTEGER) *v2,
                atype(CGRAPH_INTEGER) *res);
 
+#define arr_swap(a, b) \
+  do { \
+    typeof(a) _tmp = (a); \
+    (a) = (b); \
+    (b) = _tmp; \
+  } while (0)
 #endif  // BASE_CGRAPH_ARR_H_
