@@ -15,8 +15,11 @@ int main() {
   //Gọi hàm cgraph_create_empty với lỗi tiền điều kiện: số đỉnh âm
   cgraph_create_empty(-1, true);
   //Gọi hàm cgraph_topological_sorting với lỗi tiền điều kiện: đồ thị vô hướng
-  cgraph_topological_sorting(g, NULL, CGRAPH_ALL);
+  atype(CGRAPH_INTEGER) *res = cgraph_topological_sorting(g, CGRAPH_ALL);
   arr_free(edges);
+  if (res) {
+    arr_free(res);
+  }
   cgraph_destroy(g);
   return 0;
 }

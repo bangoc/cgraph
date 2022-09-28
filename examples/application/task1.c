@@ -27,8 +27,7 @@ int main() {
   }
 
   cgraph_t g = cgraph_create(edges, 0, true);
-  arr_make(order, 0, CGRAPH_INTEGER);
-  cgraph_topological_sorting(g, &order, CGRAPH_OUT);
+  atype(CGRAPH_INTEGER) *order = cgraph_topological_sorting(g, CGRAPH_OUT);
   FILE *out = fopen("output.txt", "w");
   if (arr_size(order) < n) {
     fprintf(out, "-1");

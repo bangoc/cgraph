@@ -57,6 +57,14 @@ typedef struct cgraph_s {
 } *cgraph_t;
 
 /**
+ * Kiểu trả về của cgraph_edge
+ */
+struct edge {
+  CGRAPH_INTEGER from;
+  CGRAPH_INTEGER to;
+};
+
+/**
  * Kiểu trả về của hàm tìm đường 1 đích đến
  */
 struct path {

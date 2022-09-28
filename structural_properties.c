@@ -102,7 +102,7 @@ bool cgraph_is_dag(const cgraph_t graph) {
  * không có cạnh đi tới sẽ xuất hiện đầu tiên. Đối với \c CGRAPH_IN,
  * quan hệ gần như ngược lại: Mỗi đỉnh đều xuất hiện trước các nút có
  * cạnh đi tới nó. Các đỉnh không có cạnh đi tới xuất hiện đầu tiên.
- * \return Mã lỗi.
+ * \return Mảng chứa các đỉnh theo thứ tự topo.
  *
  * Độ phức tạp: O(|V|+|E|), trong đó |V| và |E| là số lượng đỉnh và
  * cạnh trong đồ thị đầu vào ban đầu.
@@ -110,28 +110,28 @@ bool cgraph_is_dag(const cgraph_t graph) {
  * \sa \ref cgraph_is_dag() nếu bạn chỉ quan tâm đồ thị được cho có phải là DAG hay không, hoặc \ref igraph_feedback_arc_set() để tìm một tập hợp cạnh, sao cho khi loại bỏ thì đồ thị là DAG.
  *
  */
-int cgraph_topological_sorting(const cgraph_t graph,
-                               atype(CGRAPH_INTEGER) **res,
+atype(CGRAPH_INTEGER) *cgraph_topological_sorting(const cgraph_t graph,
                                cgraph_neimode_t mode) {
+  cgraph_err_reset();
   CGRAPH_INTEGER no_of_nodes = cgraph_vcount(graph);
   cgraph_neimode_t deg_mode;
 
   if (mode == CGRAPH_ALL || !cgraph_is_directed(graph)) {
     CGRAPH_ERROR("Sắp xếp topo vô nghĩa đối với đồ thị"
                  " vô hướng", CGRAPH_FAILURE);
+    return NULL;
   } else if (mode == CGRAPH_OUT) {
     deg_mode = CGRAPH_IN;
   } else if (mode == CGRAPH_IN) {
     deg_mode = CGRAPH_OUT;
   } else {
-    CGRAPH_ERROR("Thuộc tính không hợp lệ", CGRAPH_FAILURE);
+    CGRAPH_ERROR("Tham số mode không hợp lệ", CGRAPH_FAILURE);
+    return NULL;
   }
   struct gsllist *sources = gsl_create_list(NULL);
 
   /* Không tính đỉnh lặp */
   atype(CGRAPH_INTEGER) *degrees = cgraph_degree_all(graph, deg_mode, false);
-
-  arr_resize(*res, 0);
   /* Chúng ta có đỉnh không có láng giềng đứng trước hay không? */
   for (CGRAPH_INTEGER i = 0; i < no_of_nodes; i++) {
     if (degrees[i] == 0) {
@@ -139,12 +139,14 @@ int cgraph_topological_sorting(const cgraph_t graph,
     }
   }
 
+  arr_make(res, 0, CGRAPH_INTEGER);
+
   /* Lấy và xóa tất cả các đỉnh không có láng giềng đứng trước */
   while (!que_is_empty(sources)) {
     CGRAPH_INTEGER node;
     node = que_peek(sources).l;
     que_deq(sources);
-    arr_append(*res, node);
+    arr_append(res, node);
     degrees[node] = -1;
     atype(CGRAPH_INTEGER) *neis = cgraph_neighbors(graph, node, mode);
     for (CGRAPH_INTEGER i = 0; i < arr_size(neis); i++) {
@@ -159,12 +161,10 @@ int cgraph_topological_sorting(const cgraph_t graph,
   arr_free(degrees);
   gsl_free(sources);
 
-  if (arr_size(*res) < no_of_nodes) {
-    CGRAPH_ERROR("đồ thị chứa một chu trình, một phần"
-                 " kết quả được trả về", CGRAPH_FAILURE);
+  if (arr_size(res) < no_of_nodes) {
+    CGRAPH_WARNING("Đồ thị chứa chu trình, một phần kết quả được trả về");
   }
-
-  return CGRAPH_SUCCESS;
+  return res;
 }
 
 /**
