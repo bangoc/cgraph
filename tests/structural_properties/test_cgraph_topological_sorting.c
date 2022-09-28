@@ -15,9 +15,8 @@ bool is_valid_topological_order(cgraph_t g,
     deg_mode = CGRAPH_IN;
   }
   CGRAPH_INTEGER no_of_nodes = cgraph_vcount(g);
-  arr_make(degrees, 0, CGRAPH_INTEGER);
   arr_make(neis, 0, CGRAPH_INTEGER);
-  cgraph_degree_all(g, &degrees, deg_mode, true);
+  atype(CGRAPH_INTEGER) *degrees = cgraph_degree_all(g, deg_mode, true);
 
   CGRAPH_INTEGER sz = arr_size(v);
   bool *removed = calloc(no_of_nodes, sizeof(bool));

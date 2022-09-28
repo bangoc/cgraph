@@ -398,22 +398,20 @@ int cgraph_incident(const cgraph_t graph,
   return 0;
 }
 
-int cgraph_degree_all(const cgraph_t graph,
-                      atype(CGRAPH_INTEGER) **res,
-                      cgraph_neimode_t mode,
-                      bool loops) {
-  if (mode != CGRAPH_OUT && mode != CGRAPH_IN &&
-      mode != CGRAPH_ALL) {
-    CGRAPH_ERROR("Không thể lấy bậc", CGRAPH_FAILURE);
+atype(CGRAPH_INTEGER) *cgraph_degree_all(const cgraph_t graph,
+                      cgraph_neimode_t mode, bool loops) {
+  cgraph_err_reset();
+  if (mode != CGRAPH_OUT && mode != CGRAPH_IN && mode != CGRAPH_ALL) {
+    CGRAPH_ERROR("Lỗi tham số mode", CGRAPH_FAILURE);
+    return NULL;
   }
   if (!cgraph_is_directed(graph)) {
     mode = CGRAPH_ALL;
   }
   CGRAPH_INTEGER no_of_nodes = cgraph_vcount(graph);
   CGRAPH_INTEGER no_of_edges = cgraph_ecount(graph);
-  arr_resize(*res, no_of_nodes);
-  atype(CGRAPH_INTEGER) *v = *res;
-  arr_ifill(v, 0);
+  arr_make(v, no_of_nodes, CGRAPH_INTEGER);
+  arr_fill(v, 0);
 
   for (CGRAPH_INTEGER ed = 0; ed < no_of_edges; ++ed) {
     if (loops || graph->from[ed] != graph->to[ed]) {
@@ -425,7 +423,7 @@ int cgraph_degree_all(const cgraph_t graph,
       }
     }
   }
-  return 0;
+  return v;
 }
 
 CGRAPH_INTEGER cgraph_degree_one(const cgraph_t graph,

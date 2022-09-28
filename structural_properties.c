@@ -33,12 +33,11 @@ bool cgraph_is_dag(const cgraph_t graph) {
   }
 
   CGRAPH_INTEGER no_of_nodes = cgraph_vcount(graph);
-  arr_make(degrees, 0, CGRAPH_INTEGER);
   arr_make(neis, 0, CGRAPH_INTEGER);
   struct gsllist *sources = gsl_create_list(NULL);
   CGRAPH_INTEGER node, i, j, nei, vertices_left;
 
-  cgraph_degree_all(graph, &degrees, CGRAPH_OUT, true);
+  atype(CGRAPH_INTEGER) *degrees = cgraph_degree_all(graph, CGRAPH_OUT, true);
 
   vertices_left = no_of_nodes;
 
@@ -128,12 +127,11 @@ int cgraph_topological_sorting(const cgraph_t graph,
   } else {
     CGRAPH_ERROR("Thuộc tính không hợp lệ", CGRAPH_FAILURE);
   }
-  arr_make(degrees, 0, CGRAPH_INTEGER);
   arr_make(neis, 0, CGRAPH_INTEGER);
   struct gsllist *sources = gsl_create_list(NULL);
 
   /* Không tính đỉnh lặp */
-  CGRAPH_CHECK(cgraph_degree_all(graph, &degrees, deg_mode, false));
+  atype(CGRAPH_INTEGER) *degrees = cgraph_degree_all(graph, deg_mode, false);
 
   arr_resize(*res, 0);
   /* Chúng ta có đỉnh không có láng giềng đứng trước hay không? */

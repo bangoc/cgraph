@@ -27,10 +27,8 @@ int cgraph_incident(const cgraph_t graph,
                     CGRAPH_INTEGER vid,
                     cgraph_neimode_t mode);
 
-int cgraph_degree_all(const cgraph_t graph,
-                      atype(CGRAPH_INTEGER) **res,
-                      cgraph_neimode_t mode,
-                      bool loops);
+atype(CGRAPH_INTEGER) *cgraph_degree_all(const cgraph_t graph,
+                      cgraph_neimode_t mode, bool loops);
 
 CGRAPH_INTEGER cgraph_degree_one(const cgraph_t graph,
                       const CGRAPH_INTEGER node,
