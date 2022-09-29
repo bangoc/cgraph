@@ -1,0 +1,2 @@
+add_executable(bkcgraph_demo bkcgraph_demo.c)
+target_link_libraries(bkcgraph_demo bkcgen bkcgraph)

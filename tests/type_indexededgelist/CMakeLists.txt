@@ -12,5 +12,5 @@ foreach(t cgraph_neighbors_ut cgraph_incident_ut cgraph_degree_ut
           cgraph_edge_ut cgraph_get_eid_ut cgraph_add_edges_ut
           cgraph_add_vertices_ut cgraph_delete_edges_ut
           cgraph_disconnect_vertices_ut)
-  target_link_libraries(${t} ut_base cgraph)
+  target_link_libraries(${t} ut_base bkcgraph)
 endforeach()

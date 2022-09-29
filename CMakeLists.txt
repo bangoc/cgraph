@@ -33,33 +33,8 @@ if (${CMAKE_PROJECT_NAME} STREQUAL cgraph)
   include(CTest)
 endif()
 
-set(cgraph_src
-  base/cgraph_error.c
-  base/cgraph_arr.c
-  type_indexededgelist.c
-  structure_generators.c
-  visitors.c
-  structural_properties.c
-  foreign.c
-)
-
-set(cgraph_inc
-  cgraph.h
-  base/cgraph_basic_types.h
-  base/cgraph_constants.h
-  cgraph_constructors.h
-  base/cgraph_datatype.h
-  base/cgraph_error.h
-  cgraph_interface.h
-  base/cgraph_arr.h
-  cgraph_topology.h
-  cgraph_visitor.h
-  cgraph_paths.h
-  cgraph_foreigh.h
-)
-
-add_library(cgraph STATIC ${cgraph_src})
-target_link_libraries(cgraph bkcgen)
+add_library(bkcgraph STATIC cgraph.c)
+target_link_libraries(bkcgraph bkcgen)
 
 if(${BUILD_TESTING})
   add_subdirectory(tests)
@@ -86,34 +61,43 @@ if(${BUILD_TESTING})
                 cgraph_disconnect_vertices_ut)
 endif()
 
-# e.g. copy libries headers and binary to bkc
-# cmake .. -DCMAKE_INSTALL_PREFIX=bkc
-MESSAGE(STATUS "Install prefix: ${CMAKE_INSTALL_PREFIX}")
-set(cgraph_include_dest "include/bkc")
-set(cgraph_lib_dest "lib")
-install(FILES ${cgraph_inc} DESTINATION "${cgraph_include_dest}")
-install(TARGETS cgraph DESTINATION "${cgraph_lib_dest}")
+if (${CMAKE_BUILD_TYPE} STREQUAL Release AND
+    ${CMAKE_PROJECT_NAME} STREQUAL cgraph)
+  set(cgraph_include_dest "include")
+  set(cgraph_lib_dest "lib")
+  set(MERGE_CMD ${CMAKE_CURRENT_BINARY_DIR}/cgen/mega-unit/merge)
+  MESSAGE(STATUS "MERGE CMD: " ${MERGE_CMD})
+  execute_process(COMMAND ${MERGE_CMD}
+                    ${CMAKE_CURRENT_SOURCE_DIR} cgraph.h bkcgraph.h
+                  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+  execute_process(COMMAND ${MERGE_CMD}
+                    ${CMAKE_CURRENT_SOURCE_DIR} cgraph.c bkcgraph.c
+                  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+  MESSAGE(STATUS "Install prefix: ${CMAKE_INSTALL_PREFIX}")
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/bkcgraph.h DESTINATION "${cgraph_include_dest}")
+  install(TARGETS bkcgraph DESTINATION "${cgraph_lib_dest}")
 
-set(CPACK_PACKAGE_INSTALL_DIRECTORY "/usr")
-set(CPACK_GENERATOR "DEB")
-set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Nguyen Ba Ngoc")
-set(CPACK_DEBIAN_PACKAGE_DESCRIPTION
-              "A library of graph algorithms built on top of C \
-              standard libraries.")
-set(CMAKE_PROJECT_HOMEPAGE_URL "https://github.com/bangoc/cgraph")
-set(CPACK_DEBIAN_PACKAGE_PRIORITY "standard")
-set(CPACK_DEBIAN_PACKAGE_SECTION "devel")
+  set(CPACK_PACKAGE_INSTALL_DIRECTORY "/usr")
+  set(CPACK_GENERATOR "DEB")
+  set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Nguyen Ba Ngoc")
+  set(CPACK_DEBIAN_PACKAGE_DESCRIPTION
+                "A library of graph algorithms built on top of C \
+                standard libraries.")
+  set(CMAKE_PROJECT_HOMEPAGE_URL "https://github.com/bangoc/cgraph")
+  set(CPACK_DEBIAN_PACKAGE_PRIORITY "standard")
+  set(CPACK_DEBIAN_PACKAGE_SECTION "devel")
 
-file (READ ${CMAKE_CURRENT_SOURCE_DIR}/VERSION CGRAPH_VERSION)
+  file (READ ${CMAKE_CURRENT_SOURCE_DIR}/VERSION CGRAPH_VERSION)
 
-# Set a Package Version
-set(CPACK_PACKAGE_VERSION ${CGRAPH_VERSION})
-include(CPack)
+  # Set a Package Version
+  set(CPACK_PACKAGE_VERSION ${CGRAPH_VERSION})
+  include(CPack)
 
-# To build a debian package
-# cmake .. -DCMAKE_BUILD_TYPE=Release
-# make -j 2
-# make package
-#
-# To install the debian package
-# sudo dpkg -i package.deb
+  # To build a debian package
+  # cmake .. -DCMAKE_BUILD_TYPE=Release
+  # make -j 2
+  # make package
+  #
+  # To install the debian package
+  # sudo dpkg -i package.deb
+endif()

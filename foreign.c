@@ -29,7 +29,7 @@ int cgraph_write_graph_dot(const cgraph_t graph, FILE* outstream) {
     char edgeop[3];
 
     // TODO: Bổ xung thông tin phiên bản
-    fprintf(outstream, "/* Được tạo bởi cgraph */\n");
+    fprintf(outstream, "/* Được tạo bởi bkcgraph */\n");
 
     if (cgraph_is_directed(graph)) {
         fprintf(outstream, "digraph {\n");

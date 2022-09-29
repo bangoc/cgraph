@@ -125,7 +125,7 @@ static int cgraph_i_create_start(
  * |E| là số lượng cạnh trong đồ thị được mở rộng.
  *
  * \example examples/simple/igraph_add_edges.c
- * TODO: Bổ xung ví dụ cho cgraph
+ * TODO: Bổ xung ví dụ cho bkcgraph
  */
 void cgraph_add_edges(cgraph_t graph, atype(CGRAPH_INTEGER) *edges) {
   cgraph_err_reset();
@@ -235,7 +235,7 @@ void cgraph_add_edges(cgraph_t graph, atype(CGRAPH_INTEGER) *edges) {
  * số lượng đỉnh trong đồ thì sau khi mở rộng.
  *
  * \example examples/simple/igraph_add_vertices.c
- * TODO: Bổ xung ví dụ cho cgraph
+ * TODO: Bổ xung ví dụ cho bkcgraph
  */
 void cgraph_add_vertices(cgraph_t graph, CGRAPH_INTEGER nv) {
   cgraph_err_reset();

@@ -1,5 +1,5 @@
 add_executable(cgraph_bfs_ut test_cgraph_bfs.c)
 add_executable(cgraph_dfs_ut test_cgraph_dfs.c)
 foreach (t cgraph_bfs_ut cgraph_dfs_ut)
-  target_link_libraries(${t} ut_base cgraph)
+  target_link_libraries(${t} ut_base bkcgraph)
 endforeach()

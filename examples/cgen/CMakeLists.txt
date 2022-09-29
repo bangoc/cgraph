@@ -1,5 +1,5 @@
 add_executable(queue_demo queue_demo.c)
 add_executable(pqueue_demo pqueue_demo.c)
 foreach (p queue_demo pqueue_demo)
-  target_link_libraries(${p} cgraph)
+  target_link_libraries(${p} bkcgraph)
 endforeach()
