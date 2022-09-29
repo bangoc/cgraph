@@ -4,8 +4,8 @@
  * @brief Thử nghiệm sử dụng thư viện bkcgraph ở cấu hình hệ thống.
  */
 
-#include <bkcgraph.h>
 #include <bkcgen.h>
+#include <bkcgraph.h>
 
 int main() {
   atype(CGRAPH_INTEGER) *edges = arr_ifrom_array(
