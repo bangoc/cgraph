@@ -2,7 +2,17 @@
 #define BASE_CGRAPH_DATATYPE_H_
 
 #include "cgen/vec/arr.h"
-#include "base/cgraph_basic_types.h"
+
+#include <inttypes.h>
+#include <stdbool.h>
+
+#ifndef CGRAPH_INTEGER
+#define CGRAPH_INTEGER int32_t
+#endif
+
+#ifndef CGRAPH_REAL
+#define CGRAPH_REAL double
+#endif
 
 /**
  * \brief Cấu trúc dữ liệu biểu diễn đồ thị

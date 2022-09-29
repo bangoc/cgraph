@@ -1,6 +1,5 @@
 cgraph-fat.c
 cgraph.h
-core/cgraph_basic_types.h
 core/cgraph_constants.h
 core/cgraph_arr.h
 core/cgraph_datatype.h
