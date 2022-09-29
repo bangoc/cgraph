@@ -24,7 +24,7 @@ int main() {
   TEST(res->order_out, ((CGRAPH_INTEGER[]){4, 2, 5, 3, 1, CGRAPH_NAN}), 6, "Case 1. order_out");
   TEST(res->father, ((CGRAPH_INTEGER[]){CGRAPH_NAN, -1, 1, 1, 2, 3}), 6, "Case 1. father");
   TEST(res->dist, ((CGRAPH_INTEGER[]){CGRAPH_NAN, 0, 1, 1, 2, 2}), 6, "Case 1. dist");
-  free_dfs(res);
+  dfs_free(res);
 
   res = cgraph_dfs(g, 1, CGRAPH_IN, false);
   /*
@@ -37,7 +37,7 @@ int main() {
   TEST(res->order_out, ((CGRAPH_INTEGER[]){0, 3, 1, CGRAPH_NAN, CGRAPH_NAN, CGRAPH_NAN}), 6, "Case 2. order_out");
   TEST(res->father, ((CGRAPH_INTEGER[]){1, -1, CGRAPH_NAN, 1, CGRAPH_NAN, CGRAPH_NAN}), 6, "Case 2. father");
   TEST(res->dist, ((CGRAPH_INTEGER[]){1, 0, CGRAPH_NAN, 1, CGRAPH_NAN, CGRAPH_NAN}), 6, "Case 2. dist");
-  free_dfs(res);
+  dfs_free(res);
 
   res = cgraph_dfs(g, 1, CGRAPH_ALL, false);
   /*
@@ -50,7 +50,7 @@ int main() {
   TEST(res->order_out, ((CGRAPH_INTEGER[]){4, 2, 5, 3, 0, 1}), 6, "Case 3. order_out");
   TEST(res->father, ((CGRAPH_INTEGER[]){1, -1, 0, 0, 2, 3}), 6, "Case 3. father");
   TEST(res->dist, ((CGRAPH_INTEGER[]){1, 0, 2, 2, 3, 3}), 6, "Case 3. dist");
-  free_dfs(res);
+  dfs_free(res);
 
   res = cgraph_dfs(g, 1, CGRAPH_OUT, true);
   /*
@@ -63,7 +63,7 @@ int main() {
   TEST(res->order_out, ((CGRAPH_INTEGER[]){4, 2, 5, 3, 1, 0}), 6, "Case 4. order_out");
   TEST(res->father, ((CGRAPH_INTEGER[]){-1, -1, 1, 1, 2, 3}), 6, "Case 4. father");
   TEST(res->dist, ((CGRAPH_INTEGER[]){0, 0, 1, 1, 2, 2}), 6, "Case 4. dist");
-  free_dfs(res);
+  dfs_free(res);
 
   cgraph_destroy(g);
   if (any) {

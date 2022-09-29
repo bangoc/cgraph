@@ -163,7 +163,7 @@ int main(int argc, char *argv[]) {
     } else {
       printf("Path not found.\n");
     }
-    free_path(p);
+    path_free(p);
   }
   free_global();
   free(beg);

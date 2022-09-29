@@ -73,13 +73,13 @@ struct path {
   int reached;
 };
 
-#define make_path(name) \
+#define path_make(name) \
   struct path *name = malloc(sizeof(struct path)); \
   name->vertices = arr_create(0, CGRAPH_INTEGER); \
   name->edges = arr_create(0, CGRAPH_INTEGER); \
   name->reached = 0
 
-#define free_path(name) \
+#define path_free(name) \
   arr_free(name->vertices); \
   arr_free(name->edges); \
   free(name)
@@ -94,7 +94,7 @@ struct paths {
   atype(CGRAPH_INTEGER) *predecessors;
   atype(CGRAPH_INTEGER) *inbound_edges;
 };
-#define make_paths(name, nto, no_of_nodes) \
+#define paths_make(name, nto, no_of_nodes) \
   struct paths *name = malloc(sizeof(struct paths)); \
   name->vertices = arr_create(nto, atype(CGRAPH_INTEGER) *); \
   name->edges = arr_create(nto, atype(CGRAPH_INTEGER) *); \
@@ -106,7 +106,7 @@ struct paths {
   name->predecessors = arr_create(no_of_nodes, CGRAPH_INTEGER); \
   name->inbound_edges = arr_create(no_of_nodes, CGRAPH_INTEGER)
 
-#define free_paths(name) \
+#define paths_free(name) \
   for (long i = 0; i < arr_size((name)->vertices); ++i) { \
     arr_free((name)->vertices[i]); \
     arr_free((name)->edges[i]); \
@@ -130,7 +130,7 @@ struct bfs {
   atype(CGRAPH_INTEGER) *dist;
 };
 
-#define make_bfs(name, no_of_nodes) \
+#define bfs_make(name, no_of_nodes) \
   struct bfs *name = malloc(sizeof(struct bfs)); \
   name->order = arr_create(no_of_nodes, CGRAPH_INTEGER); \
   name->rank = arr_create(no_of_nodes, CGRAPH_INTEGER); \
@@ -145,7 +145,7 @@ struct bfs {
   arr_fill(name->succ, CGRAPH_NAN); \
   arr_fill(name->dist, CGRAPH_NAN)
 
-#define free_bfs(name) \
+#define bfs_free(name) \
   do { \
     if (!(name)) { \
       break; \
@@ -170,7 +170,7 @@ struct dfs {
   atype(CGRAPH_INTEGER) *dist;
 };
 
-#define make_dfs(name, no_of_nodes) \
+#define dfs_make(name, no_of_nodes) \
   struct dfs *name = malloc(sizeof(struct dfs)); \
   name->order = arr_create(no_of_nodes, CGRAPH_INTEGER); \
   name->order_out = arr_create(no_of_nodes, CGRAPH_INTEGER); \
@@ -181,7 +181,7 @@ struct dfs {
   arr_fill(name->father, CGRAPH_NAN); \
   arr_fill(name->dist, CGRAPH_NAN)
 
-#define free_dfs(obj) \
+#define dfs_free(obj) \
   do { \
     if (!obj) { \
       break; \

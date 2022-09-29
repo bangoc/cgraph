@@ -33,7 +33,7 @@ bool t1() {
 
   // Giải phóng bộ nhớ
   arr_free(to);
-  free_paths(res);
+  paths_free(res);
   cgraph_destroy(g);
   return any;
 }
@@ -59,7 +59,7 @@ bool t2() {
     any = true;
   }
 
-  free_paths(res);
+  paths_free(res);
   arr_free(to);
   cgraph_destroy(g);
   return any;

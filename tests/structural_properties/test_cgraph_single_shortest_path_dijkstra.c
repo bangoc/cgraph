@@ -31,7 +31,7 @@ int main() {
     UT_MSG_FAILED("Case 1. Test edges sequence 0-5 (out)");
     any = true;
   }
-  free_path(p);
+  path_free(p);
 
   p = cgraph_get_shortest_path_dijkstra(g, 0, 4, weights, CGRAPH_OUT);
   if (!p->reached) {
@@ -49,7 +49,7 @@ int main() {
     UT_MSG_FAILED("Case 2. Test edges sequence 0-4 (out)");
     any = true;
   }
-  free_path(p);
+  path_free(p);
 
   p = cgraph_get_shortest_path_dijkstra(g, 2, 3, weights, CGRAPH_IN);
   if (!p->reached) {
@@ -67,7 +67,7 @@ int main() {
     UT_MSG_FAILED("Case 3. Test edges sequence 2-3 (in)");
     any = true;
   }
-  free_path(p);
+  path_free(p);
 
   p = cgraph_get_shortest_path_dijkstra(g, 4, 5, weights, CGRAPH_ALL);
   if (!p->reached) {
@@ -84,14 +84,14 @@ int main() {
     UT_MSG_FAILED("Case 4. Test edges sequence 4-5 (all)");
     any = true;
   }
-  free_path(p);
+  path_free(p);
 
   p = cgraph_get_shortest_path_dijkstra(g, 3, 0, weights, CGRAPH_OUT);
   if (p->reached) {
     UT_MSG_FAILED("Can't reach 0 from 3");
     any = true;
   }
-  free_path(p);
+  path_free(p);
 
   p = cgraph_get_shortest_path_dijkstra(g, 3, 3, weights, CGRAPH_OUT);
   if (!p->reached) {
@@ -108,7 +108,7 @@ int main() {
     UT_MSG_FAILED("Case 6. p->edges empty if from==to, 3-3 (out)");
     any = true;
   }
-  free_path(p);
+  path_free(p);
 
   p = cgraph_get_shortest_path_dijkstra(g, 0, 5, NULL, CGRAPH_OUT);
   if (!p->reached) {
@@ -125,11 +125,11 @@ int main() {
     UT_MSG_FAILED("Case 7. No weight 0-5 (out)");
     any = true;
   }
-  free_path(p);
+  path_free(p);
 
   /* crash test in the no path case*/
   p = cgraph_get_shortest_path_dijkstra(g, 3, 0, weights, CGRAPH_OUT);
-  free_path(p);
+  path_free(p);
 
   cgraph_destroy(g);
   arr_free(weights);

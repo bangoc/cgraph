@@ -71,7 +71,7 @@ int main() {
     UT_MSG_FAILED("Case 1. Test edges sequence 0->5 (out)");
     any = true;
   }
-  free_paths(res);
+  paths_free(res);
 
   // Case 2: Not reach
   cgraph_set_warning_handler(cgraph_warning_print);
@@ -88,7 +88,7 @@ int main() {
     UT_MSG_FAILED("Case 2. Nguồn = Đích");
     any = true;
   }
-  free_paths(res);
+  paths_free(res);
   arr_free(weights);
   arr_free(to);
   cgraph_destroy(g);

@@ -26,7 +26,7 @@ int main() {
   TEST(res->pred, ((CGRAPH_INTEGER[]){CGRAPH_NAN, -1, 1, 2, 3, 4}), 6, "Case 1. pred");
   TEST(res->succ, ((CGRAPH_INTEGER[]){CGRAPH_NAN, 2, 3, 4, 5, -1}), 6, "Case 1. succ");
   TEST(res->dist, ((CGRAPH_INTEGER[]){CGRAPH_NAN, 0, 1, 1, 1, 2}), 6, "Case 1. dist");
-  free_bfs(res);
+  bfs_free(res);
 
   // printf("Case 2\n");
   res = cgraph_bfs(g,
@@ -40,7 +40,7 @@ int main() {
   TEST(res->pred, ((CGRAPH_INTEGER[]){1, -1, CGRAPH_NAN, 0, CGRAPH_NAN, CGRAPH_NAN}), 6, "Case 2. pred");
   TEST(res->succ, ((CGRAPH_INTEGER[]){3, 0, CGRAPH_NAN, -1, CGRAPH_NAN, CGRAPH_NAN}), 6, "Case 2. succ");
   TEST(res->dist, ((CGRAPH_INTEGER[]){1, 0, CGRAPH_NAN, 1, CGRAPH_NAN, CGRAPH_NAN}), 6, "Case 2. dist");
-  free_bfs(res);
+  bfs_free(res);
 
   // printf("Case 3\n");
   res = cgraph_bfs(g,
@@ -54,7 +54,7 @@ int main() {
   TEST(res->pred, ((CGRAPH_INTEGER[]){1, -1, 0, 2, 3, 4}), 6, "Case 3. pred");
   TEST(res->succ, ((CGRAPH_INTEGER[]){2, 0, 3, 4, 5, -1}), 6, "Case 3. succ");
   TEST(res->dist, ((CGRAPH_INTEGER[]){1, 0, 1, 1, 1, 2}), 6, "Case 3. dist");
-  free_bfs(res);
+  bfs_free(res);
 
   // printf("Case 4\n");
   res = cgraph_bfs(g,
@@ -68,7 +68,7 @@ int main() {
   TEST(res->pred, ((CGRAPH_INTEGER[]){-1, -1, 1, 2, 3, 4}), 6, "Case 4. pred");
   TEST(res->succ, ((CGRAPH_INTEGER[]){-1, 2, 3, 4, 5, -1}), 6, "Case 4. succ");
   TEST(res->dist, ((CGRAPH_INTEGER[]){0, 0, 1, 1, 1, 2}), 6, "Case 4. dist");
-  free_bfs(res);
+  bfs_free(res);
 
 #undef TEST
   UT_MSG_OK("Test neightbors");

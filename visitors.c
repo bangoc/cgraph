@@ -56,7 +56,7 @@ struct bfs *cgraph_bfs(const cgraph_t graph,
     }
   }
 
-  make_bfs(res, no_of_nodes);
+  bfs_make(res, no_of_nodes);
 
   int rootpos = 0;
   while (1) {
@@ -198,7 +198,7 @@ struct dfs *cgraph_dfs(const cgraph_t graph,
 
   stk_push(stack, gtype_l(root));
   added[root] = true;
-  make_dfs(res, no_of_nodes);
+  dfs_make(res, no_of_nodes);
   res->father[root] = -1;
   res->order[act_rank++] = root;
   res->dist[root] = 0;

@@ -251,7 +251,7 @@ struct paths *cgraph_get_shortest_paths(const cgraph_t graph,
     return NULL;
   }
 
-  make_paths(res, arr_size(to), no_of_nodes);
+  paths_make(res, arr_size(to), no_of_nodes);
   father = calloc(no_of_nodes, sizeof(CGRAPH_INTEGER));
   if (father == 0) {
     CGRAPH_ERROR("Lỗi cấp phát bộ nhớ", CGRAPH_FAILURE);
@@ -480,7 +480,7 @@ struct paths *cgraph_get_shortest_paths_dijkstra(const cgraph_t graph,
   struct p2ways *q = p2w_create(gtype_cmp_d);
   arr_make(dists, no_of_nodes, CGRAPH_REAL);
   CGRAPH_INTEGER i, to_reach;
-  make_paths(res, arr_size(to), no_of_nodes);
+  paths_make(res, arr_size(to), no_of_nodes);
   arr_fill(dists, -1.0);
 
   CGRAPH_INTEGER *parents = calloc(no_of_nodes, sizeof(CGRAPH_INTEGER));
@@ -648,12 +648,12 @@ struct path *cgraph_get_shortest_path_dijkstra(const cgraph_t graph,
     CGRAPH_ERROR("Lỗi tìm đường", CGRAPH_FAILURE);
     return NULL;
   }
-  make_path(res);
+  path_make(res);
   arr_swap(res->vertices, tmp->vertices[0]);
   arr_swap(res->edges, tmp->edges[0]);
   res->reached = tmp->reached[0];
   arr_free(pto);
-  free_paths(tmp);
+  paths_free(tmp);
   return res;
 }
 
@@ -681,11 +681,11 @@ struct path *cgraph_get_shortest_path(const cgraph_t graph,
     CGRAPH_ERROR("Lỗi tìm đường đi giữa các đỉnh", CGRAPH_FAILURE);
     return NULL;
   }
-  make_path(res);
+  path_make(res);
   arr_swap(res->vertices, tmp->vertices[0]);
   arr_swap(res->edges, tmp->edges[0]);
   res->reached = tmp->reached[0];
   arr_free(pto);
-  free_paths(tmp);
+  paths_free(tmp);
   return res;
 }
