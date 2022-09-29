@@ -33,8 +33,7 @@ if (${CMAKE_PROJECT_NAME} STREQUAL cgraph)
   include(CTest)
 endif()
 
-add_library(bkcgraph STATIC cgraph.c)
-target_link_libraries(bkcgraph bkcgen)
+add_library(bkcgraph STATIC cgraph.c cgen/all.c)
 
 if(${BUILD_TESTING})
   add_subdirectory(tests)
@@ -63,16 +62,28 @@ endif()
 
 if (${CMAKE_BUILD_TYPE} STREQUAL Release AND
     ${CMAKE_PROJECT_NAME} STREQUAL cgraph)
-  set(cgraph_include_dest "include")
-  set(cgraph_lib_dest "lib")
+  # Hợp nhất các tệp
   set(MERGE_CMD ${CMAKE_CURRENT_BINARY_DIR}/cgen/mega-unit/merge)
   MESSAGE(STATUS "MERGE CMD: " ${MERGE_CMD})
   execute_process(COMMAND ${MERGE_CMD}
-                    ${CMAKE_CURRENT_SOURCE_DIR} cgraph.h bkcgraph.h
+                  ${CMAKE_CURRENT_SOURCE_DIR}/cgen all.h bkcgen.h
                   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
   execute_process(COMMAND ${MERGE_CMD}
-                    ${CMAKE_CURRENT_SOURCE_DIR} cgraph.c bkcgraph.c
+                  ${CMAKE_CURRENT_SOURCE_DIR} cgraph.h __bkcgraph.h
                   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+  set(lines "#include \"bkcgen.h\"\n"
+            "#include \"__bkcgraph.h\"")
+  write_file(${CMAKE_CURRENT_BINARY_DIR}/__bkc.h ${lines})
+  execute_process(COMMAND ${MERGE_CMD}
+                  ${CMAKE_CURRENT_BINARY_DIR} __bkc.h bkcgraph.h
+                  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+  execute_process(COMMAND ${MERGE_CMD}
+                  ${CMAKE_CURRENT_SOURCE_DIR} cgraph.c bkcgraph.c
+                  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+
+  # Đóng gói
+  set(cgraph_include_dest "include")
+  set(cgraph_lib_dest "lib")
   MESSAGE(STATUS "Install prefix: ${CMAKE_INSTALL_PREFIX}")
   install(FILES ${CMAKE_CURRENT_BINARY_DIR}/bkcgraph.h DESTINATION "${cgraph_include_dest}")
   install(TARGETS bkcgraph DESTINATION "${cgraph_lib_dest}")
@@ -96,6 +107,9 @@ if (${CMAKE_BUILD_TYPE} STREQUAL Release AND
   # To build a debian package
   # cmake .. -DCMAKE_BUILD_TYPE=Release
   # make -j 2
+  #
+  # Chạy lại cmake để hợp nhất tệp
+  # cmake .. -DCMAKE_BUILD_TYPE=Release
   # make package
   #
   # To install the debian package

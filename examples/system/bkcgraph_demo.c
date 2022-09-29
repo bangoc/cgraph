@@ -2,9 +2,10 @@
 
 /** @file
  * @brief Thử nghiệm sử dụng thư viện bkcgraph ở cấu hình hệ thống.
+ * Không cần chèn bkcgen bởi vì bkcgen.h đã được đưa vào bkcgraph.h
+ * để đảm bảo tính tương thích.
  */
 
-#include <bkcgen.h>
 #include <bkcgraph.h>
 
 int main() {

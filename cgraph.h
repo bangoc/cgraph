@@ -1,8 +1,6 @@
 #ifndef CGRAPH_H_
 #define CGRAPH_H_
 
-#include "cgen/base/gtype.h"
-#include "cgen/vec/arr.h"
 #include "base/cgraph_datatype.h"
 #include "base/cgraph_arr.h"
 #include "base/cgraph_constants.h"
